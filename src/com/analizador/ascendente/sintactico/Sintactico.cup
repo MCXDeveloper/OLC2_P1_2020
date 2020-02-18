@@ -1,0 +1,426 @@
+/************************ 1RA AREA: CÓDIGO DE USUARIO ************************/
+
+/* IMPORTACIONES, PAQUETES */
+package com.analizador.ascendente.sintactico;
+
+import java_cup.runtime.*;
+import java.util.LinkedList;
+
+/* CODIGO PARA EL PARSER, VARIABLES Y METODOS */
+parser code
+{:
+    //Metodo al que se llama automaticamente ante algun error sintactico
+    public void syntax_error(Symbol s){
+        String lexema = String.valueOf(s.value);
+        int fila = s.right;
+        int columna = s.left;
+        System.err.println("PARSER RECOVERED! No se esperaba el caracter '" + lexema + "'.");
+        ErrorHandler.AddError("Sintáctico", NombreArchivo, "[PARSER_RECOVERED]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
+    }
+
+    //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        String lexema = String.valueOf(s.value);
+        int fila = s.right;
+        int columna = s.left;
+        System.err.println("PARSER PANIC! No se esperaba el caracter '" + lexema + "'.");
+        ErrorHandler.AddError("Sintáctico", NombreArchivo, "[PARSER_PANIC]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
+    }
+
+    private NRaiz raiz;
+    private String NombreArchivo;
+
+    public NRaiz getRaiz() {
+        return raiz;
+    }
+
+    public void setNombreArchivo(String nombre_archivo) {
+        this.NombreArchivo = nombre_archivo;
+    }
+
+:}
+
+/* CODIGO PARA LAS ACCIONES GRAMATICALES */
+action code {::}
+
+/************************** 2DA AREA: DECLARACIONES **************************/
+
+/* RESERVADOS */
+terminal r_c, r_nulo, r_var, r_if, r_else, r_switch, r_case, r_default, r_break, r_continue, r_return;
+terminal r_while, r_for, r_do, r_in, r_function, r_print, r_typeof, r_length, r_array, r_matrix, r_list;
+terminal r_ncol, r_nrow, r_stringlength, r_tolowercase, r_touppercase, r_trunk, r_round, r_mean, r_median;
+terminal r_mode, r_pie, r_barplot, r_plot, r_hist, r_remove;
+
+/* OPERADORES */
+terminal mas, menos, por, div, pot, mod, par_a, par_c, cor_a, cor_c;
+terminal coma, puco, dospu, interrogacion, menor, mayor, menor_igual;
+terminal mayor_igual, diferente_que, igualdad, igual, llave_a, llave_c;
+terminal or, and, not, punto, flecha;
+
+/* PRIMITIVOS */
+terminal String identificador, numero_entero, numero_decimal, cadena, uminus;
+
+/* NO TERMINALES */
+non terminal INICIO;
+non terminal SIF;
+non terminal CASE;
+non terminal SELSE;
+non terminal BLOQUE;
+non terminal ACCESO;
+non terminal ELSE_IF;
+non terminal PARAMETRO;
+non terminal EXPRESION;
+non terminal LISTA_ELIF;
+non terminal INSTRUCCION;
+non terminal LISTA_CASES;
+non terminal LISTA_ACCESO;
+non terminal SENTENCIA_IF;
+non terminal SENTENCIA_FOR;
+non terminal SENTENCIA_PIE;
+non terminal DECASI_FUNCION;
+non terminal SENTENCIA_PLOT;
+non terminal SENTENCIA_HIST;
+non terminal DECASI_VARIABLE;
+non terminal SENTENCIA_WHILE;
+non terminal SENTENCIA_BREAK;
+non terminal SENTENCIA_PRINT;
+non terminal SENTENCIA_SWITCH;
+non terminal SENTENCIA_RETURN;
+non terminal SENTENCIA_DOWHILE;
+non terminal SENTENCIA_LLAMADA;
+non terminal LISTA_EXPRESIONES;
+non terminal SENTENCIA_BARPLOT;
+non terminal PARAMETROS_FUNCION;
+non terminal SENTENCIA_CONTINUE;
+non terminal PARAMETROS_LLAMADA;
+non terminal LISTA_INSTRUCCIONES;
+non terminal LISTA_PARAM_FUNCION;
+
+/* PRECEDENCIA DE OPERADORES */
+precedence right iterrogacion;
+precedence left or;
+precedence left and;
+precedence left diferente_que, igualdad;
+precedence nonassoc menor, mayor, menor_igual, mayor_igual;
+precedence left mas, menos;
+precedence left por, div, mod, pot;
+precedence right uminus, not;
+
+start with INICIO;
+
+/************************ 3RA AREA: REGLAS SEMANTICAS ************************/
+
+INICIO
+    ::= LISTA_INSTRUCCIONES
+;
+
+LISTA_INSTRUCCIONES
+    ::= LISTA_INSTRUCCIONES INSTRUCCION
+    |   INSTRUCCION
+;
+
+INSTRUCCION
+    ::= DECASI_FUNCION
+    |   DECASI_VARIABLE
+    |   DECASI_VARIABLE puco
+    |   SENTENCIA_IF
+    |   SENTENCIA_SWITCH
+    |   SENTENCIA_WHILE
+    |   SENTENCIA_DOWHILE
+    |   SENTENCIA_DOWHILE puco
+    |   SENTENCIA_FOR
+    |   SENTENCIA_BREAK
+    |   SENTENCIA_CONTINUE
+    |   SENTENCIA_RETURN
+    |   SENTENCIA_BREAK puco
+    |   SENTENCIA_CONTINUE puco
+    |   SENTENCIA_RETURN puco
+    |   SENTENCIA_LLAMADA
+    |   SENTENCIA_LLAMADA puco
+    |   SENTENCIA_PRINT
+    |   SENTENCIA_PRINT puco
+    |   SENTENCIA_PIE
+    |   SENTENCIA_BARPLOT
+    |   SENTENCIA_PLOT
+    |   SENTENCIA_HIST
+    |   SENTENCIA_PIE puco
+    |   SENTENCIA_BARPLOT puco
+    |   SENTENCIA_PLOT puco
+    |   SENTENCIA_HIST puco
+;
+
+BLOQUE
+    ::= llave_a llave_c
+    |   llave_a LISTA_INSTRUCCIONES llave_c
+;
+
+// +----------------------------------------------------------------------+
+// | ----------------- SENTENCIA DECLARACIÓN DE FUNCIÓN ----------------- |
+// +----------------------------------------------------------------------+
+
+DECASI_FUNCION
+    ::= identificador igual r_function PARAMETROS_FUNCION BLQOUE
+    |   identificador igual PARAMETROS_FUNCION flecha BLOQUE
+;
+
+PARAMETROS_FUNCION
+    ::= par_a par_c
+    |   par_a LISTA_PARAM_FUNCION par_c
+;
+
+LISTA_PARAM_FUNCION
+    ::= LISTA_PARAM_FUNCION PARAMETRO
+    |   PARAMETRO
+;
+
+PARAMETRO
+    ::= identificador
+    |   identificador igual EXPRESION
+;
+
+// +-----------------------------------------------------------------------+
+// | ----------------- SENTENCIA DECLARACIÓN DE VARIABLE ----------------- |
+// +-----------------------------------------------------------------------+
+
+DECASI_VARIABLE
+    ::= identificador igual EXPRESION
+    |   identificador LISTA_ACCESO igual EXPRESION
+;
+
+LISTA_ACCESO
+    ::= LISTA_ACCESO ACCESO
+    |   ACCESO
+;
+
+ACCESO
+    ::= cor_a EXPRESION cor_c
+    |   cor_a coma EXPRESION cor_c
+    |   cor_a EXPRESION coma cor_c
+    |   cor_a cor_a EXPRESION cor_c cor_c
+    |   cor_a EXPRESION coma EXPRESION cor_c
+;
+
+// +--------------------------------------------------+
+// | ----------------- SENTENCIA IF ----------------- |
+// +--------------------------------------------------+
+
+SENTENCIA_IF
+    ::= SIF
+    |   SIF SELSE
+;
+
+SIF
+    ::= r_if par_a EXPRESION par_c BLQOUE
+;
+
+SELSE
+    ::= r_else BLOQUE
+    |   LISTA_ELIF r_else BLQOUE
+    |   LISTA_ELIF
+;
+
+LISTA_ELIF
+    ::= LISTA_ELIF ELSE_IF
+    |   ELSE_IF
+;
+
+ELSE_IF
+    ::= r_else r_if par_a EXPRESION par_c BLQOUE
+;
+
+// +------------------------------------------------------+
+// | ----------------- SENTENCIA SWITCH ----------------- |
+// +------------------------------------------------------+
+
+SENTENCIA_SWITCH
+    ::= r_switch par_a EXPRESION par_c llave_a LISTA_CASES llave_c
+    |   r_switch par_a EXPRESION par_c llave_a LISTA_CASES r_default dospu LISTA_INSTRUCCIONES llave_c
+;
+
+LISTA_CASES
+    ::= LISTA_CASES CASE
+    |   CASE
+;
+
+CASE
+    ::= r_case EXPRESION dospu LISTA_INSTRUCCIONES
+;
+
+// +-----------------------------------------------------+
+// | ----------------- SENTENCIA WHILE ----------------- |
+// +-----------------------------------------------------+
+
+SENTENCIA_WHILE
+    ::= r_while par_a EXPRESION par_c BLOQUE
+;
+
+// +--------------------------------------------------------+
+// | ----------------- SENTENCIA DO WHILE ----------------- |
+// +--------------------------------------------------------+
+
+SENTENCIA_DOWHILE
+    ::= r_do BLOQUE r_while par_a EXPRESION par_c
+;
+
+// +---------------------------------------------------+
+// | ----------------- SENTENCIA FOR ----------------- |
+// +---------------------------------------------------+
+
+SENTENCIA_FOR
+    ::= r_for par_a identificador r_in EXPRESION par_c BLQOUE
+;
+
+// +-----------------------------------------------------+
+// | ----------------- SENTENCIA BREAK ----------------- |
+// +-----------------------------------------------------+
+
+SENTENCIA_BREAK
+    ::= r_break
+;
+
+// +--------------------------------------------------------+
+// | ----------------- SENTENCIA CONTINUE ----------------- |
+// +--------------------------------------------------------+
+
+SENTENCIA_CONTINUE
+    ::= r_continue
+;
+
+// +------------------------------------------------------+
+// | ----------------- SENTENCIA RETURN ----------------- |
+// +------------------------------------------------------+
+
+SENTENCIA_RETURN
+    ::= r_return
+    |   r_return par_a EXPRESION par_c
+;
+
+// +-----------------------------------------------------------------+
+// | ----------------- SENTENCIA LLAMADA A FUNCIÓN ----------------- |
+// +-----------------------------------------------------------------+
+
+SENTENCIA_LLAMADA
+    ::= identificador PARAMETROS_LLAMADA
+;
+
+PARAMETROS_LLAMADA
+    ::= par_a par_c
+    |   par_a LISTA_EXPRESIONES par_c
+;
+
+LISTA_EXPRESIONES
+    ::= LISTA_EXPRESIONES coma EXPRESION
+    |   LISTA_EXPRESIONES coma r_default
+    |   EXPRESION
+    |   r_default
+;
+
+// +-----------------------------------------------------+
+// | ----------------- SENTENCIA PRINT ----------------- |
+// +-----------------------------------------------------+
+
+SENTENCIA_PRINT
+    ::= r_print par_a EXPRESION par_c
+;
+
+// +---------------------------------------------------+
+// | ----------------- SENTENCIA PIE ----------------- |
+// +---------------------------------------------------+
+
+SENTENCIA_PIE
+    ::= r_pie par_a EXPRESION coma EXPRESION coma EXPRESION par_c
+;
+
+// +-------------------------------------------------------+
+// | ----------------- SENTENCIA BARPLOT ----------------- |
+// +-------------------------------------------------------+
+
+SENTENCIA_BARPLOT
+    ::= r_barplot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+;
+
+// +----------------------------------------------------+
+// | ----------------- SENTENCIA PLOT ----------------- |
+// +----------------------------------------------------+
+
+SENTENCIA_PLOT
+    ::= r_plot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+    |   r_plot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+;
+
+// +----------------------------------------------------+
+// | ----------------- SENTENCIA HIST ----------------- |
+// +----------------------------------------------------+
+
+SENTENCIA_HIST
+    ::= r_hist par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+;
+
+// +-------------------------------------------------+
+// | ----------------- EXPRESIONES ----------------- |
+// +-------------------------------------------------+
+
+EXPRESION
+    ::= EXPRESION and EXPRESION
+    |   EXPRESION or EXPRESION
+    |   EXPRESION igualdad EXPRESION
+    |   EXPRESION diferente_que EXPRESION
+    |   EXPRESION mayor EXPRESION
+    |   EXPRESION menor EXPRESION
+    |   EXPRESION mayor_igual EXPRESION
+    |   EXPRESION menor_igual EXPRESION
+    |   EXPRESION mas EXPRESION
+    |   EXPRESION menos EXPRESION
+    |   EXPRESION por EXPRESION
+    |   EXPRESION div EXPRESION
+    |   EXPRESION mod EXPRESION
+    |   EXPRESION pot EXPRESION
+    |   menos EXPRESION
+    |   not EXPRESION
+    |   numero_entero
+    |   numero_decimal
+    |   cadena
+    |   caracter
+    |   r_true
+    |   r_false
+    |   r_nulo
+    |   r_c par_a LISTA_EXPRESIONES par_c
+    |   r_list par_a LISTA_EXPRESIONES par_c
+    |   r_array par_a EXPRESION coma EXPRESION par_c
+    |   r_matrix par_a EXPRESION coma EXPRESION coma EXPRESION par_c
+    |   r_typeof par_a EXPRESION par_c
+    |   r_length par_a EXPRESION par_c
+    |   r_ncol par_a EXPRESION par_c
+    |   r_nrow par_a EXPRESION par_c
+    |   r_stringlength par_a EXPRESION par_c
+    |   r_remove par_a EXPRESION coma EXPRESION par_c
+    |   r_tolowercase par_a EXPRESION par_c
+    |   r_touppercase par_a EXPRESION par_c
+    |   r_trunk par_a EXPRESION par_c
+    |   r_round par_a EXPRESION par_c
+    |   r_mean par_a EXPRESION par_c
+    |   r_median par_a EXPRESION par_c
+    |   r_mode par_a EXPRESION par_c
+    |   r_mean par_a EXPRESION coma EXPRESION par_c
+    |   r_median par_a EXPRESION coma EXPRESION par_c
+    |   r_mode par_a EXPRESION coma EXPRESION par_c
+    |   identificador
+    |   identificador LISTA_ACCESO
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
