@@ -3,6 +3,12 @@
 /* IMPORTACIONES, PAQUETES */
 package com.analizador.ascendente.sintactico;
 
+import com.arbol.*;
+import com.abstracto.Nodo;
+import com.constantes.ETipoDato;
+import com.constantes.ETipoNodo;
+import com.estaticas.ErrorHandler;
+
 import java_cup.runtime.*;
 import java.util.LinkedList;
 
@@ -46,16 +52,16 @@ action code {::}
 /************************** 2DA AREA: DECLARACIONES **************************/
 
 /* RESERVADOS */
-terminal r_c, r_nulo, r_var, r_if, r_else, r_switch, r_case, r_default, r_break, r_continue, r_return;
+terminal r_c, r_nulo, r_if, r_else, r_switch, r_case, r_default, r_break, r_continue, r_return;
 terminal r_while, r_for, r_do, r_in, r_function, r_print, r_typeof, r_length, r_array, r_matrix, r_list;
 terminal r_ncol, r_nrow, r_stringlength, r_tolowercase, r_touppercase, r_trunk, r_round, r_mean, r_median;
-terminal r_mode, r_pie, r_barplot, r_plot, r_hist, r_remove;
+terminal r_mode, r_pie, r_barplot, r_plot, r_hist, r_remove, r_true, r_false;
 
 /* OPERADORES */
 terminal mas, menos, por, div, pot, mod, par_a, par_c, cor_a, cor_c;
 terminal coma, puco, dospu, interrogacion, menor, mayor, menor_igual;
 terminal mayor_igual, diferente_que, igualdad, igual, llave_a, llave_c;
-terminal or, and, not, punto, flecha;
+terminal or, and, not, flecha;
 
 /* PRIMITIVOS */
 terminal String identificador, numero_entero, numero_decimal, cadena, uminus;
@@ -69,9 +75,9 @@ non terminal BLOQUE;
 non terminal ACCESO;
 non terminal ELSE_IF;
 non terminal PARAMETRO;
-non terminal EXPRESION;
+non terminal Nodo EXPRESION;
 non terminal LISTA_ELIF;
-non terminal INSTRUCCION;
+non terminal Nodo INSTRUCCION;
 non terminal LISTA_CASES;
 non terminal LISTA_ACCESO;
 non terminal SENTENCIA_IF;
@@ -83,7 +89,7 @@ non terminal SENTENCIA_HIST;
 non terminal DECASI_VARIABLE;
 non terminal SENTENCIA_WHILE;
 non terminal SENTENCIA_BREAK;
-non terminal SENTENCIA_PRINT;
+non terminal Nodo SENTENCIA_PRINT;
 non terminal SENTENCIA_SWITCH;
 non terminal SENTENCIA_RETURN;
 non terminal SENTENCIA_DOWHILE;
@@ -93,11 +99,11 @@ non terminal SENTENCIA_BARPLOT;
 non terminal PARAMETROS_FUNCION;
 non terminal SENTENCIA_CONTINUE;
 non terminal PARAMETROS_LLAMADA;
-non terminal LISTA_INSTRUCCIONES;
+non terminal LinkedList<Nodo> LISTA_INSTRUCCIONES;
 non terminal LISTA_PARAM_FUNCION;
 
 /* PRECEDENCIA DE OPERADORES */
-precedence right iterrogacion;
+precedence right interrogacion;
 precedence left or;
 precedence left and;
 precedence left diferente_que, igualdad;
@@ -111,47 +117,49 @@ start with INICIO;
 /************************ 3RA AREA: REGLAS SEMANTICAS ************************/
 
 INICIO
-    ::= LISTA_INSTRUCCIONES
+    ::= LISTA_INSTRUCCIONES:a                                                                                       {: RESULT = new NRaiz(aright, aleft, archivo, a); :}
 ;
 
 LISTA_INSTRUCCIONES
-    ::= LISTA_INSTRUCCIONES INSTRUCCION
-    |   INSTRUCCION
+    ::= LISTA_INSTRUCCIONES:a INSTRUCCION:b                                                                         {: RESULT = a;  RESULT.add(b); :}
+    |   INSTRUCCION:a                                                                                               {: RESULT = new LinkedList<>();  RESULT.add(a); :}
 ;
 
 INSTRUCCION
-    ::= DECASI_FUNCION
-    |   DECASI_VARIABLE
-    |   DECASI_VARIABLE puco
-    |   SENTENCIA_IF
-    |   SENTENCIA_SWITCH
-    |   SENTENCIA_WHILE
-    |   SENTENCIA_DOWHILE
-    |   SENTENCIA_DOWHILE puco
-    |   SENTENCIA_FOR
-    |   SENTENCIA_BREAK
-    |   SENTENCIA_CONTINUE
-    |   SENTENCIA_RETURN
-    |   SENTENCIA_BREAK puco
-    |   SENTENCIA_CONTINUE puco
-    |   SENTENCIA_RETURN puco
-    |   SENTENCIA_LLAMADA
-    |   SENTENCIA_LLAMADA puco
-    |   SENTENCIA_PRINT
-    |   SENTENCIA_PRINT puco
-    |   SENTENCIA_PIE
-    |   SENTENCIA_BARPLOT
-    |   SENTENCIA_PLOT
-    |   SENTENCIA_HIST
-    |   SENTENCIA_PIE puco
-    |   SENTENCIA_BARPLOT puco
-    |   SENTENCIA_PLOT puco
-    |   SENTENCIA_HIST puco
+    ::= DECASI_FUNCION:a                                                                                            {: /*RESULT = a;*/ :}
+    |   DECASI_VARIABLE:a                                                                                           {: /*RESULT = a;*/ :}
+    |   DECASI_VARIABLE:a puco                                                                                      {: /*RESULT = a;*/ :}
+    |   SENTENCIA_IF:a                                                                                              {: /*RESULT = a;*/ :}
+    |   SENTENCIA_SWITCH:a                                                                                          {: /*RESULT = a;*/ :}
+    |   SENTENCIA_WHILE:a                                                                                           {: /*RESULT = a;*/ :}
+    |   SENTENCIA_DOWHILE:a                                                                                         {: /*RESULT = a;*/ :}
+    |   SENTENCIA_DOWHILE:a puco                                                                                    {: /*RESULT = a;*/ :}
+    |   SENTENCIA_FOR:a                                                                                             {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BREAK:a                                                                                           {: /*RESULT = a;*/ :}
+    |   SENTENCIA_CONTINUE:a                                                                                        {: /*RESULT = a;*/ :}
+    |   SENTENCIA_RETURN:a                                                                                          {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BREAK:a puco                                                                                      {: /*RESULT = a;*/ :}
+    |   SENTENCIA_CONTINUE:a puco                                                                                   {: /*RESULT = a;*/ :}
+    |   SENTENCIA_RETURN:a puco                                                                                     {: /*RESULT = a;*/ :}
+    |   SENTENCIA_LLAMADA:a                                                                                         {: /*RESULT = a;*/ :}
+    |   SENTENCIA_LLAMADA:a puco                                                                                    {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PRINT:a                                                                                           {: RESULT = a; :}
+    |   SENTENCIA_PRINT:a puco                                                                                      {: RESULT = a; :}
+    |   SENTENCIA_PIE:a                                                                                             {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BARPLOT:a                                                                                         {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PLOT:a                                                                                            {: /*RESULT = a;*/ :}
+    |   SENTENCIA_HIST:a                                                                                            {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PIE:a puco                                                                                        {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BARPLOT:a puco                                                                                    {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PLOT:a puco                                                                                       {: /*RESULT = a;*/ :}
+    |   SENTENCIA_HIST:a puco                                                                                       {: /*RESULT = a;*/ :}
+    |   error puco                                                                                                  {: /*RESULT = new Nodo(0, 0, archivo, ETipoNodo.ERROR);*/ :}
+    |   error llave_c                                                                                               {: /*RESULT = new Nodo(0, 0, archivo, ETipoNodo.ERROR);*/ :}
 ;
 
 BLOQUE
-    ::= llave_a llave_c
-    |   llave_a LISTA_INSTRUCCIONES llave_c
+    ::= llave_a llave_c                                                                                             {: /*RESULT = new LinkedList<>();*/ :}
+    |   llave_a LISTA_INSTRUCCIONES:a llave_c                                                                       {: /*RESULT = a;*/ :}
 ;
 
 // +----------------------------------------------------------------------+
@@ -159,23 +167,26 @@ BLOQUE
 // +----------------------------------------------------------------------+
 
 DECASI_FUNCION
-    ::= identificador igual r_function PARAMETROS_FUNCION BLQOUE
-    |   identificador igual PARAMETROS_FUNCION flecha BLOQUE
+    ::= identificador:a igual r_function PARAMETROS_FUNCION:b BLOQUE:c                                              {: /*RESULT = new NFunc(aright, aleft, archivo, a, b, c);*/ :}
+    |   identificador:a igual par_a par_c flecha BLOQUE:b                                                           {: /*RESULT = new NFunc(aright, aleft, archivo, a, new LinkedList<>(), b);*/ :}
+    |   identificador:a igual par_a EXPRESION:b par_c flecha BLOQUE:c                                               {: /*RESULT = new NFunc(aright, aleft, archivo, a, b, c);*/ :}
+    |   identificador:a igual par_a identificador:b igual EXPRESION:c par_c flecha BLOQUE:d                         {: /*RESULT = new NFunc(aright, aleft, archivo, a, new LinkedList<NParam>(Arrays.asList(new NParam(bright, bleft, archivo, b, c))), d);*/ :}
+    |   identificador:a igual par_a PARAMETRO:b coma LISTA_PARAM_FUNCION:c par_c flecha BLOQUE:d                    {: /*c.addFirst(b);  RESULT = new NFunc(aright, aleft, archivo, a, c, d);*/ :}
 ;
 
 PARAMETROS_FUNCION
-    ::= par_a par_c
-    |   par_a LISTA_PARAM_FUNCION par_c
+    ::= par_a par_c                                                                                                 {: /*RESULT = new LinkedList<>();*/ :}
+    |   par_a LISTA_PARAM_FUNCION:a par_c                                                                           {: /*RESULT = a;*/ :}
 ;
 
 LISTA_PARAM_FUNCION
-    ::= LISTA_PARAM_FUNCION PARAMETRO
-    |   PARAMETRO
+    ::= LISTA_PARAM_FUNCION:a coma PARAMETRO:b                                                                      {: /*RESULT = a;  RESULT.add(b);*/ :}
+    |   PARAMETRO:a                                                                                                 {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
 ;
 
 PARAMETRO
-    ::= identificador
-    |   identificador igual EXPRESION
+    ::= identificador:a                                                                                             {: /*RESULT = new NParam(aright, aleft, archivo, a);*/ :}
+    |   identificador:a igual EXPRESION:b                                                                           {: /*RESULT = new NParam(aright, aleft, archivo, a, b);*/ :}
 ;
 
 // +-----------------------------------------------------------------------+
@@ -183,21 +194,21 @@ PARAMETRO
 // +-----------------------------------------------------------------------+
 
 DECASI_VARIABLE
-    ::= identificador igual EXPRESION
-    |   identificador LISTA_ACCESO igual EXPRESION
+    ::= identificador:a igual EXPRESION:b                                                                           {: /*RESULT = new NDecAsi(aright, aleft, archivo, a, b);*/ :}
+    |   identificador:a LISTA_ACCESO:b igual EXPRESION:c                                                            {: /*RESULT = new NDecAsiArr(aright, aleft, archivo, a, b, c);*/ :}
 ;
 
 LISTA_ACCESO
-    ::= LISTA_ACCESO ACCESO
-    |   ACCESO
+    ::= LISTA_ACCESO:a ACCESO:b                                                                                     {: /*RESULT = a;  RESULT.add(b);*/ :}
+    |   ACCESO:a                                                                                                    {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
 ;
 
 ACCESO
-    ::= cor_a EXPRESION cor_c
-    |   cor_a coma EXPRESION cor_c
-    |   cor_a EXPRESION coma cor_c
-    |   cor_a cor_a EXPRESION cor_c cor_c
-    |   cor_a EXPRESION coma EXPRESION cor_c
+    ::= cor_a EXPRESION:a cor_c                                                                                     {: /*RESULT = new Dimension(1, a);*/ :}
+    |   cor_a coma EXPRESION:a cor_c                                                                                {: /*RESULT = new Dimension(2, a);*/ :}
+    |   cor_a EXPRESION:a coma cor_c                                                                                {: /*RESULT = new Dimension(3, a);*/ :}
+    |   cor_a cor_a EXPRESION:a cor_c cor_c                                                                         {: /*RESULT = new Dimension(4, a);*/ :}
+    |   cor_a EXPRESION:a coma EXPRESION:b cor_c                                                                    {: /*RESULT = new Dimension(5, a, b);*/ :}
 ;
 
 // +--------------------------------------------------+
@@ -205,27 +216,27 @@ ACCESO
 // +--------------------------------------------------+
 
 SENTENCIA_IF
-    ::= SIF
-    |   SIF SELSE
+    ::= SIF:a                                                                                                       {: /*RESULT = a;*/ :}
+    |   SIF:a SELSE:b                                                                                               {: /*a.setSecIf(b);  RESULT = a;*/ :}
 ;
 
 SIF
-    ::= r_if par_a EXPRESION par_c BLQOUE
+    ::= r_if:a par_a EXPRESION:b par_c BLOQUE:c                                                                     {: /*RESULT = new NIf(aright, aleft, archivo, b, c, ETipoNodo.STMT_IF);*/ :}
 ;
 
 SELSE
-    ::= r_else BLOQUE
-    |   LISTA_ELIF r_else BLQOUE
-    |   LISTA_ELIF
+    ::= r_else:a BLOQUE:b                                                                                           {: /*RESULT = new LinkedList<NIf>(); RESULT.add(new NIf(aright, aleft, archivo, b));*/ :}
+    |   LISTA_ELIF:a r_else:b BLOQUE:c                                                                              {: /*RESULT = a;  RESULT.add(new NIf(bright, bleft, archivo, c));*/ :}
+    |   LISTA_ELIF:a                                                                                                {: /*RESULT = a;*/ :}
 ;
 
 LISTA_ELIF
-    ::= LISTA_ELIF ELSE_IF
-    |   ELSE_IF
+    ::= LISTA_ELIF:a ELSE_IF:b                                                                                      {: /*RESULT = a; RESULT.add(b);*/ :}
+    |   ELSE_IF:a                                                                                                   {: /*RESULT = new LinkedList<>(); RESULT.add(a);*/ :}
 ;
 
 ELSE_IF
-    ::= r_else r_if par_a EXPRESION par_c BLQOUE
+    ::= r_else:a r_if par_a EXPRESION:b par_c BLOQUE:c                                                              {: /*RESULT = new NIf(aright, aleft, archivo, b, c, ETipoNodo.ELSEIF);*/ :}
 ;
 
 // +------------------------------------------------------+
@@ -233,17 +244,17 @@ ELSE_IF
 // +------------------------------------------------------+
 
 SENTENCIA_SWITCH
-    ::= r_switch par_a EXPRESION par_c llave_a LISTA_CASES llave_c
-    |   r_switch par_a EXPRESION par_c llave_a LISTA_CASES r_default dospu LISTA_INSTRUCCIONES llave_c
+    ::= r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c llave_c                                            {: /*RESULT = new NSwitch(aright, aleft, archivo, b, c);*/ :}
+    |   r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c r_default dospu LISTA_INSTRUCCIONES:d llave_c      {: /*RESULT = new NSwitch(aright, aleft, archivo, b, c, d);*/ :}
 ;
 
 LISTA_CASES
-    ::= LISTA_CASES CASE
-    |   CASE
+    ::= LISTA_CASES:a CASE:b                                                                                        {: /*RESULT = a;  RESULT.add(b);*/ :}
+    |   CASE:a                                                                                                      {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
 ;
 
 CASE
-    ::= r_case EXPRESION dospu LISTA_INSTRUCCIONES
+    ::= r_case:a EXPRESION:b dospu LISTA_INSTRUCCIONES:c                                                            {: /*RESULT = new NCase(aright, aleft, archivo, b, c);*/ :}
 ;
 
 // +-----------------------------------------------------+
@@ -251,7 +262,7 @@ CASE
 // +-----------------------------------------------------+
 
 SENTENCIA_WHILE
-    ::= r_while par_a EXPRESION par_c BLOQUE
+    ::= r_while:a par_a EXPRESION:b par_c BLOQUE:c                                                                  {: /*RESULT = new NWhile(aright, aleft, archivo, b, c);*/ :}
 ;
 
 // +--------------------------------------------------------+
@@ -259,7 +270,7 @@ SENTENCIA_WHILE
 // +--------------------------------------------------------+
 
 SENTENCIA_DOWHILE
-    ::= r_do BLOQUE r_while par_a EXPRESION par_c
+    ::= r_do:a BLOQUE:b r_while par_a EXPRESION:c par_c                                                             {: /*RESULT = new NDoWhile(aright, aleft, archivo, b, c);*/ :}
 ;
 
 // +---------------------------------------------------+
@@ -267,7 +278,7 @@ SENTENCIA_DOWHILE
 // +---------------------------------------------------+
 
 SENTENCIA_FOR
-    ::= r_for par_a identificador r_in EXPRESION par_c BLQOUE
+    ::= r_for:a par_a identificador:b r_in EXPRESION:c par_c BLOQUE:d                                               {: /*RESULT = new NFor(aright, aleft, archivo, b, c, d);*/ :}
 ;
 
 // +-----------------------------------------------------+
@@ -275,7 +286,7 @@ SENTENCIA_FOR
 // +-----------------------------------------------------+
 
 SENTENCIA_BREAK
-    ::= r_break
+    ::= r_break:a                                                                                                   {: /*RESULT = new NBreak(aright, aleft, archivo);*/ :}
 ;
 
 // +--------------------------------------------------------+
@@ -283,7 +294,7 @@ SENTENCIA_BREAK
 // +--------------------------------------------------------+
 
 SENTENCIA_CONTINUE
-    ::= r_continue
+    ::= r_continue:a                                                                                                {: /*RESULT = new NContinue(aright, aleft, archivo);*/ :}
 ;
 
 // +------------------------------------------------------+
@@ -291,8 +302,8 @@ SENTENCIA_CONTINUE
 // +------------------------------------------------------+
 
 SENTENCIA_RETURN
-    ::= r_return
-    |   r_return par_a EXPRESION par_c
+    ::= r_return:a                                                                                                  {: /*RESULT = new NReturn(aright, aleft, archivo);*/ :}
+    |   r_return:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NReturn(aright, aleft, archivo, b);*/ :}
 ;
 
 // +-----------------------------------------------------------------+
@@ -300,19 +311,19 @@ SENTENCIA_RETURN
 // +-----------------------------------------------------------------+
 
 SENTENCIA_LLAMADA
-    ::= identificador PARAMETROS_LLAMADA
+    ::= identificador:a PARAMETROS_LLAMADA:b                                                                        {: /*RESULT = new NCall(aright, aleft, archivo, a, b);*/ :}
 ;
 
 PARAMETROS_LLAMADA
-    ::= par_a par_c
-    |   par_a LISTA_EXPRESIONES par_c
+    ::= par_a par_c                                                                                                 {: /*RESULT = new LinkedList<>();*/ :}
+    |   par_a LISTA_EXPRESIONES:a par_c                                                                             {: /*RESULT = a;*/ :}
 ;
 
 LISTA_EXPRESIONES
-    ::= LISTA_EXPRESIONES coma EXPRESION
-    |   LISTA_EXPRESIONES coma r_default
-    |   EXPRESION
-    |   r_default
+    ::= LISTA_EXPRESIONES:a coma EXPRESION:b                                                                        {: /*RESULT = a;  RESULT.add(b);*/ :}
+    |   LISTA_EXPRESIONES:a coma r_default                                                                          {: /*RESULT = a;  RESULT.add(new NDefault());*/ :}
+    |   EXPRESION:a                                                                                                 {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
+    |   r_default                                                                                                   {: /*RESULT = new LinkedList<>();  RESULT.add(new NDefault());*/ :}
 ;
 
 // +-----------------------------------------------------+
@@ -320,7 +331,7 @@ LISTA_EXPRESIONES
 // +-----------------------------------------------------+
 
 SENTENCIA_PRINT
-    ::= r_print par_a EXPRESION par_c
+    ::= r_print:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NPrint(aright, aleft, b); :}
 ;
 
 // +---------------------------------------------------+
@@ -328,7 +339,7 @@ SENTENCIA_PRINT
 // +---------------------------------------------------+
 
 SENTENCIA_PIE
-    ::= r_pie par_a EXPRESION coma EXPRESION coma EXPRESION par_c
+    ::= r_pie:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                           {: /*RESULT = new NPie(aright, aleft, archivo, b, c, d);*/ :}
 ;
 
 // +-------------------------------------------------------+
@@ -336,7 +347,7 @@ SENTENCIA_PIE
 // +-------------------------------------------------------+
 
 SENTENCIA_BARPLOT
-    ::= r_barplot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+    ::= r_barplot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c     {: /*RESULT = new NBarPlot(aright, aleft, archivo, b, c, d, e, f);*/ :}
 ;
 
 // +----------------------------------------------------+
@@ -344,8 +355,8 @@ SENTENCIA_BARPLOT
 // +----------------------------------------------------+
 
 SENTENCIA_PLOT
-    ::= r_plot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
-    |   r_plot par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+    ::= r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: /*RESULT = new NPlot(aright, aleft, archivo, b, c, d, e, f);*/ :}
+    |   r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f coma EXPRESION:g coma EXPRESION:h coma EXPRESION:i par_c     {: /*RESULT = new NDispersion(aright, aleft, archivo, b, c, d, e, f, g, h, i);*/ :}
 ;
 
 // +----------------------------------------------------+
@@ -353,7 +364,7 @@ SENTENCIA_PLOT
 // +----------------------------------------------------+
 
 SENTENCIA_HIST
-    ::= r_hist par_a EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION coma EXPRESION par_c
+    ::= r_hist:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: /*RESULT = new NHist(aright, aleft, archivo, b, c, d, e, f);*/ :}
 ;
 
 // +-------------------------------------------------+
@@ -361,60 +372,53 @@ SENTENCIA_HIST
 // +-------------------------------------------------+
 
 EXPRESION
-    ::= EXPRESION and EXPRESION
-    |   EXPRESION or EXPRESION
-    |   EXPRESION igualdad EXPRESION
-    |   EXPRESION diferente_que EXPRESION
-    |   EXPRESION mayor EXPRESION
-    |   EXPRESION menor EXPRESION
-    |   EXPRESION mayor_igual EXPRESION
-    |   EXPRESION menor_igual EXPRESION
-    |   EXPRESION mas EXPRESION
-    |   EXPRESION menos EXPRESION
-    |   EXPRESION por EXPRESION
-    |   EXPRESION div EXPRESION
-    |   EXPRESION mod EXPRESION
-    |   EXPRESION pot EXPRESION
-    |   menos EXPRESION
-    |   not EXPRESION
-    |   numero_entero
-    |   numero_decimal
-    |   cadena
-    |   caracter
-    |   r_true
-    |   r_false
-    |   r_nulo
-    |   r_c par_a LISTA_EXPRESIONES par_c
-    |   r_list par_a LISTA_EXPRESIONES par_c
-    |   r_array par_a EXPRESION coma EXPRESION par_c
-    |   r_matrix par_a EXPRESION coma EXPRESION coma EXPRESION par_c
-    |   r_typeof par_a EXPRESION par_c
-    |   r_length par_a EXPRESION par_c
-    |   r_ncol par_a EXPRESION par_c
-    |   r_nrow par_a EXPRESION par_c
-    |   r_stringlength par_a EXPRESION par_c
-    |   r_remove par_a EXPRESION coma EXPRESION par_c
-    |   r_tolowercase par_a EXPRESION par_c
-    |   r_touppercase par_a EXPRESION par_c
-    |   r_trunk par_a EXPRESION par_c
-    |   r_round par_a EXPRESION par_c
-    |   r_mean par_a EXPRESION par_c
-    |   r_median par_a EXPRESION par_c
-    |   r_mode par_a EXPRESION par_c
-    |   r_mean par_a EXPRESION coma EXPRESION par_c
-    |   r_median par_a EXPRESION coma EXPRESION par_c
-    |   r_mode par_a EXPRESION coma EXPRESION par_c
-    |   identificador
-    |   identificador LISTA_ACCESO
+    ::= EXPRESION:a and EXPRESION:b                                                                                 {: /*RESULT = new NAnd(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a or EXPRESION:b                                                                                  {: /*RESULT = new NOr(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a igualdad EXPRESION:b                                                                            {: /*RESULT = new NIgualdad(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a diferente_que EXPRESION:b                                                                       {: /*RESULT = new NDiferente(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a mayor EXPRESION:b                                                                               {: /*RESULT = new NMayor(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a menor EXPRESION:b                                                                               {: /*RESULT = new NMenor(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a mayor_igual EXPRESION:b                                                                         {: /*RESULT = new NMayorIgual(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a menor_igual EXPRESION:b                                                                         {: /*RESULT = new NMenorIgual(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a mas EXPRESION:b                                                                                 {: /*RESULT = new NSuma(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a menos EXPRESION:b                                                                               {: /*RESULT = new NResta(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a por EXPRESION:b                                                                                 {: /*RESULT = new NMultiplicacion(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a div EXPRESION:b                                                                                 {: /*RESULT = new NDivision(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a mod EXPRESION:b                                                                                 {: /*RESULT = new NModulo(aright, aleft, archivo, a, b);*/ :}
+    |   EXPRESION:a pot EXPRESION:b                                                                                 {: /*RESULT = new NPotencia(aright, aleft, archivo, a, b);*/ :}
+    |   menos EXPRESION:a                                                                                           {: /*RESULT = new NNegativo(aright, aleft, archivo, a);*/ :}   %prec uminus
+    |   not EXPRESION:a                                                                                             {: /*RESULT = new NNot(aright, aleft, archivo, a);*/ :}
+    |   EXPRESION:b interrogacion:a EXPRESION:c dospu EXPRESION:d                                                   {: /*RESULT = new NTernario(aright, aleft, archivo, b, c, d);*/ :}
+    |   par_a EXPRESION:a par_c                                                                                     {: /*RESULT = a;*/ :}
+    |   numero_entero:a                                                                                             {: RESULT = new NPrim(aright, aleft, archivo, Integer.parseInt(a), ETipoDato.INT); :}
+    |   numero_decimal:a                                                                                            {: RESULT = new NPrim(aright, aleft, archivo, Double.parseDouble(a), ETipoDato.DECIMAL); :}
+    |   cadena:a                                                                                                    {: RESULT = new NPrim(aright, aleft, archivo, a, ETipoDato.STRING); :}
+    |   r_true:a                                                                                                    {: RESULT = new NPrim(aright, aleft, archivo, true, ETipoDato.BOOLEAN); :}
+    |   r_false:a                                                                                                   {: RESULT = new NPrim(aright, aleft, archivo, false, ETipoDato.BOOLEAN); :}
+    |   r_nulo:a                                                                                                    {: RESULT = new NNulo(aright, aleft, archivo); :}
+    |   r_c:a par_a LISTA_EXPRESIONES:b par_c                                                                       {: /*RESULT = new NVector(aright, aleft, archivo, b);*/ :}
+    |   r_list:a par_a LISTA_EXPRESIONES:b par_c                                                                    {: /*RESULT = new NList(aright, aleft, archivo, b);*/ :}
+    |   r_array:a par_a EXPRESION:b coma EXPRESION:c par_c                                                          {: /*RESULT = new NArray(aright, aleft, archivo, b, c);*/ :}
+    |   r_matrix:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                        {: /*RESULT = new NMatrix(aright, aleft, archivo, b, c, d);*/ :}
+    |   r_typeof:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NTypeOf(aright, aleft, archivo, b);*/ :}
+    |   r_length:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NLength(aright, aleft, archivo, b);*/ :}
+    |   r_ncol:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NCol(aright, aleft, archivo, b);*/ :}
+    |   r_nrow:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NRow(aright, aleft, archivo, b);*/ :}
+    |   r_stringlength:a par_a EXPRESION:b par_c                                                                    {: /*RESULT = new NStringLength(aright, aleft, archivo, b);*/ :}
+    |   r_remove:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: /*RESULT = new NRemove(aright, aleft, archivo, b, c);*/ :}
+    |   r_tolowercase:a par_a EXPRESION:b par_c                                                                     {: /*RESULT = new NToLower(aright, aleft, archivo, b);*/ :}
+    |   r_touppercase:a par_a EXPRESION:b par_c                                                                     {: /*RESULT = new NToUpper(aright, aleft, archivo, b);*/ :}
+    |   r_trunk:a par_a EXPRESION:b par_c                                                                           {: /*RESULT = new NTrunk(aright, aleft, archivo, b);*/ :}
+    |   r_round:a par_a EXPRESION:b par_c                                                                           {: /*RESULT = new NRound(aright, aleft, archivo, b);*/ :}
+    |   r_mean:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NMean(arigth, aleft, archivo, b);*/ :}
+    |   r_median:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NMedian(aright, aleft, archivo, b);*/ :}
+    |   r_mode:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NMode(aright, aleft, archivo, b);*/ :}
+    |   r_mean:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMean(aright, aleft, archivo, b, c);*/ :}
+    |   r_median:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: /*RESULT = new NMedian(aright, aleft, archivo, b, c);*/ :}
+    |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMode(aright, aleft, archivo, b, c);*/ :}
+    |   identificador:a                                                                                             {: /*RESULT = new NId(aright, aleft, archivo, a);*/ :}
+    |   identificador:a LISTA_ACCESO:b                                                                              {: /*RESULT = new NAcceso(aright, aleft, archivo, a, b);*/ :}
 ;
-
-
-
-
-
-
-
-
 
 
 

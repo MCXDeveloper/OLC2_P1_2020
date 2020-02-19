@@ -3,6 +3,8 @@
 /* PAQUETES E IMPORTACIONES */
 package com.analizador.ascendente.lexico;
 
+import com.estaticas.ErrorHandler;
+import com.analizador.ascendente.sintactico.CUPSim;
 import java_cup.runtime.*;
 
 /********************** 2DA AREA: OPCIONES Y DECLARACIONES *********************/
@@ -59,7 +61,6 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 
 <YYINITIAL> "c"			        { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: c");                return new Symbol(CUPSim.r_c, yycolumn, yyline, yytext()); }
 <YYINITIAL> "null"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: r_nulo");           return new Symbol(CUPSim.r_nulo, yycolumn, yyline, yytext()); }
-<YYINITIAL> "var"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: r_var");            return new Symbol(CUPSim.r_var, yycolumn, yyline, yytext()); }
 <YYINITIAL> "if"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: if");               return new Symbol(CUPSim.r_if, yycolumn, yyline, yytext()); }
 <YYINITIAL> "else"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: else");             return new Symbol(CUPSim.r_else, yycolumn, yyline, yytext()); }
 <YYINITIAL> "switch"		    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: switch");           return new Symbol(CUPSim.r_switch, yycolumn, yyline, yytext()); }
@@ -94,6 +95,8 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 <YYINITIAL> "barplot"			{ System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: barplot");          return new Symbol(CUPSim.r_barplot, yycolumn, yyline, yytext()); }
 <YYINITIAL> "plot"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: plot");             return new Symbol(CUPSim.r_plot, yycolumn, yyline, yytext()); }
 <YYINITIAL> "hist"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: hist");             return new Symbol(CUPSim.r_hist, yycolumn, yyline, yytext()); }
+<YYINITIAL> "true"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: true");             return new Symbol(CUPSim.r_true, yycolumn, yyline, yytext()); }
+<YYINITIAL> "false"			    { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: false");            return new Symbol(CUPSim.r_false, yycolumn, yyline, yytext()); }
 <YYINITIAL> "+"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: mas");              return new Symbol(CUPSim.mas, yycolumn, yyline, yytext()); }
 <YYINITIAL> "-"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: menos");            return new Symbol(CUPSim.menos, yycolumn, yyline, yytext()); }
 <YYINITIAL> "*"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: por");              return new Symbol(CUPSim.por, yycolumn, yyline, yytext()); }
@@ -121,7 +124,6 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 <YYINITIAL> "|"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: or");               return new Symbol(CUPSim.or, yycolumn, yyline, yytext()); }
 <YYINITIAL> "&"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: and");              return new Symbol(CUPSim.and, yycolumn, yyline, yytext()); }
 <YYINITIAL> "!"                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: not");              return new Symbol(CUPSim.not, yycolumn, yyline, yytext()); }
-<YYINITIAL> "."                 { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: punto");            return new Symbol(CUPSim.punto, yycolumn, yyline, yytext()); }
 <YYINITIAL> "\""                { System.out.println("Encontro el simbolo: " + yytext() + " >>>> Token: comilla");          cadena.setLength(0); yybegin(STRING_CAPTURE); }
 
 /* CAPTURA DE CADENAS */

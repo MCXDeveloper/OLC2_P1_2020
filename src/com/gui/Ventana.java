@@ -5,6 +5,8 @@
  */
 package com.gui;
 
+import javax.swing.*;
+
 /**
  *
  * @author mcalderon
@@ -299,6 +301,10 @@ public class Ventana extends javax.swing.JFrame {
                 new Ventana().setVisible(true);
             }
         });
+    }
+
+    public void showMessage(String message) {
+        JOptionPane.showMessageDialog(null, message);
     }
 
     // Variables declaration - do not modify

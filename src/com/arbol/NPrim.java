@@ -1,0 +1,43 @@
+package com.arbol;
+
+import com.abstracto.Instruccion;
+import com.abstracto.Nodo;
+import com.abstracto.Resultado;
+import com.constantes.EFlujo;
+import com.constantes.ETipoDato;
+import com.constantes.ETipoNodo;
+import com.entorno.TablaSimbolos;
+
+public class NPrim extends Nodo implements Instruccion {
+
+    private final Object valor;
+    private final ETipoDato tipoDato;
+
+    public NPrim(int linea, int columna, String archivo, Object valor, ETipoDato tipoDato) {
+        super(linea, columna, archivo, ETipoNodo.EXP_PRIMITIVE);
+        this.valor = valor;
+        this.tipoDato = tipoDato;
+    }
+
+    @Override
+    public Resultado Ejecutar(TablaSimbolos ts) {
+
+        Resultado r;
+
+        switch (tipoDato) {
+            case INT:
+            case STRING:
+            case DECIMAL:
+            case BOOLEAN: {
+                r = new Resultado(tipoDato, EFlujo.NORMAL, valor);
+            }
+            default: {
+                r = new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
+            }
+
+        }
+
+        return r;
+
+    }
+}
