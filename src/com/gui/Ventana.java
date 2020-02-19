@@ -5,7 +5,28 @@
  */
 package com.gui;
 
+import com.analizador.ascendente.lexico.Lexico;
+import com.analizador.ascendente.sintactico.Sintactico;
+import com.arbol.NRaiz;
+import com.entorno.TablaSimbolos;
+import com.estaticas.ErrorHandler;
+import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rtextarea.RTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
+
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -233,7 +254,9 @@ public class Ventana extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        RSyntaxTextArea textArea = getColoredArea();
+        Tab pestana = new Tab(textArea, "NuevoTab", "arit");
+        tabContainer.addTab(pestana.ObtenerNombreCompletoArchivo(), pestana);
     }
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {
@@ -261,7 +284,38 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnAnalizarAscendenteActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        Component actualTab = tabContainer.getSelectedComponent();
+        Tab auxTab = (Tab)actualTab;
+        RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
+        RTextArea contenedor = textObject.getTextArea();
+        String texto = contenedor.getText();
+
+        // Limpio la consola de salida
+        consolaSalida.setText("");
+
+        Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
+        lexer.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+
+        Sintactico parser = new Sintactico(lexer);
+        parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+
+        try {
+
+            parser.parse();
+            NRaiz raiz = parser.getRaiz();
+            TablaSimbolos ts = new TablaSimbolos();
+
+            try {
+                raiz.Ejecutar(ts);
+                verificarErrores();
+            } catch (Exception ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } catch (Exception e) {
+            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+            e.printStackTrace();
+        }
     }
 
     private void btnAnalizarDescendenteActionPerformed(java.awt.event.ActionEvent evt) {
@@ -301,6 +355,54 @@ public class Ventana extends javax.swing.JFrame {
                 new Ventana().setVisible(true);
             }
         });
+    }
+
+    public RSyntaxTextArea getColoredArea() {
+        RSyntaxTextArea area = new RSyntaxTextArea(10, 10);
+        Theme theme;
+        AbstractTokenMakerFactory atm = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+        atm.putMapping("text/example", "com.paint.PainterIDE");
+        try {
+            theme = Theme.load(getClass().getResourceAsStream("/com/paint/XMLColor.xml"));
+            theme.apply(area);
+        } catch (IOException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        area.setSyntaxEditingStyle("text/example");
+        area.setCodeFoldingEnabled(true);
+        //setFont(area, new Font("Consolas", Font.PLAIN, 16));
+        return area;
+    }
+
+    public static void setFont(RSyntaxTextArea textArea, Font font) {
+        if (font != null) {
+            SyntaxScheme ss = textArea.getSyntaxScheme();
+            ss = (SyntaxScheme) ss.clone();
+            for (int i = 0; i < ss.getStyleCount(); i++) {
+                if (ss.getStyle(i) != null) {
+                    ss.getStyle(i).font = font;
+                }
+            }
+            textArea.setSyntaxScheme(ss);
+            textArea.setFont(font);
+        }
+    }
+
+    public void appendSalida(String cadena, Color color) {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, color);
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        int len = consolaSalida.getDocument().getLength();
+        consolaSalida.setCaretPosition(len);
+        consolaSalida.setCharacterAttributes(aset, false);
+        consolaSalida.replaceSelection("> " + cadena + System.lineSeparator());
+    }
+
+    private void verificarErrores() {
+        if (ErrorHandler.ListaErrores.size() > 0) {
+            showMessage("Ocurrieron errores al ejecutar el archivo.  Revisar pestaña de errores.");
+        }
     }
 
     public void showMessage(String message) {

@@ -1,6 +1,9 @@
 package com.main;
 
+import com.estaticas.Manejador;
 import com.gui.Ventana;
+
+import java.util.LinkedList;
 
 public class Main {
 
@@ -17,7 +20,7 @@ public class Main {
     }
 
     public static void cleaner() {
-        System.out.println("Saludo inicial!");
+        Manejador.TSEstatica = new LinkedList<>();
     }
 
 }

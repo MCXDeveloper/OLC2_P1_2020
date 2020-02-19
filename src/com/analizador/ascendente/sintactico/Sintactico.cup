@@ -21,7 +21,7 @@ parser code
         int fila = s.right;
         int columna = s.left;
         System.err.println("PARSER RECOVERED! No se esperaba el caracter '" + lexema + "'.");
-        ErrorHandler.AddError("Sintáctico", NombreArchivo, "[PARSER_RECOVERED]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
+        ErrorHandler.AddError("Sintáctico", archivo, "[PARSER_RECOVERED]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
     }
 
     //Metodo al que se llama en el momento en que ya no es posible una recuperacion de errores
@@ -30,18 +30,18 @@ parser code
         int fila = s.right;
         int columna = s.left;
         System.err.println("PARSER PANIC! No se esperaba el caracter '" + lexema + "'.");
-        ErrorHandler.AddError("Sintáctico", NombreArchivo, "[PARSER_PANIC]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
+        ErrorHandler.AddError("Sintáctico", archivo, "[PARSER_PANIC]", "No se esperaba el caracter '" + lexema + "'.", fila, columna);
     }
 
     private NRaiz raiz;
-    private String NombreArchivo;
+    private String archivo;
 
     public NRaiz getRaiz() {
         return raiz;
     }
 
     public void setNombreArchivo(String nombre_archivo) {
-        this.NombreArchivo = nombre_archivo;
+        this.archivo = nombre_archivo;
     }
 
 :}
@@ -117,7 +117,7 @@ start with INICIO;
 /************************ 3RA AREA: REGLAS SEMANTICAS ************************/
 
 INICIO
-    ::= LISTA_INSTRUCCIONES:a                                                                                       {: RESULT = new NRaiz(aright, aleft, archivo, a); :}
+    ::= LISTA_INSTRUCCIONES:a                                                                                       {: raiz = new NRaiz(aright, aleft, archivo, a); :}
 ;
 
 LISTA_INSTRUCCIONES
@@ -331,7 +331,7 @@ LISTA_EXPRESIONES
 // +-----------------------------------------------------+
 
 SENTENCIA_PRINT
-    ::= r_print:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NPrint(aright, aleft, b); :}
+    ::= r_print:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NPrint(aright, aleft, archivo, b); :}
 ;
 
 // +---------------------------------------------------+
