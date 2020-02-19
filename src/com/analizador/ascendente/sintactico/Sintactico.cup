@@ -86,7 +86,7 @@ non terminal SENTENCIA_PIE;
 non terminal DECASI_FUNCION;
 non terminal SENTENCIA_PLOT;
 non terminal SENTENCIA_HIST;
-non terminal DECASI_VARIABLE;
+non terminal Nodo DECASI_VARIABLE;
 non terminal SENTENCIA_WHILE;
 non terminal SENTENCIA_BREAK;
 non terminal Nodo SENTENCIA_PRINT;
@@ -127,8 +127,8 @@ LISTA_INSTRUCCIONES
 
 INSTRUCCION
     ::= DECASI_FUNCION:a                                                                                            {: /*RESULT = a;*/ :}
-    |   DECASI_VARIABLE:a                                                                                           {: /*RESULT = a;*/ :}
-    |   DECASI_VARIABLE:a puco                                                                                      {: /*RESULT = a;*/ :}
+    |   DECASI_VARIABLE:a                                                                                           {: RESULT = a; :}
+    |   DECASI_VARIABLE:a puco                                                                                      {: RESULT = a; :}
     |   SENTENCIA_IF:a                                                                                              {: /*RESULT = a;*/ :}
     |   SENTENCIA_SWITCH:a                                                                                          {: /*RESULT = a;*/ :}
     |   SENTENCIA_WHILE:a                                                                                           {: /*RESULT = a;*/ :}
@@ -194,7 +194,7 @@ PARAMETRO
 // +-----------------------------------------------------------------------+
 
 DECASI_VARIABLE
-    ::= identificador:a igual EXPRESION:b                                                                           {: /*RESULT = new NDecAsi(aright, aleft, archivo, a, b);*/ :}
+    ::= identificador:a igual EXPRESION:b                                                                           {: RESULT = new NDecAsi(aright, aleft, archivo, a, b); :}
     |   identificador:a LISTA_ACCESO:b igual EXPRESION:c                                                            {: /*RESULT = new NDecAsiArr(aright, aleft, archivo, a, b, c);*/ :}
 ;
 
@@ -416,7 +416,7 @@ EXPRESION
     |   r_mean:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMean(aright, aleft, archivo, b, c);*/ :}
     |   r_median:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: /*RESULT = new NMedian(aright, aleft, archivo, b, c);*/ :}
     |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMode(aright, aleft, archivo, b, c);*/ :}
-    |   identificador:a                                                                                             {: /*RESULT = new NId(aright, aleft, archivo, a);*/ :}
+    |   identificador:a                                                                                             {: RESULT = new NId(aright, aleft, archivo, a); :}
     |   identificador:a LISTA_ACCESO:b                                                                              {: /*RESULT = new NAcceso(aright, aleft, archivo, a, b);*/ :}
 ;
 

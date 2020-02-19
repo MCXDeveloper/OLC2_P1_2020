@@ -8,8 +8,10 @@ package com.gui;
 import com.analizador.ascendente.lexico.Lexico;
 import com.analizador.ascendente.sintactico.Sintactico;
 import com.arbol.NRaiz;
+import com.bethecoder.ascii_table.ASCIITable;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
+import com.estaticas.Manejador;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -50,7 +52,6 @@ public class Ventana extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        radioBtnGroup = new javax.swing.ButtonGroup();
         panelAreaTrabajo = new javax.swing.JPanel();
         tabContainer = new javax.swing.JTabbedPane();
         panelConsola = new javax.swing.JPanel();
@@ -70,6 +71,14 @@ public class Ventana extends javax.swing.JFrame {
         btnReporteAST = new javax.swing.JMenuItem();
         btnReporteErrores = new javax.swing.JMenuItem();
         btnReporteTS = new javax.swing.JMenuItem();
+        salidasContainer = new javax.swing.JTabbedPane();
+        innerPanelConsola = new javax.swing.JPanel();
+        innerPanelErrores = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        consolaErrores = new javax.swing.JTextPane();
+        innerPanelSimbolos = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        consolaSimbolos = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,10 +101,74 @@ public class Ventana extends javax.swing.JFrame {
                                 .addContainerGap())
         );
 
-        panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Consola"));
+        panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Salidas"));
 
         consolaSalida.setBackground(new java.awt.Color(0, 0, 0));
         jspConsola.setViewportView(consolaSalida);
+
+        javax.swing.GroupLayout innerPanelConsolaLayout = new javax.swing.GroupLayout(innerPanelConsola);
+        innerPanelConsola.setLayout(innerPanelConsolaLayout);
+        innerPanelConsolaLayout.setHorizontalGroup(
+                innerPanelConsolaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelConsolaLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jspConsola, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+        innerPanelConsolaLayout.setVerticalGroup(
+                innerPanelConsolaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelConsolaLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jspConsola, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
+        salidasContainer.addTab("Consola", innerPanelConsola);
+
+        consolaErrores.setBackground(new java.awt.Color(0, 0, 0));
+        jScrollPane1.setViewportView(consolaErrores);
+
+        javax.swing.GroupLayout innerPanelErroresLayout = new javax.swing.GroupLayout(innerPanelErrores);
+        innerPanelErrores.setLayout(innerPanelErroresLayout);
+        innerPanelErroresLayout.setHorizontalGroup(
+                innerPanelErroresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelErroresLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+        innerPanelErroresLayout.setVerticalGroup(
+                innerPanelErroresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelErroresLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
+        salidasContainer.addTab("Errores", innerPanelErrores);
+
+        consolaSimbolos.setBackground(new java.awt.Color(0, 0, 0));
+        //consolaSimbolos.setFont(new java.awt.Font("Inconsolata", Font.BOLD, 12)); // NOI18N
+        jScrollPane2.setViewportView(consolaSimbolos);
+
+        javax.swing.GroupLayout innerPanelSimbolosLayout = new javax.swing.GroupLayout(innerPanelSimbolos);
+        innerPanelSimbolos.setLayout(innerPanelSimbolosLayout);
+        innerPanelSimbolosLayout.setHorizontalGroup(
+                innerPanelSimbolosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelSimbolosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+        innerPanelSimbolosLayout.setVerticalGroup(
+                innerPanelSimbolosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(innerPanelSimbolosLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addContainerGap())
+        );
+
+        salidasContainer.addTab("Tabla de Simbolos", innerPanelSimbolos);
 
         javax.swing.GroupLayout panelConsolaLayout = new javax.swing.GroupLayout(panelConsola);
         panelConsola.setLayout(panelConsolaLayout);
@@ -103,14 +176,14 @@ public class Ventana extends javax.swing.JFrame {
                 panelConsolaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(panelConsolaLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jspConsola)
+                                .addComponent(salidasContainer)
                                 .addContainerGap())
         );
         panelConsolaLayout.setVerticalGroup(
                 panelConsolaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelConsolaLayout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelConsolaLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jspConsola, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                                .addComponent(salidasContainer)
                                 .addContainerGap())
         );
 
@@ -226,7 +299,7 @@ public class Ventana extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(layout.createSequentialGroup()
-                                                                .addGap(0, 47, Short.MAX_VALUE)
+                                                                .addGap(0, 0, Short.MAX_VALUE)
                                                                 .addComponent(btnAnalizarAscendente, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(btnAnalizarDescendente, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -275,14 +348,32 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnReporteErroresActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        consolaErrores.setText("");
+        if (ErrorHandler.GetStringArrayErrors().size() > 0) {
+            String[][] data = ErrorHandler.GetStringArrayErrors().toArray(new String[0][]);
+            String[] header = { "Archivo", "Tipo", "Ubicación", "Descripcion", "Fila", "Columna" };
+            String tabla = ASCIITable.getInstance().getTable(header, data);
+            appendErrores(tabla);
+        } else {
+            appendErrores("No hay errores en la tabla que mostrar.");
+        }
     }
 
     private void btnReporteTSActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        consolaSimbolos.setText("");
+        if (Manejador.TSEstatica.size() > 0) {
+            String[][] data = Manejador.TSEstatica.toArray(new String[0][]);
+            String[] header = { "Ambito", "Tipo Simbolo", "Tipo Dato", "Nombre" };
+            String tabla = ASCIITable.getInstance().getTable(header, data);
+            appendSimbolos("IMPRIMIENDO TABLA DE SIMBOLOS..." + System.lineSeparator());
+            appendSimbolos(tabla);
+        } else {
+            appendSimbolos("No hay simbolos en la tabla que mostrar.");
+        }
     }
 
     private void btnAnalizarAscendenteActionPerformed(java.awt.event.ActionEvent evt) {
+
         Component actualTab = tabContainer.getSelectedComponent();
         Tab auxTab = (Tab)actualTab;
         RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
@@ -315,6 +406,7 @@ public class Ventana extends javax.swing.JFrame {
             appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
             e.printStackTrace();
         }
+
     }
 
     private void btnAnalizarDescendenteActionPerformed(java.awt.event.ActionEvent evt) {
@@ -390,12 +482,34 @@ public class Ventana extends javax.swing.JFrame {
     public void appendSalida(String cadena, Color color) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, color);
-        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
         int len = consolaSalida.getDocument().getLength();
         consolaSalida.setCaretPosition(len);
         consolaSalida.setCharacterAttributes(aset, false);
         consolaSalida.replaceSelection("> " + cadena + System.lineSeparator());
+    }
+
+    private void appendErrores(String cadena) {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.PINK);
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        int len = consolaErrores.getDocument().getLength();
+        consolaErrores.setCaretPosition(len);
+        consolaErrores.setCharacterAttributes(aset, false);
+        consolaErrores.replaceSelection(cadena);
+    }
+
+    private void appendSimbolos(String cadena) {
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.YELLOW);
+        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        int len = consolaSimbolos.getDocument().getLength();
+        consolaSimbolos.setCaretPosition(len);
+        consolaSimbolos.setCharacterAttributes(aset, false);
+        consolaSimbolos.replaceSelection(cadena);
     }
 
     private void verificarErrores() {
@@ -427,7 +541,14 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JPanel panelAreaTrabajo;
     private javax.swing.JPanel panelConsola;
     private javax.swing.JPanel panelGraficos;
-    private javax.swing.ButtonGroup radioBtnGroup;
     private javax.swing.JTabbedPane tabContainer;
+    private javax.swing.JTextPane consolaErrores;
+    private javax.swing.JTextPane consolaSimbolos;
+    private javax.swing.JPanel innerPanelConsola;
+    private javax.swing.JPanel innerPanelErrores;
+    private javax.swing.JPanel innerPanelSimbolos;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane salidasContainer;
     // End of variables declaration
 }

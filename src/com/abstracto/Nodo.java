@@ -1,5 +1,6 @@
 package com.abstracto;
 
+import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 
 public class Nodo {

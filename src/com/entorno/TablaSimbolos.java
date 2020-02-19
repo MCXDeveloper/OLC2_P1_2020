@@ -1,24 +1,24 @@
 package com.entorno;
 
+import java.util.Map;
+import java.util.Stack;
 import com.arbol.NFunc;
+import java.util.TreeMap;
 import com.constantes.EAmbito;
 import com.estaticas.Manejador;
-
-import java.util.HashMap;
-import java.util.Stack;
 
 public class TablaSimbolos {
 
     private Ambito actual;
     private Ambito global;
     private final Stack<Ambito> llamadas;
-    private final HashMap<String, NFunc> funciones;
+    private final Map<String, NFunc> funciones;
 
     public TablaSimbolos() {
         this.actual = new Ambito(EAmbito.GLOBAL);
         this.global = this.actual;
         this.llamadas = new Stack<>();
-        this.funciones = new HashMap<>();
+        this.funciones = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public boolean addMetodo(NFunc fun) {
@@ -34,8 +34,8 @@ public class TablaSimbolos {
         return funciones.get(id);
     }
 
-    public boolean addSimbolo(String id, Simbolo sim) {
-        return actual.addSimbolo(id, sim);
+    public boolean addSimbolo(Simbolo sim) {
+        return actual.addSimbolo(sim);
     }
 
     public Simbolo getSimbolo(String id) {
@@ -68,8 +68,8 @@ public class TablaSimbolos {
         actual.imprimirSimbolos();
     }
 
-    public void updateSimbolo(String id, Simbolo sim) {
-        actual.updateSimbolo(id, sim);
+    public void updateSimbolo(Simbolo sim) {
+        actual.updateSimbolo(sim);
     }
 
 }

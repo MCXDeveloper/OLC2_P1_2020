@@ -1,20 +1,20 @@
 package com.entorno;
 
+import java.util.Map;
+import java.util.TreeMap;
 import com.constantes.EAmbito;
 import com.estaticas.Manejador;
-
-import java.util.HashMap;
 
 public class Ambito {
 
     private EAmbito tipo;
     private Ambito superior;
-    private HashMap<String, Simbolo> tabla;
+    private Map<String, Simbolo> tabla;
 
     public Ambito(EAmbito tipo){
         this.tipo = tipo;
         this.superior = null;
-        this.tabla = new HashMap<>();
+        this.tabla = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     public Ambito(EAmbito tipo, Ambito superior){
@@ -38,22 +38,22 @@ public class Ambito {
         return s;
     }
 
-    public boolean addSimbolo(String id, Simbolo sim){
-        if(tabla.containsKey(id)) {
+    public boolean addSimbolo(Simbolo sim){
+        if(tabla.containsKey(sim.getId())) {
             return false;
         }
-        tabla.put(id, sim);
-        Manejador.TSEstatica.add(new String[] { String.valueOf(tipo), "VARIABLE", String.valueOf(sim.getTipo()), id });
+        tabla.put(sim.getId(), sim);
+        Manejador.TSEstatica.add(new String[] { String.valueOf(tipo), "VARIABLE", String.valueOf(sim.getTipo()), sim.getId() });
         return true;
     }
 
-    public void updateSimbolo(String id, Simbolo sim) {
+    public void updateSimbolo(Simbolo sim) {
         Simbolo s;
         Ambito a = this;
         while(a != null){
-            s = a.tabla.get(id);
+            s = a.tabla.get(sim.getId());
             if(s != null) {
-                a.tabla.put(id, sim);
+                a.tabla.put(sim.getId(), sim);
                 break;
             } else {
                 a = a.superior;
