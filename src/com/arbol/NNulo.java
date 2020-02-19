@@ -18,4 +18,9 @@ public class NNulo extends Nodo implements Instruccion {
     public Resultado Ejecutar(TablaSimbolos ts) {
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
     }
+
+    @Override
+    public String toString() {
+        return "NULL";
+    }
 }

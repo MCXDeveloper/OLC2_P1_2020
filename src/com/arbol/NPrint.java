@@ -21,10 +21,8 @@ public class NPrint extends Nodo implements Instruccion {
 
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
-        String valor = ((Instruccion)elemento).Ejecutar(ts).toString();
-        System.out.println(valor);
-        // TODO - Arreglar el valor a imprimir
-        Main.getGUI().appendSalida(valor, Color.CYAN);
+        Resultado r = ((Instruccion)elemento).Ejecutar(ts);
+        Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
     }
 

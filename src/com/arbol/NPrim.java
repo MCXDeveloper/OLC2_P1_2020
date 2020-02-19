@@ -30,10 +30,10 @@ public class NPrim extends Nodo implements Instruccion {
             case DECIMAL:
             case BOOLEAN: {
                 r = new Resultado(tipoDato, EFlujo.NORMAL, valor);
-            }
+            }   break;
             default: {
                 r = new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
-            }
+            }   break;
 
         }
 

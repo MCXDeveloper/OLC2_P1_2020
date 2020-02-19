@@ -94,7 +94,6 @@ public class Ventana extends javax.swing.JFrame {
 
         panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Consola"));
 
-        consolaSalida.setEditable(false);
         consolaSalida.setBackground(new java.awt.Color(0, 0, 0));
         jspConsola.setViewportView(consolaSalida);
 
