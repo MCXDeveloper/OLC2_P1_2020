@@ -372,24 +372,24 @@ SENTENCIA_HIST
 // +-------------------------------------------------+
 
 EXPRESION
-    ::= EXPRESION:a and EXPRESION:b                                                                                 {: /*RESULT = new NAnd(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a or EXPRESION:b                                                                                  {: /*RESULT = new NOr(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a igualdad EXPRESION:b                                                                            {: /*RESULT = new NIgualdad(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a diferente_que EXPRESION:b                                                                       {: /*RESULT = new NDiferente(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a mayor EXPRESION:b                                                                               {: /*RESULT = new NMayor(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a menor EXPRESION:b                                                                               {: /*RESULT = new NMenor(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a mayor_igual EXPRESION:b                                                                         {: /*RESULT = new NMayorIgual(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a menor_igual EXPRESION:b                                                                         {: /*RESULT = new NMenorIgual(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a mas EXPRESION:b                                                                                 {: /*RESULT = new NSuma(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a menos EXPRESION:b                                                                               {: /*RESULT = new NResta(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a por EXPRESION:b                                                                                 {: /*RESULT = new NMultiplicacion(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a div EXPRESION:b                                                                                 {: /*RESULT = new NDivision(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a mod EXPRESION:b                                                                                 {: /*RESULT = new NModulo(aright, aleft, archivo, a, b);*/ :}
-    |   EXPRESION:a pot EXPRESION:b                                                                                 {: /*RESULT = new NPotencia(aright, aleft, archivo, a, b);*/ :}
-    |   menos EXPRESION:a                                                                                           {: /*RESULT = new NNegativo(aright, aleft, archivo, a);*/ :}   %prec uminus
-    |   not EXPRESION:a                                                                                             {: /*RESULT = new NNot(aright, aleft, archivo, a);*/ :}
+    ::= EXPRESION:a and EXPRESION:b                                                                                 {: RESULT = new NAnd(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a or EXPRESION:b                                                                                  {: RESULT = new NOr(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a igualdad EXPRESION:b                                                                            {: RESULT = new NIgualdad(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a diferente_que EXPRESION:b                                                                       {: RESULT = new NDiferente(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a mayor EXPRESION:b                                                                               {: RESULT = new NMayor(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a menor EXPRESION:b                                                                               {: RESULT = new NMenor(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a mayor_igual EXPRESION:b                                                                         {: RESULT = new NMayorIgual(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a menor_igual EXPRESION:b                                                                         {: RESULT = new NMenorIgual(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a mas EXPRESION:b                                                                                 {: RESULT = new NSuma(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a menos EXPRESION:b                                                                               {: RESULT = new NResta(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a por EXPRESION:b                                                                                 {: RESULT = new NMultiplicacion(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a div EXPRESION:b                                                                                 {: RESULT = new NDivision(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a mod EXPRESION:b                                                                                 {: RESULT = new NModulo(aright, aleft, archivo, a, b); :}
+    |   EXPRESION:a pot EXPRESION:b                                                                                 {: RESULT = new NPotencia(aright, aleft, archivo, a, b); :}
+    |   menos EXPRESION:a                                                                                           {: RESULT = new NNegativo(aright, aleft, archivo, a); :}   %prec uminus
+    |   not EXPRESION:a                                                                                             {: RESULT = new NNot(aright, aleft, archivo, a); :}
     |   EXPRESION:b interrogacion:a EXPRESION:c dospu EXPRESION:d                                                   {: /*RESULT = new NTernario(aright, aleft, archivo, b, c, d);*/ :}
-    |   par_a EXPRESION:a par_c                                                                                     {: /*RESULT = a;*/ :}
+    |   par_a EXPRESION:a par_c                                                                                     {: RESULT = a; :}
     |   numero_entero:a                                                                                             {: RESULT = new NPrim(aright, aleft, archivo, Integer.parseInt(a), ETipoDato.INT); :}
     |   numero_decimal:a                                                                                            {: RESULT = new NPrim(aright, aleft, archivo, Double.parseDouble(a), ETipoDato.DECIMAL); :}
     |   cadena:a                                                                                                    {: RESULT = new NPrim(aright, aleft, archivo, a, ETipoDato.STRING); :}
