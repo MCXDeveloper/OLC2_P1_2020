@@ -398,7 +398,7 @@ EXPRESION
     |   r_true:a                                                                                                    {: RESULT = new NPrim(aright, aleft, archivo, true, ETipoDato.BOOLEAN); :}
     |   r_false:a                                                                                                   {: RESULT = new NPrim(aright, aleft, archivo, false, ETipoDato.BOOLEAN); :}
     |   r_nulo:a                                                                                                    {: RESULT = new NNulo(aright, aleft, archivo); :}
-    |   r_c:a par_a LISTA_EXPRESIONES:b par_c                                                                       {: /*RESULT = new NVector(aright, aleft, archivo, b);*/ :}
+    |   r_c:a par_a LISTA_EXPRESIONES:b par_c                                                                       {: RESULT = new NFC(aright, aleft, archivo, b); :}
     |   r_list:a par_a LISTA_EXPRESIONES:b par_c                                                                    {: /*RESULT = new NList(aright, aleft, archivo, b);*/ :}
     |   r_array:a par_a EXPRESION:b coma EXPRESION:c par_c                                                          {: /*RESULT = new NArray(aright, aleft, archivo, b, c);*/ :}
     |   r_matrix:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                        {: /*RESULT = new NMatrix(aright, aleft, archivo, b, c, d);*/ :}
