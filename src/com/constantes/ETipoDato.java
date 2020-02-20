@@ -2,6 +2,7 @@ package com.constantes;
 
 public enum ETipoDato {
     NT,
+    ANY,
     INT,
     LIST,
     ERROR,

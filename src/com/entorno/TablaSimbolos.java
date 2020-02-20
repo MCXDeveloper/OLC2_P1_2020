@@ -5,6 +5,7 @@ import java.util.Stack;
 import com.arbol.NFunc;
 import java.util.TreeMap;
 import com.constantes.EAmbito;
+import com.constantes.ETipoDato;
 import com.estaticas.Manejador;
 
 public class TablaSimbolos {
@@ -26,7 +27,7 @@ public class TablaSimbolos {
             return false;
         }
         funciones.put(fun.getId(), fun);
-        Manejador.TSEstatica.add(new String[] { String.valueOf(actual.getTipo()), "FUNCION", String.valueOf(fun.getTipo()), fun.getId() });
+        Manejador.TSEstatica.add(new String[] { String.valueOf(actual.getTipo()), "FUNCION", String.valueOf(ETipoDato.ANY), fun.getId() });
         return true;
     }
 
