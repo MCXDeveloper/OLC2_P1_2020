@@ -5,6 +5,7 @@ package com.analizador.ascendente.sintactico;
 
 import com.arbol.*;
 import com.abstracto.Nodo;
+import com.abstracto.Dimension;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.estaticas.ErrorHandler;

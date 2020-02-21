@@ -90,77 +90,79 @@ public class NAsiArr extends Nodo implements Instruccion {
             return false;
         } else {
 
-            if (listaDims.size() == 1) {
+            int actualPos = 0;
+            Resultado rdim = ((Instruccion)listaDims.get(0).getValorDimIzq()).Ejecutar(ts);
 
+            if (rdim.getTipoDato() != ETipoDato.INT) {
+                msj = "Error. Se espera que el valor propocionado como posición en la dimension 1 sea de tipo INTEGER.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
             } else {
 
-                /* Verifico que el primer elemento de las dimensiones sea entero y que no sea mayor al tamaño del vector. */
-                Resultado rdim = ((Instruccion)listaDims.get(0).getValorDimIzq()).Ejecutar(ts);
+                int firstPos = (int)rdim.getValor();
 
-                if (rdim.getTipoDato() != ETipoDato.INT) {
-                    msj = "Error. Se espera que el valor propocionado como posición en la dimension 1 sea de tipo INTEGER.";
+                if (firstPos <= 0) {
+                    msj = "Error. El indice proporcionado debe ser mayor o igual a 1.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
                     return false;
+                }
+
+                if (listaDims.size() == 1) {
+                    actualPos = firstPos;
                 } else {
 
-                    int firstPos = (int)rdim.getValor();
+                    /*
+                     * Verifico si el acceso al vector posee más de una dimension. Si eso se cumple,
+                     * se tiene que validar que las siguientes dimensiones proporcionen un entero como
+                     * valor de posicion y este tiene que ser exactamente igual que el primero, de lo
+                     * contrario se debe reportar error.  Éste multiple acceso simula la recursión interna
+                     * de la relación entre vectores y tipos primitivos (que también se consideran vectores).
+                     */
 
-                    if (((Vector)s.getValor()).getVectorSize() > firstPos) {
-                        msj = "Error. El indice proporcionado sobrepasa el tamaño del vector.";
-                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
-                        return false;
-                    } else {
-
-                        /*
-                         * Verifico si el acceso al vector posee más de una dimension. Si eso se cumple,
-                         * se tiene que validar que las siguientes dimensiones proporcionen un entero como
-                         * valor de posicion y este tiene que ser exactamente igual que el primero, de lo
-                         * contrario se debe reportar error.  Éste multiple acceso simula la recursión interna
-                         * de la relación entre vectores y tipos primitivos (que también se consideran vectores).
-                         */
-
-                        Resultado r;
-                        int actualPos;
-                        for (int i = 1; i < listaDims.size(); i++) {
-                            r = ((Instruccion)listaDims.get(i).getValorDimIzq()).Ejecutar(ts);
-                            if (r.getTipoDato() != ETipoDato.INT) {
-                                msj = "Error. Se espera que el valor propocionado como posición en la dimension "+ (i+1) +" sea de tipo INTEGER.";
-                                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
-                                return false;
-                            } else {
-                                actualPos = (int)r.getValor();
-                                if (actualPos != firstPos) {
-                                    msj = "Error. No se puede acceder a una posición inexistente de un vector [Dimension = "+ (i+1) +" | Valor = "+ actualPos +"].";
-                                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
-                                    return false;
-                                }
-                            }
-                        }
-
-                        /*
-                         * Una vez finalizado el ciclo y llegado a este punto significa que todas las posiciones
-                         * son iguales, por lo que se procede a tomar la última (actualPos) y se modifica su valor
-                         * por la expresión proporcionada.  La expresión no puede ser ni ARRAY ni MATRIX.
-                        */
-
-                        Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
-                        if (rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
-                            msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
+                    Resultado r;
+                    for (int i = 1; i < listaDims.size(); i++) {
+                        r = ((Instruccion)listaDims.get(i).getValorDimIzq()).Ejecutar(ts);
+                        if (r.getTipoDato() != ETipoDato.INT) {
+                            msj = "Error. Se espera que el valor propocionado como posición en la dimension "+ (i+1) +" sea de tipo INTEGER.";
                             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
                             return false;
                         } else {
-
+                            actualPos = (int)r.getValor();
+                            if (actualPos != firstPos) {
+                                msj = "Error. No se puede acceder a una posición inexistente de un vector [Dimension = "+ (i+1) +" | Valor = "+ actualPos +"].";
+                                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                                return false;
+                            }
                         }
-
                     }
+
+                    /*
+                     * Una vez finalizado el ciclo de arriba y llegado a este punto significa que todas las
+                     * posiciones son iguales, por lo que se procede a tomar la última (actualPos) y se
+                     * modifica su valor por la expresión proporcionada. Esto se realiza más abajo.
+                     */
 
                 }
 
             }
 
+            Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
+            if (rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
+                msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
+            } else {
+                /* Actualizo el valor del arreglo. */
+                if (!((Vector)s.getValor()).updateVectorValue(actualPos, rexp.getTipoDato(), rexp.getValor())) {
+                    msj = "Error. No se pudo actualizar/castear los valores del vector.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    return false;
+                }
+            }
+
         }
 
-        return false;
+        return true;
     }
 
     private boolean validarActualizarLista() {

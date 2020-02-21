@@ -32,7 +32,7 @@ public class Vector {
         }
 
         /* Una vez unificados todos los valores del vector, se procede a realizar el casteo en base a prioridades. */
-        Optional<Item> priori1 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.STRING).findAny();
+        Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
         if (priori1.isPresent()) {
             convertToString();
         } else {
@@ -57,8 +57,37 @@ public class Vector {
         return elementos.size();
     }
 
-    public void updateVectorValue(int pos, ETipoDato type, Object value) {
-        // TODO - Terminar de definir esta funcionalidad.
+    public boolean updateVectorValue(int pos, ETipoDato type, Object value) {
+
+        /* Se le resta 1 a la posición ya que las posiciones son manejadas de 0 en adelante. */
+        int finalPos = pos - 1;
+
+        if (finalPos <= getVectorSize()) {
+            elementos.set(finalPos, new Item(type, value));
+        } else {
+
+            /*
+             * Si la posición proporcionada es mayor que el tamaño actual del vector
+             * entonces se procede a llenar los espacios entre el espacio actual y el
+             * deseado con los valores por defecto del tipo del que sea el vector.
+            */
+
+            /* Obtengo el tipo interno del vector. */
+            ETipoDato tipoInterno = elementos.get(0).getTipo();
+
+            for (int i = getVectorSize(); i <= finalPos; i++) {
+                if (i == finalPos) {
+                    elementos.add(new Item(type, value));
+                } else {
+                    elementos.add(new Item(tipoInterno, tipoInterno.getDefecto()));
+                }
+            }
+
+        }
+
+        /* Por ultimo, hago un rehash del vector para que se actualicen los tipos. */
+        return rehashing();
+
     }
 
     private void mergeVectors() {
@@ -77,7 +106,7 @@ public class Vector {
         for (int i = 0; i < elementos.size(); i++) {
             pivot = elementos.get(i);
             if (pivot.getTipo() != ETipoDato.STRING) {
-                elementos.set(i, new Item(ETipoDato.STRING, pivot.getValor().toString()));
+                elementos.set(i, new Item(ETipoDato.STRING, ((pivot.getTipo() != ETipoDato.NT) ? pivot.getValor().toString() : pivot.getValor())));
             }
         }
     }

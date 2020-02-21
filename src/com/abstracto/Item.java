@@ -29,7 +29,7 @@ public class Item {
     }
 
     public String getStringItem() {
-        return (tipo == ETipoDato.STRING) ? "\"" + valor.toString() + "\"" : valor.toString();
+        return (tipo == ETipoDato.STRING && !valor.toString().equals("NULL")) ? "\"" + valor.toString() + "\"" : valor.toString();
     }
 
 }
