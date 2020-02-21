@@ -16,6 +16,7 @@ public enum ETipoNodo {
     EXP_ID,
     EXP_AND,
     EXP_NOT,
+    EXP_LIST,
     EXP_SUMA,
     EXP_RESTA,
     EXP_MENOR,

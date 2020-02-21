@@ -16,9 +16,10 @@ public class Vector {
     /**
      * Método utilizado para reorganizar la lista basandose en la prioridad de
      * los tipos.  La prioridad está dada de la siguiente forma:
-     *      1. String
-     *      2. Numeric/Decimal
-     *      3. Integer
+     *      1. Unificar otros vectores
+     *      2. String
+     *      3. Decimal
+     *      4. Integer
      * Si algun elemento no concuerda con alguno de estos tipos, se valida que
      * todos los elementos sean boolean, de lo contrario, se reporta error.
      */
@@ -99,7 +100,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "Printing vector...\n> ["+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +"]";
+        return "["+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +"]";
     }
 
     public LinkedList<Item> getElementos() {

@@ -1,6 +1,10 @@
 package com.abstracto;
 
+import com.constantes.ETipoDato;
+
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Lista {
 
@@ -10,8 +14,27 @@ public class Lista {
         this.elementos = le;
     }
 
-    public void addItem(Item i) {
-        elementos.add(i);
+    public boolean rehashing() {
+
+        /* Primero valido que si vienen listas internas, los unifico. */
+        Optional<Item> hasVector = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
+        if (hasVector.isPresent()) {
+            mergeLists();
+        }
+        
+        return true;
+
+    }
+
+    private void mergeLists() {
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() == ETipoDato.LIST) {
+                elementos.remove(i);
+                elementos.addAll(i, ((Lista)pivot.getValor()).getElementos());
+            }
+        }
     }
 
     // TODO - Pendiente desarrollar estas funciones para cuando ya estén las listas.
@@ -23,9 +46,12 @@ public class Lista {
         return null;
     }
 
-    // TODO - Pendiente desarrollar la función toString para poder imprimir los valores de la lista.
+    public LinkedList<Item> getElementos() {
+        return elementos;
+    }
+
     @Override
     public String toString() {
-        return "";
+        return "{"+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +"}";
     }
 }

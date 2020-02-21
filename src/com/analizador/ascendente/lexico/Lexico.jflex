@@ -33,6 +33,7 @@ import java_cup.runtime.*;
 %char
 %cup
 %unicode
+%ignorecase
 %state STRING_CAPTURE
 
 %init{

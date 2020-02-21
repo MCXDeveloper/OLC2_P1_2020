@@ -7,25 +7,28 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.LinkedList;
 
 public class NFC extends Nodo implements Instruccion {
 
+    private ETipoDato[] tiposNoPermitidos;
     private LinkedList<Nodo> listaExpresiones;
 
     public NFC(int linea, int columna, String archivo, LinkedList<Nodo> listaExpresiones) {
         super(linea, columna, archivo, ETipoNodo.EXP_FUNCION_C);
         this.listaExpresiones = listaExpresiones;
+        tiposNoPermitidos = new ETipoDato[]{ ETipoDato.ANY, ETipoDato.ARRAY, ETipoDato.MATRIX };
     }
 
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
+        String msj;
         Object rvalor = new Fail();
         ETipoDato tdr = ETipoDato.ERROR;
 
-        String msj;
         Resultado r;
         boolean flag = false;
         LinkedList<Item> listaItems = new LinkedList<>();
@@ -35,11 +38,18 @@ public class NFC extends Nodo implements Instruccion {
             r = ((Instruccion)nodito).Ejecutar(ts);
             if (r.getTipoDato() == ETipoDato.ERROR) {
                 flag = true;
-                msj = "Error. No se pudo obtener alguna de las expresiones definidas dentro de la función C.";
+                msj = "Error. No se pudo obtener alguna de las expresiones definidas dentro de la función C().";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_FC]", msj, getLinea(), getColumna());
                 break;
             } else {
-                listaItems.add(new Item(r.getTipoDato(), r.getValor()));
+                if (Arrays.asList(tiposNoPermitidos).contains(r.getTipoDato())) {
+                    flag = true;
+                    msj = "Error. Dentro de la función C() no están permitidos valores de tipo <"+ r.getTipoDato() +">.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_FC]", msj, getLinea(), getColumna());
+                    break;
+                } else {
+                    listaItems.add(new Item(r.getTipoDato(), r.getValor()));
+                }
             }
         }
 
@@ -49,13 +59,22 @@ public class NFC extends Nodo implements Instruccion {
             Optional<Item> optListaItems = listaItems.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
 
             if (optListaItems.isPresent()) {
-                tdr = ETipoDato.LIST;
-                rvalor = new Lista(listaItems);
+                Lista l = new Lista(listaItems);
+                if (l.rehashing()) {
+                    tdr = ETipoDato.LIST;
+                    rvalor = l;
+                } else {
+                    msj = "Error. No se pudo realizar el casteo correspondiente a la lista.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_FC]", msj, getLinea(), getColumna());
+                }
             } else {
                 Vector v = new Vector(listaItems);
                 if (v.rehashing()) {
                     tdr = ETipoDato.VECTOR;
                     rvalor = v;
+                } else {
+                    msj = "Error. No se pudo realizar el casteo correspondiente al vector.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_FC]", msj, getLinea(), getColumna());
                 }
             }
 
