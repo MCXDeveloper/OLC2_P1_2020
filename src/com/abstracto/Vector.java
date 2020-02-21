@@ -53,6 +53,14 @@ public class Vector {
 
     }
 
+    public int getVectorSize() {
+        return elementos.size();
+    }
+
+    public void updateVectorValue(int pos, ETipoDato type, Object value) {
+        // TODO - Terminar de definir esta funcionalidad.
+    }
+
     private void mergeVectors() {
         Item pivot;
         for (int i = 0; i < elementos.size(); i++) {

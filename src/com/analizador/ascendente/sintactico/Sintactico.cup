@@ -8,6 +8,7 @@ import com.abstracto.Nodo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.estaticas.ErrorHandler;
+import com.constantes.ETipoDimension;
 
 import java.util.Arrays;
 import java_cup.runtime.*;
@@ -73,14 +74,14 @@ non terminal SIF;
 non terminal CASE;
 non terminal SELSE;
 non terminal LinkedList<Nodo> BLOQUE;
-non terminal ACCESO;
+non terminal Dimension ACCESO;
 non terminal ELSE_IF;
 non terminal NParam PARAMETRO;
 non terminal Nodo EXPRESION;
 non terminal LISTA_ELIF;
 non terminal Nodo INSTRUCCION;
 non terminal LISTA_CASES;
-non terminal LISTA_ACCESO;
+non terminal LinkedList<Dimension> LISTA_ACCESO;
 non terminal SENTENCIA_IF;
 non terminal SENTENCIA_FOR;
 non terminal SENTENCIA_PIE;
@@ -196,20 +197,20 @@ PARAMETRO
 
 DECASI_VARIABLE
     ::= identificador:a igual EXPRESION:b                                                                           {: RESULT = new NDecAsi(aright, aleft, archivo, a, b); :}
-    |   identificador:a LISTA_ACCESO:b igual EXPRESION:c                                                            {: /*RESULT = new NDecAsiArr(aright, aleft, archivo, a, b, c);*/ :}
+    |   identificador:a LISTA_ACCESO:b igual EXPRESION:c                                                            {: RESULT = new NAsiArr(aright, aleft, archivo, a, b, c); :}
 ;
 
 LISTA_ACCESO
-    ::= LISTA_ACCESO:a ACCESO:b                                                                                     {: /*RESULT = a;  RESULT.add(b);*/ :}
-    |   ACCESO:a                                                                                                    {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
+    ::= LISTA_ACCESO:a ACCESO:b                                                                                     {: RESULT = a;  RESULT.add(b); :}
+    |   ACCESO:a                                                                                                    {: RESULT = new LinkedList<>();  RESULT.add(a); :}
 ;
 
 ACCESO
-    ::= cor_a EXPRESION:a cor_c                                                                                     {: /*RESULT = new NDim(1, a);*/ :}
-    |   cor_a coma EXPRESION:a cor_c                                                                                {: /*RESULT = new NDim(2, a);*/ :}
-    |   cor_a EXPRESION:a coma cor_c                                                                                {: /*RESULT = new NDim(3, a);*/ :}
-    |   cor_a cor_a EXPRESION:a cor_c cor_c                                                                         {: /*RESULT = new NDim(4, a);*/ :}
-    |   cor_a EXPRESION:a coma EXPRESION:b cor_c                                                                    {: /*RESULT = new NDim(5, a, b);*/ :}
+    ::= cor_a EXPRESION:a cor_c                                                                                     {: RESULT = new Dimension(ETipoDimension.SIMPLE, a); :}
+    |   cor_a coma EXPRESION:a cor_c                                                                                {: RESULT = new Dimension(ETipoDimension.COLUMN, a); :}
+    |   cor_a EXPRESION:a coma cor_c                                                                                {: RESULT = new Dimension(ETipoDimension.ROW, a); :}
+    |   cor_a cor_a EXPRESION:a cor_c cor_c                                                                         {: RESULT = new Dimension(ETipoDimension.INNER, a); :}
+    |   cor_a EXPRESION:a coma EXPRESION:b cor_c                                                                    {: RESULT = new Dimension(ETipoDimension.COMPOUND, a, b); :}
 ;
 
 // +--------------------------------------------------+

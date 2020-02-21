@@ -11,6 +11,7 @@ public enum ETipoNodo {
     STMT_RETURN,
     STMT_DECASI,
     STMT_CONTINUE,
+    STMT_DECASI_ARR,
     EXP_NT,
     EXP_OR,
     EXP_ID,
