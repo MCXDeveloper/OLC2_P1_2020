@@ -28,9 +28,13 @@ public class NRaiz extends Nodo implements Instruccion {
         RegistrarFunciones(ts);
 
         /* Ejecuto todas las demás instrucciones. */
+        Resultado r;
         for (Nodo nodito : lista_sentencias) {
             if (nodito.getTipoNodo() != ETipoNodo.STMT_FUNC) {
-                ((Instruccion)nodito).Ejecutar(ts);
+                r = ((Instruccion)nodito).Ejecutar(ts);
+                if (r.getTipoDato() == ETipoDato.ERROR) {
+                    return r;
+                }
             }
         }
 

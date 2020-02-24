@@ -2,12 +2,19 @@ package com.abstracto;
 
 import java.util.Optional;
 import java.util.LinkedList;
+
+import com.arbol.NNulo;
 import com.constantes.ETipoDato;
 import java.util.stream.Collectors;
 
 public class Vector {
 
     private LinkedList<Item> elementos;
+
+    public Vector(ETipoDato tipo, Object valor) {
+        this.elementos = new LinkedList<>();
+        this.elementos.add(new Item(tipo, valor));
+    }
 
     public Vector(LinkedList<Item> le) {
         this.elementos = le;
@@ -53,10 +60,6 @@ public class Vector {
 
     }
 
-    public int getVectorSize() {
-        return elementos.size();
-    }
-
     public boolean updateVectorValue(int pos, ETipoDato type, Object value) {
 
         /* Se le resta 1 a la posición ya que las posiciones son manejadas de 0 en adelante. */
@@ -88,6 +91,36 @@ public class Vector {
         /* Por ultimo, hago un rehash del vector para que se actualicen los tipos. */
         return rehashing();
 
+    }
+
+    public Item getValueParaAsignacion(int pos) {
+
+        int finalPos = pos - 1;
+
+        /*
+         * Si la posicion proporcionada para obtener un elemento no existe, se
+         * deben de llenar espacios con NULL y luego devolver un valor existente.
+         */
+        if (finalPos > getVectorSize()) {
+            /* Obtengo el valor por defecto en base al primer elemento del vector. */
+            ETipoDato tipoInterno = elementos.get(0).getTipo();
+            for (int i = getVectorSize(); i <= finalPos; i++) {
+                elementos.add(new Item(tipoInterno, tipoInterno.getDefecto()));
+            }
+        }
+
+        Item it = elementos.get(finalPos);
+        if (it.getTipo() != ETipoDato.LIST || it.getTipo() != ETipoDato.VECTOR) {
+            it.setTipo(ETipoDato.VECTOR);
+            it.setValor(new Vector(it.getTipo(), it.getValor()));
+        }
+
+        return it;
+
+    }
+
+    public int getVectorSize() {
+        return elementos.size();
     }
 
     private void mergeVectors() {
@@ -137,7 +170,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "["+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +"]";
+        return "[ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ]";
     }
 
     public LinkedList<Item> getElementos() {

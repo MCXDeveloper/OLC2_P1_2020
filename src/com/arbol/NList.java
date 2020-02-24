@@ -47,7 +47,11 @@ public class NList extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_LIST]", msj, getLinea(), getColumna());
                     break;
                 } else {
-                    listaItems.add(new Item(r.getTipoDato(), r.getValor()));
+                    if (r.getTipoDato() != ETipoDato.LIST && r.getTipoDato() != ETipoDato.VECTOR) {
+                        listaItems.add(new Item(ETipoDato.VECTOR, new Vector(r.getTipoDato(), r.getValor())));
+                    } else {
+                        listaItems.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
                 }
             }
         }

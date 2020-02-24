@@ -11,6 +11,7 @@ import com.estaticas.ErrorHandler;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class NAsiArr extends Nodo implements Instruccion {
@@ -52,7 +53,7 @@ public class NAsiArr extends Nodo implements Instruccion {
                 }   break;
 
                 case LIST: {
-                    if (validarActualizarLista()) {
+                    if (validarActualizarLista(ts, s)) {
                         tdr = ETipoDato.NT;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
@@ -156,13 +157,13 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
 
-        if (rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
+        if (rexp.getTipoDato() == ETipoDato.LIST || rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
             msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
             return false;
         }
 
-        /* Actualizo el valor del arreglo. */
+        /* Actualizo el valor del vector. */
         if (!((Vector)s.getValor()).updateVectorValue(actualPos, rexp.getTipoDato(), rexp.getValor())) {
             msj = "Error. No se pudo actualizar/castear los valores del vector.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
@@ -173,7 +174,148 @@ public class NAsiArr extends Nodo implements Instruccion {
 
     }
 
-    private boolean validarActualizarLista() {
+    private boolean validarActualizarLista(TablaSimbolos ts, Simbolo s) {
+
+        String msj;
+
+        /*
+         * Valido que el tipo de acceso que se esté realizando sea:
+         * 1. SIMPLE []
+         * 2. INNER [[]]
+         * De lo contrario, se debe mostrar error.
+         */
+
+        Optional<Dimension> hasAnotherAccess = listaDims.stream().filter(d -> (d.getTipoDim() != ETipoDimension.SIMPLE && d.getTipoDim() != ETipoDimension.INNER)).findAny();
+
+        if (hasAnotherAccess.isPresent()) {
+            msj = "Error. No se puede acceder a una lista utilizando la forma de acceso proporcionada.";
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            return false;
+        }
+
+        /* Procedo a iterar sobre todas las dimensiones proporcionadas. */
+        int cnt = 1;
+        Resultado rdim;
+        int posicion = 0;
+        Object pivote = s.getValor();
+
+        for (Dimension dim : listaDims) {
+
+            rdim = ((Instruccion)dim.getValorDimIzq()).Ejecutar(ts);
+
+            if (pivote instanceof Item) {
+                pivote = ((Item)pivote).getValor();
+            }
+
+            /*
+             * Una vez validado lo anterior, se procede a verificar que el valor proporcionado
+             * como posición de la dimensión sea de tipo entero y que sea mayor a 0.
+             */
+
+            if (rdim.getTipoDato() != ETipoDato.INT) {
+                msj = "Error. Se espera que el valor propocionado como posición en la dimension #"+ cnt +" sea de tipo INTEGER.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
+            }
+
+            posicion = (int)rdim.getValor();
+
+            if (posicion <= 0) {
+                msj = "Error. El indice proporcionado en la dimensión #"+ cnt +" debe ser mayor o igual a 1.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
+            }
+
+            if (pivote instanceof Lista) {
+                Lista l = ((Lista) pivote);
+                pivote = (dim.getTipoDim() == ETipoDimension.SIMPLE) ? l.getElementoTipo1ParaAsignacion(posicion) : l.getElementoTipo2ParaAsignacion(posicion);
+            } else if (pivote instanceof Vector) {
+                if (dim.getTipoDim() != ETipoDimension.SIMPLE) {
+                    msj = "Error. La dimension #"+ (cnt-1) +" devuelve un vector y a este no se le puede hacer un acceso de tipo [[]].";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    return false;
+                }
+                Vector v = ((Vector)pivote);
+                pivote = v.getValueParaAsignacion(posicion);
+            }
+
+            cnt++;
+
+        }
+
+        /* Ejecuto la expresión para obtener su valor y validar que ésta sea de un tipo permitido. */
+        Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
+
+        if (pivote instanceof Lista) {
+            if (validateListExpression(rexp)) {
+                ((Lista)pivote).updateListValue(posicion, rexp.getTipoDato(), rexp.getValor());
+            }
+        } else if (pivote instanceof Vector){
+            if (validateVectorExpression(rexp)) {
+                ((Vector)pivote).updateVectorValue(posicion, rexp.getTipoDato(), rexp.getValor());
+            }
+        } else if (pivote instanceof Item) {
+
+            Item i = ((Item)pivote);
+
+            if (i.getTipo() == ETipoDato.LIST) {
+                if (!validateListExpression(rexp)) {
+                    return false;
+                }
+            } else if (i.getTipo() == ETipoDato.VECTOR) {
+                if (!validateVectorExpression(rexp)) {
+                    return false;
+                }
+            }
+
+            if (rexp.getTipoDato() != ETipoDato.LIST && rexp.getTipoDato() != ETipoDato.VECTOR) {
+                i.setTipo(ETipoDato.VECTOR);
+                i.setValor(new Vector(rexp.getTipoDato(), rexp.getValor()));
+            } else {
+                i.setTipo(rexp.getTipoDato());
+                i.setValor(rexp.getValor());
+            }
+
+        } else {
+            System.err.println("Error, pivote no reconocido.");
+            return false;
+        }
+
+        return true;
+
+    }
+
+    private boolean validateListExpression(Resultado rexp) {
+        String msj;
+        if (rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
+            msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de una lista.";
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            return false;
+        }
+        if (rexp.getTipoDato() == ETipoDato.LIST) {
+            Lista l = ((Lista)rexp.getValor());
+            if (l.getListSize() > 1) {
+                msj = "Error. No se puede asignar una lista con más de 1 parámetro a otra lista.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
+            }
+        } else if (rexp.getTipoDato() == ETipoDato.VECTOR) {
+            Vector v = ((Vector)rexp.getValor());
+            if (v.getVectorSize() > 1) {
+                msj = "Error. No se puede asignar un vector con más de 1 parámetro a una lista.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateVectorExpression(Resultado rexp) {
+        if (rexp.getTipoDato() == ETipoDato.LIST || rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
+            String msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            return false;
+        }
         return true;
     }
 

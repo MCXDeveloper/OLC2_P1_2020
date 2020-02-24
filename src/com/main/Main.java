@@ -1,5 +1,6 @@
 package com.main;
 
+import com.estaticas.ErrorHandler;
 import com.estaticas.Manejador;
 import com.gui.Ventana;
 
@@ -21,6 +22,7 @@ public class Main {
 
     public static void cleaner() {
         Manejador.TSEstatica = new LinkedList<>();
+        ErrorHandler.ListaErrores = new LinkedList<>();
     }
 
 }

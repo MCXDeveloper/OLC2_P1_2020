@@ -5,10 +5,12 @@
  */
 package com.gui;
 
+import com.abstracto.Resultado;
 import com.analizador.ascendente.lexico.Lexico;
 import com.analizador.ascendente.sintactico.Sintactico;
 import com.arbol.NRaiz;
 import com.bethecoder.ascii_table.ASCIITable;
+import com.constantes.ETipoDato;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 import com.estaticas.Manejador;
@@ -384,27 +386,38 @@ public class Ventana extends javax.swing.JFrame {
         consolaSalida.setText("");
 
         Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
-        lexer.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+        lexer.setArchivo(auxTab.ObtenerNombreCompletoArchivo());
 
-        Sintactico parser = new Sintactico(lexer);
-        parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+        if (!verificarErrores()) {
 
-        try {
-
-            parser.parse();
-            NRaiz raiz = parser.getRaiz();
-            TablaSimbolos ts = new TablaSimbolos();
+            Sintactico parser = new Sintactico(lexer);
+            parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
 
             try {
-                raiz.Ejecutar(ts);
-                verificarErrores();
-            } catch (Exception ex) {
-                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+
+                parser.parse();
+
+                if (!verificarErrores()) {
+
+                    NRaiz raiz = parser.getRaiz();
+                    TablaSimbolos ts = new TablaSimbolos();
+
+                    try {
+                        Resultado r = raiz.Ejecutar(ts);
+                        if (r.getTipoDato() == ETipoDato.ERROR) {
+                            verificarErrores();
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
+            } catch (Exception e) {
+                appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+                e.printStackTrace();
             }
 
-        } catch (Exception e) {
-            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
-            e.printStackTrace();
         }
 
     }
@@ -512,10 +525,12 @@ public class Ventana extends javax.swing.JFrame {
         consolaSimbolos.replaceSelection(cadena);
     }
 
-    private void verificarErrores() {
+    private boolean verificarErrores() {
         if (ErrorHandler.ListaErrores.size() > 0) {
             showMessage("Ocurrieron errores al ejecutar el archivo.  Revisar pestaña de errores.");
+            return true;
         }
+        return false;
     }
 
     public void showMessage(String message) {

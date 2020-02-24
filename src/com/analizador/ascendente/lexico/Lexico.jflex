@@ -11,15 +11,15 @@ import java_cup.runtime.*;
 
 %%
 %{
-    String NombreArchivo = "";
+    String archivo = "";
     StringBuilder cadena = new StringBuilder();
 
-    public String getNombreArchivo() {
-        return NombreArchivo;
+    public String getArchivo() {
+        return archivo;
     }
 
-    public void setNombreArchivo(String NombreArchivo) {
-        this.NombreArchivo = NombreArchivo;
+    public void setArchivo(String nombre) {
+        this.archivo = nombre;
     }
 
 %}
@@ -43,7 +43,7 @@ import java_cup.runtime.*;
 %init}
 
 /* EXPRESIONES REGULARES */
-Identificador 	= [A-Za-z][A-Za-z_0-9]*
+Identificador 	= ( ((["."]+[A-Za-z_])|[A-Za-z])([A-Za-z_0-9]|".")* | ["."]+ )
 Numero 		    = [0-9]+
 Decimal         = [0-9]+\.[0-9]+
 LineTerminator 	= \r|\n|\r\n
@@ -52,7 +52,7 @@ InputCharacter 	= [^\r\n]
 /* COMENTARIOS */
 Comentario           = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 TraditionalComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
-EndOfLineComment     = "##" {InputCharacter}* {LineTerminator}?
+EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
 DocumentationComment = "#**" {CommentContent} "*"+ "#"
 CommentContent       = ( [^*] | \*+ [^/*] )*
 
@@ -150,7 +150,7 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 /* ERRORES LEXICOS */
 .
 {
-    ErrorHandler.AddError(getNombreArchivo(), "Léxico", "[LEXER]", "El caracter '" + yytext() + "' no pertenece al alfabeto del lenguaje.", yyline, yycolumn);
+    ErrorHandler.AddError("Léxico", getArchivo(), "[LEXER]", "El caracter '" + yytext() + "' no pertenece al alfabeto del lenguaje.", yyline, yycolumn);
 }
 
 
