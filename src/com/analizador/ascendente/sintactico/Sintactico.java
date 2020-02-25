@@ -3247,7 +3247,7 @@ class CUP$Sintactico$actions {
 		int dleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-1)).left;
 		int dright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-1)).right;
 		Nodo d = (Nodo)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-1)).value;
-		 /*RESULT = new NMatrix(aright, aleft, archivo, b, c, d);*/ 
+		 RESULT = new NMatrix(aright, aleft, archivo, b, c, d); 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("EXPRESION",8, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-7)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;

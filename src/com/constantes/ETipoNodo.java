@@ -22,6 +22,7 @@ public enum ETipoNodo {
     EXP_RESTA,
     EXP_MENOR,
     EXP_MAYOR,
+    EXP_MATRIX,
     EXP_MODULO,
     EXP_DEFAULT,
     EXP_POTENCIA,

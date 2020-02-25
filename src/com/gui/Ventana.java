@@ -352,7 +352,7 @@ public class Ventana extends javax.swing.JFrame {
 
     private void btnReporteErroresActionPerformed(java.awt.event.ActionEvent evt) {
         consolaErrores.setText("");
-        if (ErrorHandler.GetStringArrayErrors().size() > 0) {
+        if (ErrorHandler.ListaErrores.size() > 0) {
             String[][] data = ErrorHandler.GetStringArrayErrors().toArray(new String[0][]);
             String[] header = { "Archivo", "Tipo", "Ubicación", "Descripcion", "Fila", "Columna" };
             String tabla = ASCIITable.getInstance().getTable(header, data);
