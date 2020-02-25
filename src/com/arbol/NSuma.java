@@ -370,7 +370,7 @@ public class NSuma extends Nodo implements Instruccion {
                     for (int i = 0; i < vec1.getVectorSize(); i++) {
                         it1 = vec1.getElementByPosition(i);
                         op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
-                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op2, op1).Ejecutar(ts);
+                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
                         li.add(new Item(r.getTipoDato(), r.getValor()));
                     }
 

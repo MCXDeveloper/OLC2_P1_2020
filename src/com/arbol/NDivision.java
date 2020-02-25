@@ -1,14 +1,13 @@
 package com.arbol;
 
-import com.abstracto.Fail;
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
+
+import java.util.LinkedList;
 
 public class NDivision extends Nodo implements Instruccion {
 
@@ -51,8 +50,8 @@ public class NDivision extends Nodo implements Instruccion {
 
             if (!flag) {
                 if (v1.getTipoDato() == ETipoDato.INT && v2.getTipoDato() == ETipoDato.INT) {
-                    tdr = ETipoDato.INT;
-                    valor = ((int)v1.getValor()) / ((int)v2.getValor());
+                    tdr = ETipoDato.DECIMAL;
+                    valor = ((double) (int) v1.getValor() / ((double)(int)v2.getValor()));
                 } else if (v1.getTipoDato() == ETipoDato.INT && v2.getTipoDato() == ETipoDato.DECIMAL) {
                     tdr = ETipoDato.DECIMAL;
                     valor = ((int)v1.getValor()) / ((double)v2.getValor());
@@ -62,6 +61,77 @@ public class NDivision extends Nodo implements Instruccion {
                 } else if (v1.getTipoDato() == ETipoDato.DECIMAL && v2.getTipoDato() == ETipoDato.DECIMAL) {
                     tdr = ETipoDato.DECIMAL;
                     valor = ((double) v1.getValor()) / ((double) v2.getValor());
+                } else if (v1.getTipoDato() == ETipoDato.VECTOR && v2.getTipoDato() == ETipoDato.VECTOR) {
+
+                    Vector vec1 = (Vector)v1.getValor();
+                    Vector vec2 = (Vector)v2.getValor();
+
+                    if (vec1.getVectorSize() == vec2.getVectorSize()) {
+
+                        Item it1;
+                        Item it2;
+                        NPrim op1;
+                        NPrim op2;
+                        Resultado r;
+                        LinkedList<Item> li = new LinkedList<>();
+
+                        for (int i = 0; i < vec1.getVectorSize(); i++) {
+                            it1 = vec1.getElementByPosition(i);
+                            it2 = vec2.getElementByPosition(i);
+                            op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+                            op2 = new NPrim(getLinea(), getColumna(), getArchivo(), it2.getValor(), it2.getTipo());
+                            r = new NDivision(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                            li.add(new Item(r.getTipoDato(), r.getValor()));
+                        }
+
+                        tdr = ETipoDato.VECTOR;
+                        valor = new Vector(li);
+
+                    } else if (vec1.getVectorSize() == 1 && vec2.getVectorSize() > 1) {
+
+                        Item it2;
+                        NPrim op2;
+                        Resultado r;
+                        LinkedList<Item> li = new LinkedList<>();
+
+                        Item it1 = vec1.getElementByPosition(0);
+                        NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+
+                        for (int i = 0; i < vec2.getVectorSize(); i++) {
+                            it2 = vec2.getElementByPosition(i);
+                            op2 = new NPrim(getLinea(), getColumna(), getArchivo(), it2.getValor(), it2.getTipo());
+                            r = new NDivision(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                            li.add(new Item(r.getTipoDato(), r.getValor()));
+                        }
+
+                        tdr = ETipoDato.VECTOR;
+                        valor = new Vector(li);
+
+                    } else if (vec1.getVectorSize() > 1 && vec2.getVectorSize() == 1) {
+
+                        Item it1;
+                        NPrim op1;
+                        Resultado r;
+                        LinkedList<Item> li = new LinkedList<>();
+
+                        Item it2 = vec2.getElementByPosition(0);
+                        NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), it2.getValor(), it2.getTipo());
+
+                        for (int i = 0; i < vec1.getVectorSize(); i++) {
+                            it1 = vec1.getElementByPosition(i);
+                            op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+                            r = new NDivision(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                            li.add(new Item(r.getTipoDato(), r.getValor()));
+                        }
+
+                        tdr = ETipoDato.VECTOR;
+                        valor = new Vector(li);
+
+                    } else {
+                        msj = "Error. Los tamaños de los vectores difieren por lo que no se puede realizar la división.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DIVISION]", msj, getLinea(), getColumna());
+                    }
+
                 } else {
                     msj = "Error. No hay implementación para la operación DIVISION para los tipos <"+ v1.getTipoDato() +"> y <"+ v2.getTipoDato() +">.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DIVISION]", msj, getLinea(), getColumna());
