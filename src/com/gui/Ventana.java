@@ -14,6 +14,7 @@ import com.constantes.ETipoDato;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 import com.estaticas.Manejador;
+import com.main.Main;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -384,6 +385,11 @@ public class Ventana extends javax.swing.JFrame {
 
         // Limpio la consola de salida
         consolaSalida.setText("");
+        consolaErrores.setText("");
+        consolaSimbolos.setText("");
+
+        // Limpio las variables manejadoras
+        Main.cleaner();
 
         Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
         lexer.setArchivo(auxTab.ObtenerNombreCompletoArchivo());

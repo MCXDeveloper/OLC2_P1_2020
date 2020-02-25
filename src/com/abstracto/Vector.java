@@ -123,6 +123,10 @@ public class Vector {
         return elementos.size();
     }
 
+    public Item getElementByPosition(int pos) {
+        return elementos.get(pos);
+    }
+
     public ETipoDato getInnerType() {
         return elementos.get(0).getTipo();
     }
