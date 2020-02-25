@@ -77,8 +77,11 @@ public class NMatrix extends Nodo implements Instruccion {
 
                     }
 
-                    rtd = ETipoDato.MATRIX;
-                    rvalor = new Matriz(filas, columnas, li);
+                    Matriz m = new Matriz(filas, columnas, li);
+                    if (m.rehashing()) {
+                        rtd = ETipoDato.MATRIX;
+                        rvalor = m;
+                    }
 
                 }
             }
