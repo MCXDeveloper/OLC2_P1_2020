@@ -123,6 +123,10 @@ public class Vector {
         return elementos.size();
     }
 
+    public ETipoDato getInnerType() {
+        return elementos.get(0).getTipo();
+    }
+
     private void mergeVectors() {
         Item pivot;
         for (int i = 0; i < elementos.size(); i++) {

@@ -1,5 +1,6 @@
 package com.arbol;
 
+import com.abstracto.Fail;
 import com.abstracto.Instruccion;
 import com.abstracto.Nodo;
 import com.abstracto.Resultado;
@@ -22,6 +23,9 @@ public class NPrint extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
         Resultado r = ((Instruccion)elemento).Ejecutar(ts);
+        if (r.getTipoDato() == ETipoDato.ERROR) {
+            return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
+        }
         Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
     }

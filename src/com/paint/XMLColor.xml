@@ -10,7 +10,7 @@
    <selection useFG="false" bg="4C4C4C" roundedEdges="true"/>
    <currentLineHighlight color="383A38" fade="false"/>
    <marginLine fg="394448"/>
-   <markAllHighlight color="383A38"/> <!-- TODO: Fix me -->
+   <markAllHighlight color="383A38"/>
    <markOccurrencesHighlight color="383A38" border="false"/>
    <matchedBracket fg="F0F0F0" bg="2E2E2E" highlightBoth="true" animate="true"/>
    <hyperlinks fg="A6E22E"/>

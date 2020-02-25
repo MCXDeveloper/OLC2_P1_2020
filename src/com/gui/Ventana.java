@@ -334,19 +334,19 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // TODO - Agregar funcionalidad de Abrir:
     }
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // TODO - Agregar funcionalidad de Guardar:
     }
 
     private void btnGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // TODO - Agregar funcionalidad de Guardar Como:
     }
 
     private void btnReporteASTActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // TODO - Agregar funcionalidad de reporte de AST:
     }
 
     private void btnReporteErroresActionPerformed(java.awt.event.ActionEvent evt) {
@@ -423,7 +423,7 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnAnalizarDescendenteActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // TODO - Agregar funcionalidad de análisis descendente:
     }
 
     /**
