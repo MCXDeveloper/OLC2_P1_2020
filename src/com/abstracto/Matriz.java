@@ -2,8 +2,6 @@ package com.abstracto;
 
 import com.bethecoder.ascii_table.ASCIITable;
 import com.constantes.ETipoDato;
-import com.estaticas.ErrorHandler;
-import com.estaticas.TError;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -26,8 +24,16 @@ public class Matriz {
         return elementos;
     }
 
-    public int colAccess(int fila,  int columna) {
-        return (columna - 1) * filas + fila;
+    public int getFilas() {
+        return filas;
+    }
+
+    public int getColumnas() {
+        return columnas;
+    }
+
+    public int getMatrixSize() {
+        return elementos.size();
     }
 
     public boolean rehashing() {
@@ -52,6 +58,79 @@ public class Matriz {
 
         return true;
 
+    }
+
+    public boolean validateDimensions(int posx, int posy) {
+        return !(posx > filas || posy > columnas);
+    }
+
+    public boolean validateRows(int pos) {
+        return !(pos > filas);
+    }
+
+    public boolean validateColumns(int pos) {
+        return !(pos > columnas);
+    }
+
+    public void updateValueByPosition(int pos, ETipoDato type, Object value) {
+        elementos.set((pos - 1), new Item(type, value));
+        rehashing();
+    }
+
+    public void updateRowValue(int rowNum, ETipoDato type, Object value) {
+
+        int pos = 0;
+
+        if (type == ETipoDato.VECTOR) {
+            Item it;
+            Vector v = (Vector)value;
+            for (int i = 0; i < columnas; i++) {
+                it = v.getElementByPosition(i);
+                pos = colAccess(rowNum, (i + 1)) - 1;
+                elementos.set(pos, new Item(it.getTipo(), it.getValor()));
+            }
+        } else {
+            for (int i = 0; i < columnas; i++) {
+                pos = colAccess(rowNum, (i + 1)) - 1;
+                elementos.set(pos, new Item(type, value));
+            }
+        }
+
+        rehashing();
+
+    }
+
+    public void updateColumnValue(int colNum, ETipoDato type, Object value) {
+
+        int pos = 0;
+
+        if (type == ETipoDato.VECTOR) {
+            Item it;
+            Vector v = (Vector)value;
+            for (int i = 0; i < filas; i++) {
+                it = v.getElementByPosition(i);
+                pos = colAccess((i + 1), colNum) - 1;
+                elementos.set(pos, new Item(it.getTipo(), it.getValor()));
+            }
+        } else {
+            for (int i = 0; i < filas; i++) {
+                pos = colAccess((i + 1), colNum) - 1;
+                elementos.set(pos, new Item(type, value));
+            }
+        }
+
+        rehashing();
+
+    }
+
+    public void updateValueByRowAndCol(int posx, int posy, ETipoDato type, Object value) {
+        int pos = colAccess(posx, posy);
+        elementos.set((pos - 1), new Item(type, value));
+        rehashing();
+    }
+
+    private int colAccess(int fila,  int columna) {
+        return (columna - 1) * filas + fila;
     }
 
     private void convertToString() {
@@ -91,7 +170,7 @@ public class Matriz {
     private String[] getColsHeader() {
         String[] arr = new String[columnas];
         for (int i = 0; i < columnas; i++) {
-            arr[i] = "Columna " + i;
+            arr[i] = "Columna " + (i + 1);
         }
         return arr;
     }
