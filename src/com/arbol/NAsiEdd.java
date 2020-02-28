@@ -14,13 +14,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class NAsiArr extends Nodo implements Instruccion {
+public class NAsiEdd extends Nodo implements Instruccion {
 
     private String id;
     private Nodo valor;
     private LinkedList<Dimension> listaDims;
 
-    public NAsiArr(int linea, int columna, String archivo, String id, LinkedList<Dimension> listaDims, Nodo valor) {
+    public NAsiEdd(int linea, int columna, String archivo, String id, LinkedList<Dimension> listaDims, Nodo valor) {
         super(linea, columna, archivo, ETipoNodo.STMT_DECASI_ARR);
         this.id = id;
         this.valor = valor;
@@ -39,7 +39,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (s == null) {
             msj = "Error. No se encontro la variable <"+ id +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
         } else {
 
             /* Verifico que la variable sea de tipo estructura (vector, lista, matriz o arreglo). */
@@ -66,11 +66,16 @@ public class NAsiArr extends Nodo implements Instruccion {
                     }
                 }   break;
 
-                // TODO - Pendiente hacer los accesos para arreglos.
+                case ARRAY: {
+                    Arreglo arr = (Arreglo)s.getValor();
+                    NAsignacionArreglo naa = new NAsignacionArreglo(getLinea(), getColumna(), getArchivo(), listaDims, arr, valor);
+                    return naa.Ejecutar(ts);
+                }
+
                 default: {
                     msj = "Error. No se puede acceder con dimensiones a una variable que no sea de tipo estructura.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
-                }
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
+                }   break;
 
             }
 
@@ -96,7 +101,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (listaDims.size() > 1) {
             msj = "Error. No se puede realizar la modificación de una matriz utilizando accesos combinados.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -104,7 +109,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (tipoDim == ETipoDimension.INNER) {
             msj = "Error. No se puede acceder a una matriz utilizando la forma de acceso [ [ ] ].";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -118,7 +123,7 @@ public class NAsiArr extends Nodo implements Instruccion {
                 /* Valido que la posición proporcionada no sobrepase el tamaño de la lista que representa la matriz. */
                 if (posDim > mat.getMatrixSize()) {
                     msj = "Error. El valor proporcionado como posición sobrepasa los índices de la matriz (IndexOutOfBounds).";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 }
 
@@ -154,7 +159,7 @@ public class NAsiArr extends Nodo implements Instruccion {
                     }
                 } else {
                     msj = "Error. Los indices proporcionados sobrepasan los rangos de la matriz.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 }
             } else {
@@ -171,7 +176,7 @@ public class NAsiArr extends Nodo implements Instruccion {
                 /* Valido que la posición proporcionada no sobrepase el tamaño de las filas de la matriz. */
                 if (!mat.validateRows(posDim)) {
                     msj = "Error. El índice proporcionado sobrepasa los limites de las filas de la matriz.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 }
 
@@ -200,7 +205,7 @@ public class NAsiArr extends Nodo implements Instruccion {
                 /* Valido que la posición proporcionada no sobrepase el tamaño de las columnas de la matriz. */
                 if (!mat.validateColumns(posDim)) {
                     msj = "Error. El índice proporcionado sobrepasa los limites de las columnas de la matriz.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 }
 
@@ -236,7 +241,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (hasAnotherThanSimple.isPresent()) {
             msj = "Error. No se puede acceder a un vector utilizando la forma de acceso proporcionada.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -251,7 +256,7 @@ public class NAsiArr extends Nodo implements Instruccion {
         // TODO - Agregar validación aqui de que si la dimensión puede ser un vector de un solo valor.
         if (rdim.getTipoDato() != ETipoDato.INT) {
             msj = "Error. Se espera que el valor propocionado como posición en la dimension 1 sea de tipo INTEGER.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -259,7 +264,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (firstPos <= 0) {
             msj = "Error. El indice proporcionado debe ser mayor o igual a 1.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -290,13 +295,13 @@ public class NAsiArr extends Nodo implements Instruccion {
                 r = ((Instruccion)listaDims.get(i).getValorDimIzq()).Ejecutar(ts);
                 if (r.getTipoDato() != ETipoDato.INT) {
                     msj = "Error. Se espera que el valor propocionado como posición en la dimension "+ (i+1) +" sea de tipo INTEGER.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 } else {
                     actualPos = (int)r.getValor();
                     if (actualPos != firstPos) {
                         msj = "Error. No se puede acceder a una posición inexistente de un vector [Dimension = "+ (i+1) +" | Valor = "+ actualPos +"].";
-                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                         return false;
                     }
                 }
@@ -310,7 +315,7 @@ public class NAsiArr extends Nodo implements Instruccion {
             /* Actualizo el valor del vector. */
             if (!((Vector)s.getValor()).updateVectorValue(actualPos, rexp.getTipoDato(), rexp.getValor())) {
                 msj = "Error. No se pudo actualizar/castear los valores del vector.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return false;
             }
         } else {
@@ -336,7 +341,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (hasAnotherAccess.isPresent()) {
             msj = "Error. No se puede acceder a una lista utilizando la forma de acceso proporcionada.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
 
@@ -362,7 +367,7 @@ public class NAsiArr extends Nodo implements Instruccion {
             // TODO - Agregar validación aqui de que si la dimensión puede ser un vector de un solo valor.
             if (rdim.getTipoDato() != ETipoDato.INT) {
                 msj = "Error. Se espera que el valor propocionado como posición en la dimension #"+ cnt +" sea de tipo INTEGER.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return false;
             }
 
@@ -370,7 +375,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
             if (posicion <= 0) {
                 msj = "Error. El indice proporcionado en la dimensión #"+ cnt +" debe ser mayor o igual a 1.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return false;
             }
 
@@ -380,7 +385,7 @@ public class NAsiArr extends Nodo implements Instruccion {
             } else if (pivote instanceof Vector) {
                 if (dim.getTipoDim() != ETipoDimension.SIMPLE) {
                     msj = "Error. La dimension #"+ (cnt-1) +" devuelve un vector y a este no se le puede hacer un acceso de tipo [[]].";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return false;
                 }
                 Vector v = ((Vector)pivote);
@@ -441,21 +446,21 @@ public class NAsiArr extends Nodo implements Instruccion {
         String msj;
         if (rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
             msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de una lista.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
         if (rexp.getTipoDato() == ETipoDato.LIST) {
             Lista l = ((Lista)rexp.getValor());
             if (l.getListSize() > 1) {
                 msj = "Error. No se puede asignar una lista con más de 1 parámetro a otra lista.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return false;
             }
         } else if (rexp.getTipoDato() == ETipoDato.VECTOR) {
             Vector v = ((Vector)rexp.getValor());
             if (v.getVectorSize() > 1) {
                 msj = "Error. No se puede asignar un vector con más de 1 parámetro a una lista.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return false;
             }
         }
@@ -465,7 +470,7 @@ public class NAsiArr extends Nodo implements Instruccion {
     private boolean validateVectorExpression(Resultado rexp) {
         if (rexp.getTipoDato() == ETipoDato.LIST || rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
             String msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return false;
         }
         return true;
@@ -475,13 +480,13 @@ public class NAsiArr extends Nodo implements Instruccion {
         String msj;
         if (rexp.getTipoDato() == ETipoDato.LIST || rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
             msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de una matriz.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return null;
         } else if (rexp.getTipoDato() == ETipoDato.VECTOR) {
             Vector v = (Vector)rexp.getValor();
             if (v.getVectorSize() > 1) {
                 msj = "Error. No se puede asignar un vector con más de un valor a una posición de una matriz.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return null;
             }
             rexp.setTipoDato(v.getInnerType());
@@ -494,7 +499,7 @@ public class NAsiArr extends Nodo implements Instruccion {
         String msj;
         if (rexp.getTipoDato() == ETipoDato.LIST || rexp.getTipoDato() == ETipoDato.ARRAY || rexp.getTipoDato() == ETipoDato.MATRIX) {
             msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una "+ type +" de una matriz.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return null;
         } else if (rexp.getTipoDato() == ETipoDato.VECTOR) {
             Vector v = (Vector)rexp.getValor();
@@ -504,7 +509,7 @@ public class NAsiArr extends Nodo implements Instruccion {
             } else {
                 if (v.getVectorSize() != size) {
                     msj = "Error. El vector que se desea asignar a la "+ type +" no coincide en tamaño con la cantidad de "+ type +"s de la matriz.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                     return null;
                 }
             }
@@ -519,7 +524,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (tdim != ETipoDato.VECTOR && tdim != ETipoDato.INT) {
             msj = "Error. Se espera que el valor propocionado como posición en la dimension sea de tipo INTEGER. Tipo recibido: <"+ tdim +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return -1;
         }
 
@@ -529,7 +534,7 @@ public class NAsiArr extends Nodo implements Instruccion {
             Vector v = (Vector)rdim.getValor();
             if (v.getVectorSize() > 1 || v.getInnerType() != ETipoDato.INT) {
                 msj = "Error. No se puede utilizar como posición un vector con más de 1 valor y/o que el vector no sea de tipo INTEGER.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
                 return -1;
             }
             posDim = (int)v.getElementByPosition(0).getValor();
@@ -539,7 +544,7 @@ public class NAsiArr extends Nodo implements Instruccion {
 
         if (posDim == 0) {
             msj = "Error. El indice proporcionado debe ser mayor o igual a 1.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_ARR]", msj, getLinea(), getColumna());
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASI_EDD]", msj, getLinea(), getColumna());
             return -1;
         }
 
