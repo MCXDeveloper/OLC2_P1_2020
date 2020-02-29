@@ -41,6 +41,17 @@ public class NAsiEdd extends Nodo implements Instruccion {
             /* Verifico que la variable sea de tipo estructura (vector, lista, matriz o arreglo). */
             switch (s.getTipo()) {
 
+                case INT:
+                case STRING:
+                case DECIMAL:
+                case BOOLEAN: {
+                    Vector vec = new Vector(s.getTipo(), s.getValor());
+                    s.setTipo(ETipoDato.VECTOR);
+                    s.setValor(vec);
+                    NAsignacionVector nav = new NAsignacionVector(getLinea(), getColumna(), getArchivo(), listaDims, vec, valor);
+                    return nav.Ejecutar(ts);
+                }
+
                 case VECTOR: {
                     Vector vec = (Vector)s.getValor();
                     NAsignacionVector nav = new NAsignacionVector(getLinea(), getColumna(), getArchivo(), listaDims, vec, valor);

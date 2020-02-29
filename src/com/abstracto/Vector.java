@@ -178,7 +178,7 @@ public class Vector {
 
     @Override
     public String toString() {
-        return "[ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ]";
+        return getVectorSize() > 1 ? "[ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ]" : elementos.get(0).getStringItem();
     }
 
     public LinkedList<Item> getElementos() {
