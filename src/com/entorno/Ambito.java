@@ -2,7 +2,13 @@ package com.entorno;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.abstracto.Arreglo;
+import com.abstracto.Lista;
+import com.abstracto.Matriz;
+import com.abstracto.Vector;
 import com.constantes.EAmbito;
+import com.constantes.ETipoDato;
 import com.estaticas.Manejador;
 
 public class Ambito {
@@ -33,6 +39,23 @@ public class Ambito {
                 break;
 
             a = a.superior;
+        }
+
+        if (s != null) {
+            switch (s.getTipo()) {
+                case VECTOR: {
+                    s = new Simbolo(ETipoDato.VECTOR, ((Vector)s.getValor()).getClone());
+                }   break;
+                case LIST: {
+                    s = new Simbolo(ETipoDato.LIST, ((Lista)s.getValor()).getClone());
+                }   break;
+                case MATRIX: {
+                    s = new Simbolo(ETipoDato.MATRIX, ((Matriz)s.getValor()).getClone());
+                }   break;
+                case ARRAY: {
+                    s = new Simbolo(ETipoDato.ARRAY, ((Arreglo)s.getValor()).getClone());
+                }   break;
+            }
         }
 
         return s;

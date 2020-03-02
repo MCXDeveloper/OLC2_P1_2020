@@ -195,6 +195,14 @@ public class Matriz {
 
     }
 
+    public Matriz getClone() {
+        LinkedList<Item> copia = new LinkedList<>();
+        for (Item it : elementos) {
+            copia.add(new Item(it.getTipo(), it.getValor()));
+        }
+        return new Matriz(filas, columnas, copia);
+    }
+
     @Override
     public String toString() {
         String[][] data = getStringArrayElements().toArray(new String[0][]);

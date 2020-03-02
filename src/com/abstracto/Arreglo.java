@@ -138,4 +138,24 @@ public class Arreglo {
         return l;
     }
 
+    public Arreglo getClone() {
+        LinkedList<Item> copia = new LinkedList<>();
+        for (Item it : elementos) {
+            switch (it.getTipo()) {
+                case VECTOR: {
+                    Vector v = ((Vector)it.getValor()).getClone();
+                    copia.add(new Item(ETipoDato.VECTOR, v));
+                }   break;
+                case LIST: {
+                    Lista l = ((Lista)it.getValor()).getClone();
+                    copia.add(new Item(ETipoDato.LIST, l));
+                }   break;
+                default: {
+                    copia.add(new Item(it.getTipo(), it.getValor()));
+                }   break;
+            }
+        }
+        return new Arreglo(tamano, listaTamanoDims, copia);
+    }
+
 }
