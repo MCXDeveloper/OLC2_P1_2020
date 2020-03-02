@@ -7,6 +7,7 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.main.Main;
 import java.awt.Color;
+import java.util.LinkedList;
 
 public class NPrint extends Nodo implements Instruccion {
 
@@ -19,15 +20,30 @@ public class NPrint extends Nodo implements Instruccion {
 
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
+
         Resultado r = ((Instruccion)elemento).Ejecutar(ts);
-        if (r.getTipoDato() == ETipoDato.ERROR) {
-            return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
-        } else if (r.getTipoDato() == ETipoDato.VECTOR) {
-            if (((Vector)r.getValor()).getInnerType() == ETipoDato.ERROR) {
+
+        switch (r.getTipoDato()) {
+            case ERROR: {
                 return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
             }
+            case VECTOR: {
+                if (((Vector)r.getValor()).getInnerType() == ETipoDato.ERROR) {
+                    return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
+                }
+                Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
+            }   break;
+            case ARRAY: {
+                LinkedList<String> lista = ((Arreglo)r.getValor()).imprimirArreglo();
+                for (String s : lista) {
+                    Main.getGUI().appendSalida(s, Color.CYAN);
+                }
+            }   break;
+            default: {
+                Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
+            }   break;
         }
-        Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
+
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
     }
 

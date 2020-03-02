@@ -83,10 +83,9 @@ public class NArray extends Nodo implements Instruccion {
                             li.add(new Item(it.getTipo(), it.getValor()));
                         }
 
-                        if (cnt == (eddSize - 1)) {
+                        cnt++;
+                        if (cnt == eddSize) {
                             cnt = 0;
-                        } else {
-                            cnt++;
                         }
 
                     }

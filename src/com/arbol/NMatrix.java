@@ -68,13 +68,11 @@ public class NMatrix extends Nodo implements Instruccion {
                         }
 
                     } else {
-
                         for (int i = 0; i < columnas; i++) {
                             for (int j = 0; j < filas; j++) {
                                 li.add(new Item(rvalores.getTipoDato(), rvalores.getValor()));
                             }
                         }
-
                     }
 
                     Matriz m = new Matriz(filas, columnas, li);

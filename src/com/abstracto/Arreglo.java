@@ -2,6 +2,8 @@ package com.abstracto;
 
 import com.constantes.ETipoDato;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Arreglo {
@@ -58,8 +60,82 @@ public class Arreglo {
         return ret;
     }
 
-    @Override
-    public String toString() {
-        return "";
+    private static String getTabs(int cnt) {
+        return "\t".repeat(cnt);
     }
+
+    private int[] tail(int[] arr) {
+        return Arrays.copyOfRange(arr, 1, arr.length);
+    }
+
+    private void fillWithSomeValues(Object array, String v, LinkedList<Integer> posiciones, int... sizes) {
+        for (int i = 0; i < sizes[0]; i++) {
+            if (sizes.length == 1) {
+                posiciones.add(i+1);
+                ((String[]) array)[i] = v + (i+1) + " = <"+ elementos.get(colAccess(posiciones)).getStringItem() +">";
+                posiciones.removeLast();
+            } else {
+                posiciones.add(i+1);
+                fillWithSomeValues(Array.get(array, i), v + (i+1) + "-", posiciones, tail(sizes));
+                posiciones.removeLast();
+            }
+        }
+    }
+
+    public LinkedList<String> imprimirArreglo() {
+
+        /* Creo un arreglo de int's con la cantidad y valores de los tamaños de las dimensiones. */
+        int[] sizes = new int[getCantidadDimensiones()];
+        for (int i = 0; i < sizes.length; i++) {
+            sizes[i] = listaTamanoDims.get(i);
+        }
+
+        /* Obtengo la representación del arreglo en tipo String. */
+        Object multiDimArray = Array.newInstance(String.class, sizes);
+        fillWithSomeValues(multiDimArray, "pos ", new LinkedList<>(), sizes);
+        String array = Arrays.deepToString((Object[]) multiDimArray);
+
+        int cnt = 0;
+        boolean flag = false;
+        StringBuilder auxiliar = new StringBuilder();
+        char[] cadena = array.toCharArray();
+
+        LinkedList<String> l = new LinkedList<>();
+        l.add("Imprimiendo arreglo con las siguientes dimensiones: " + Arrays.toString(sizes).replaceAll(", ", "]["));
+
+        /* Se hace un análisis léxico para poder establecer las identaciones del arreglo. */
+        for (int i = 0; i < cadena.length; i++) {
+            switch(cadena[i]) {
+                case '[': {
+                    l.add(getTabs(cnt) + "[");
+                    cnt++;
+                }   break;
+                case ']': {
+                    if (flag) {
+                        l.add(getTabs(cnt) + auxiliar);
+                        auxiliar = new StringBuilder();
+                        flag = false;
+                        i = i - 1;
+                    } else {
+                        cnt--;
+                        l.add(getTabs(cnt) + "]");
+                    }
+                }   break;
+                case ',': {
+                    if (flag) {
+                        auxiliar.append(", ");
+                    } else {
+                        l.add(getTabs(cnt) + ",");
+                    }
+                }   break;
+                default: {
+                    auxiliar.append(cadena[i]);
+                    flag = true;
+                }   break;
+            }
+        }
+
+        return l;
+    }
+
 }
