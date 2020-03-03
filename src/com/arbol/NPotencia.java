@@ -172,6 +172,91 @@ public class NPotencia extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
                 }
 
+                /*
+                   ___   ___  ___  ___    _    ___  ___  ___   _  _  ___  ___      ___   ___    __  __    _  _____  ___  ___  ___  ___  ___
+                  / _ \ | _ \| __|| _ \  /_\  / __||_ _|/ _ \ | \| || __|/ __|    |   \ | __|  |  \/  |  /_\|_   _|| _ \|_ _|/ __|| __|/ __|
+                 | (_) ||  _/| _| |   / / _ \| (__  | || (_) || .` || _| \__ \    | |) || _|   | |\/| | / _ \ | |  |   / | || (__ | _| \__ \
+                  \___/ |_|  |___||_|_\/_/ \_\\___||___|\___/ |_|\_||___||___/    |___/ |___|  |_|  |_|/_/ \_\|_|  |_|_\|___|\___||___||___/
+
+                */
+
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && (v2.getTipoDato() == ETipoDato.INT || v2.getTipoDato() == ETipoDato.DECIMAL)) {
+
+                Matriz mat = (Matriz)v1.getValor();
+                ETipoDato tipoInternoMatriz = mat.getInnerType();
+                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL };
+
+                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
+                    msj = "Error. No hay implementación para la operación POTENCIA para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
+                } else {
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), v2.getValor(), v2.getTipoDato());
+                    for (Item i : mat.getElementos()) {
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NPotencia(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if ((v1.getTipoDato() == ETipoDato.INT || v1.getTipoDato() == ETipoDato.DECIMAL) && v2.getTipoDato() == ETipoDato.MATRIX) {
+
+                Matriz mat = (Matriz)v2.getValor();
+                ETipoDato tipoInternoMatriz = mat.getInnerType();
+                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL };
+
+                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
+                    msj = "Error. No hay implementación para la operación POTENCIA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
+                } else {
+                    NPrim op2;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v1.getValor(), v1.getTipoDato());
+                    for (Item i : mat.getElementos()) {
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NPotencia(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.MATRIX) {
+
+                Matriz mat1 = (Matriz)v1.getValor();
+                Matriz mat2 = (Matriz)v2.getValor();
+
+                if (mat1.getSize() == mat2.getSize()) {
+
+                    Item it1;
+                    Item it2;
+                    NPrim op1;
+                    NPrim op2;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+
+                    for (int i = 0; i < mat1.getMatrixSize(); i++) {
+                        it1 = mat1.getElementByPosition(i);
+                        it2 = mat2.getElementByPosition(i);
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), it2.getValor(), it2.getTipo());
+                        r = new NPotencia(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat1.getFilas(), mat1.getColumnas(), li);
+
+                } else {
+                    msj = "Error. Las dimensiones de la matriz difieren por lo que no se puede realizar la potencia.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
+                }
+
             } else {
                 msj = "Error. No hay implementación para la operación POTENCIA para los tipos <"+ v1.getTipoDato() +"> y <"+ v2.getTipoDato() +">.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());

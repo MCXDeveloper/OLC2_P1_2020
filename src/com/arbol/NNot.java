@@ -30,31 +30,50 @@ public class NNot extends Nodo implements Instruccion {
             Resultado v1;
             v1 = ((Instruccion)op).Ejecutar(ts);
 
-            if (v1.getTipoDato() == ETipoDato.BOOLEAN) {
-                tdr = ETipoDato.BOOLEAN;
-                valor = !((boolean)v1.getValor());
-            } else if (v1.getTipoDato() == ETipoDato.VECTOR) {
+            switch (v1.getTipoDato()) {
 
-                Vector vec1 = (Vector)v1.getValor();
+                case BOOLEAN: {
+                    tdr = ETipoDato.BOOLEAN;
+                    valor = !((boolean)v1.getValor());
+                }   break;
 
-                Item it1;
-                NPrim op1;
-                Resultado r;
-                LinkedList<Item> li = new LinkedList<>();
+                case VECTOR: {
+                    Vector vec1 = (Vector)v1.getValor();
+                    Item it1;
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    for (int i = 0; i < vec1.getVectorSize(); i++) {
+                        it1 = vec1.getElementByPosition(i);
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+                        r = new NNot(getLinea(), getColumna(), getArchivo(), op1).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.VECTOR;
+                    valor = new Vector(li);
+                }   break;
 
-                for (int i = 0; i < vec1.getVectorSize(); i++) {
-                    it1 = vec1.getElementByPosition(i);
-                    op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
-                    r = new NNot(getLinea(), getColumna(), getArchivo(), op1).Ejecutar(ts);
-                    li.add(new Item(r.getTipoDato(), r.getValor()));
-                }
+                case MATRIX: {
+                    Matriz mat = (Matriz)v1.getValor();
+                    Item it1;
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    for (int i = 0; i < mat.getMatrixSize(); i++) {
+                        it1 = mat.getElementByPosition(i);
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), it1.getValor(), it1.getTipo());
+                        r = new NNot(getLinea(), getColumna(), getArchivo(), op1).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }   break;
 
-                tdr = ETipoDato.VECTOR;
-                valor = new Vector(li);
+                default: {
+                    msj = "Error. No hay implementación para la operación NOT para los tipos <"+ v1.getTipoDato() +">.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_NOT]", msj, getLinea(), getColumna());
+                }   break;
 
-            } else {
-                msj = "Error. No hay implementación para la operación NOT para los tipos <"+ v1.getTipoDato() +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_NOT]", msj, getLinea(), getColumna());
             }
 
         } else {
