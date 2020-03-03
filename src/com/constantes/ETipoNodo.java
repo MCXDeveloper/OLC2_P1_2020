@@ -3,6 +3,8 @@ package com.constantes;
 public enum ETipoNodo {
     ROOT,
     ERROR,
+    STMT_IF,
+    STMT_ELSE,
     STMT_CALL,
     STMT_FUNC,
     STMT_PRINT,
@@ -10,6 +12,7 @@ public enum ETipoNodo {
     STMT_PARAM,
     STMT_RETURN,
     STMT_DECASI,
+    STMT_ELSE_IF,
     STMT_CONTINUE,
     STMT_DECASI_ARR,
     STMT_ASIGNACION_LISTA,
