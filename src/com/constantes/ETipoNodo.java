@@ -39,6 +39,7 @@ public enum ETipoNodo {
     EXP_MODULO,
     EXP_ACCESO,
     EXP_DEFAULT,
+    EXP_TERNARIO,
     EXP_POTENCIA,
     EXP_DIVISION,
     EXP_NEGATIVO,

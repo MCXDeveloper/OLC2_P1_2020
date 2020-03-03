@@ -391,7 +391,7 @@ EXPRESION
     |   EXPRESION:a pot EXPRESION:b                                                                                 {: RESULT = new NPotencia(aright, aleft, archivo, a, b); :}
     |   menos EXPRESION:a                                                                                           {: RESULT = new NNegativo(aright, aleft, archivo, a); :}   %prec uminus
     |   not EXPRESION:a                                                                                             {: RESULT = new NNot(aright, aleft, archivo, a); :}
-    |   EXPRESION:b interrogacion:a EXPRESION:c dospu EXPRESION:d                                                   {: /*RESULT = new NTernario(aright, aleft, archivo, b, c, d);*/ :}
+    |   EXPRESION:b interrogacion:a EXPRESION:c dospu EXPRESION:d                                                   {: RESULT = new NTernario(aright, aleft, archivo, b, c, d); :}
     |   par_a EXPRESION:a par_c                                                                                     {: RESULT = a; :}
     |   SENTENCIA_LLAMADA:a                                                                                         {: RESULT = a; :}
     |   numero_entero:a                                                                                             {: RESULT = new NPrim(aright, aleft, archivo, Integer.parseInt(a), ETipoDato.INT); :}
