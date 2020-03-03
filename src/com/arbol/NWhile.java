@@ -82,7 +82,7 @@ public class NWhile extends Nodo implements Instruccion {
                     return null;
                 }
                 rc.setTipoDato(ETipoDato.BOOLEAN);
-                rc.setValor((boolean)v.getElementByPosition(0).getValor());
+                rc.setValor(v.getElementByPosition(0).getValor());
                 return rc;
             }
             default: {

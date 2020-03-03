@@ -95,7 +95,7 @@ non terminal Nodo SENTENCIA_BREAK;
 non terminal Nodo SENTENCIA_PRINT;
 non terminal Nodo SENTENCIA_SWITCH;
 non terminal Nodo SENTENCIA_RETURN;
-non terminal SENTENCIA_DOWHILE;
+non terminal Nodo SENTENCIA_DOWHILE;
 non terminal Nodo SENTENCIA_LLAMADA;
 non terminal LinkedList<Nodo> LISTA_EXPRESIONES;
 non terminal SENTENCIA_BARPLOT;
@@ -135,8 +135,8 @@ INSTRUCCION
     |   SENTENCIA_IF:a                                                                                              {: RESULT = a; :}
     |   SENTENCIA_SWITCH:a                                                                                          {: RESULT = a; :}
     |   SENTENCIA_WHILE:a                                                                                           {: RESULT = a; :}
-    |   SENTENCIA_DOWHILE:a                                                                                         {: /*RESULT = a;*/ :}
-    |   SENTENCIA_DOWHILE:a puco                                                                                    {: /*RESULT = a;*/ :}
+    |   SENTENCIA_DOWHILE:a                                                                                         {: RESULT = a; :}
+    |   SENTENCIA_DOWHILE:a puco                                                                                    {: RESULT = a; :}
     |   SENTENCIA_FOR:a                                                                                             {: /*RESULT = a;*/ :}
     |   SENTENCIA_BREAK:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_CONTINUE:a                                                                                        {: RESULT = a; :}
@@ -273,7 +273,7 @@ SENTENCIA_WHILE
 // +--------------------------------------------------------+
 
 SENTENCIA_DOWHILE
-    ::= r_do:a BLOQUE:b r_while par_a EXPRESION:c par_c                                                             {: /*RESULT = new NDoWhile(aright, aleft, archivo, b, c);*/ :}
+    ::= r_do:a BLOQUE:b r_while par_a EXPRESION:c par_c                                                             {: RESULT = new NDoWhile(aright, aleft, archivo, b, c); :}
 ;
 
 // +---------------------------------------------------+
