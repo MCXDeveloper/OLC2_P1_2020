@@ -32,8 +32,16 @@ public class Matriz {
         return columnas;
     }
 
+    public int getSize() {
+        return filas*columnas;
+    }
+
     public int getMatrixSize() {
         return elementos.size();
+    }
+
+    public ETipoDato getInnerType() {
+        return elementos.get(0).getTipo();
     }
 
     public boolean rehashing() {
@@ -121,6 +129,14 @@ public class Matriz {
 
         rehashing();
 
+    }
+
+    public Item getElementByPosition(int pos) {
+        return elementos.get(pos);
+    }
+
+    public Item getElementByCoordinates(int row, int column) {
+        return elementos.get(colAccess(row, column) - 1);
     }
 
     public void updateValueByRowAndCol(int posx, int posy, ETipoDato type, Object value) {
