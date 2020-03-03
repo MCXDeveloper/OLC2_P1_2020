@@ -87,7 +87,7 @@ public class Ambito {
     public boolean enCiclo(){
         Ambito a = this;
         while(a != null){
-            if(a.tipo == EAmbito.CICLO) {
+            if(a.tipo == EAmbito.CICLO || a.tipo == EAmbito.CASE || a.tipo == EAmbito.DEFAULT) {
                 return true;
             }
             a = a.superior;

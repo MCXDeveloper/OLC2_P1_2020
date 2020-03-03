@@ -72,7 +72,7 @@ terminal String identificador, numero_entero, numero_decimal, cadena, uminus;
 /* NO TERMINALES */
 non terminal INICIO;
 non terminal NIf SIF;
-non terminal CASE;
+non terminal NCase CASE;
 non terminal LinkedList<NIf> SELSE;
 non terminal LinkedList<Nodo> BLOQUE;
 non terminal Dimension ACCESO;
@@ -81,7 +81,7 @@ non terminal NParam PARAMETRO;
 non terminal Nodo EXPRESION;
 non terminal LinkedList<NIf> LISTA_ELIF;
 non terminal Nodo INSTRUCCION;
-non terminal LISTA_CASES;
+non terminal LinkedList<NCase> LISTA_CASES;
 non terminal LinkedList<Dimension> LISTA_ACCESO;
 non terminal Nodo SENTENCIA_IF;
 non terminal SENTENCIA_FOR;
@@ -93,7 +93,7 @@ non terminal Nodo DECASI_VARIABLE;
 non terminal SENTENCIA_WHILE;
 non terminal Nodo SENTENCIA_BREAK;
 non terminal Nodo SENTENCIA_PRINT;
-non terminal SENTENCIA_SWITCH;
+non terminal Nodo SENTENCIA_SWITCH;
 non terminal Nodo SENTENCIA_RETURN;
 non terminal SENTENCIA_DOWHILE;
 non terminal Nodo SENTENCIA_LLAMADA;
@@ -133,7 +133,7 @@ INSTRUCCION
     |   DECASI_VARIABLE:a                                                                                           {: RESULT = a; :}
     |   DECASI_VARIABLE:a puco                                                                                      {: RESULT = a; :}
     |   SENTENCIA_IF:a                                                                                              {: RESULT = a; :}
-    |   SENTENCIA_SWITCH:a                                                                                          {: /*RESULT = a;*/ :}
+    |   SENTENCIA_SWITCH:a                                                                                          {: RESULT = a; :}
     |   SENTENCIA_WHILE:a                                                                                           {: /*RESULT = a;*/ :}
     |   SENTENCIA_DOWHILE:a                                                                                         {: /*RESULT = a;*/ :}
     |   SENTENCIA_DOWHILE:a puco                                                                                    {: /*RESULT = a;*/ :}
@@ -247,17 +247,17 @@ ELSE_IF
 // +------------------------------------------------------+
 
 SENTENCIA_SWITCH
-    ::= r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c llave_c                                            {: /*RESULT = new NSwitch(aright, aleft, archivo, b, c);*/ :}
-    |   r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c r_default dospu LISTA_INSTRUCCIONES:d llave_c      {: /*RESULT = new NSwitch(aright, aleft, archivo, b, c, d);*/ :}
+    ::= r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c llave_c                                            {: RESULT = new NSwitch(aright, aleft, archivo, b, c); :}
+    |   r_switch:a par_a EXPRESION:b par_c llave_a LISTA_CASES:c r_default dospu LISTA_INSTRUCCIONES:d llave_c      {: RESULT = new NSwitch(aright, aleft, archivo, b, c, d); :}
 ;
 
 LISTA_CASES
-    ::= LISTA_CASES:a CASE:b                                                                                        {: /*RESULT = a;  RESULT.add(b);*/ :}
-    |   CASE:a                                                                                                      {: /*RESULT = new LinkedList<>();  RESULT.add(a);*/ :}
+    ::= LISTA_CASES:a CASE:b                                                                                        {: RESULT = a;  RESULT.add(b); :}
+    |   CASE:a                                                                                                      {: RESULT = new LinkedList<>();  RESULT.add(a); :}
 ;
 
 CASE
-    ::= r_case:a EXPRESION:b dospu LISTA_INSTRUCCIONES:c                                                            {: /*RESULT = new NCase(aright, aleft, archivo, b, c);*/ :}
+    ::= r_case:a EXPRESION:b dospu LISTA_INSTRUCCIONES:c                                                            {: RESULT = new NCase(aright, aleft, archivo, b, c); :}
 ;
 
 // +-----------------------------------------------------+
