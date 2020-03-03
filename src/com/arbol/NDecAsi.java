@@ -33,11 +33,14 @@ public class NDecAsi extends Nodo implements Instruccion {
 
             tdr = ETipoDato.NT;
             rval = new NNulo(getLinea(), getColumna(), getArchivo());
-            Resultado r = ((Instruccion)valor).Ejecutar(ts);
-            Simbolo s = new Simbolo(r.getTipoDato(), id, r.getValor());
 
-            if (!ts.addSimbolo(s)) {
-                ts.updateSimbolo(s);
+            Simbolo s = ts.getSimbolo(id);
+            Resultado r = ((Instruccion)valor).Ejecutar(ts);
+
+            if (s != null) {
+                ts.updateSimbolo(new Simbolo(r.getTipoDato(), id, r.getValor()));
+            } else {
+                ts.addSimbolo(new Simbolo(r.getTipoDato(), id, r.getValor()));
             }
 
         } else {

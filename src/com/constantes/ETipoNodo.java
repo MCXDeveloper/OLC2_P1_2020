@@ -11,6 +11,7 @@ public enum ETipoNodo {
     STMT_PRINT,
     STMT_BREAK,
     STMT_PARAM,
+    STMT_WHILE,
     STMT_SWITCH,
     STMT_RETURN,
     STMT_DECASI,

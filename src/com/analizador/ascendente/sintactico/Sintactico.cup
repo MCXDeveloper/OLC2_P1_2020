@@ -90,7 +90,7 @@ non terminal Nodo DECASI_FUNCION;
 non terminal SENTENCIA_PLOT;
 non terminal SENTENCIA_HIST;
 non terminal Nodo DECASI_VARIABLE;
-non terminal SENTENCIA_WHILE;
+non terminal Nodo SENTENCIA_WHILE;
 non terminal Nodo SENTENCIA_BREAK;
 non terminal Nodo SENTENCIA_PRINT;
 non terminal Nodo SENTENCIA_SWITCH;
@@ -134,7 +134,7 @@ INSTRUCCION
     |   DECASI_VARIABLE:a puco                                                                                      {: RESULT = a; :}
     |   SENTENCIA_IF:a                                                                                              {: RESULT = a; :}
     |   SENTENCIA_SWITCH:a                                                                                          {: RESULT = a; :}
-    |   SENTENCIA_WHILE:a                                                                                           {: /*RESULT = a;*/ :}
+    |   SENTENCIA_WHILE:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_DOWHILE:a                                                                                         {: /*RESULT = a;*/ :}
     |   SENTENCIA_DOWHILE:a puco                                                                                    {: /*RESULT = a;*/ :}
     |   SENTENCIA_FOR:a                                                                                             {: /*RESULT = a;*/ :}
@@ -265,7 +265,7 @@ CASE
 // +-----------------------------------------------------+
 
 SENTENCIA_WHILE
-    ::= r_while:a par_a EXPRESION:b par_c BLOQUE:c                                                                  {: /*RESULT = new NWhile(aright, aleft, archivo, b, c);*/ :}
+    ::= r_while:a par_a EXPRESION:b par_c BLOQUE:c                                                                  {: RESULT = new NWhile(aright, aleft, archivo, b, c); :}
 ;
 
 // +--------------------------------------------------------+
