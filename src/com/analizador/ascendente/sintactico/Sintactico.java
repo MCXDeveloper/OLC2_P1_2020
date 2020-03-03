@@ -1710,8 +1710,8 @@ class CUP$Sintactico$actions {
               Nodo RESULT =null;
 		int aleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).right;
-		Object a = (Object)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
-		 /*RESULT = a;*/ 
+		Nodo a = (Nodo)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
+		 RESULT = a; 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("INSTRUCCION",10, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -2520,7 +2520,7 @@ class CUP$Sintactico$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 71: // SENTENCIA_FOR ::= r_for par_a identificador r_in EXPRESION par_c BLOQUE 
             {
-              Object RESULT =null;
+              Nodo RESULT =null;
 		int aleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).right;
 		Object a = (Object)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).value;
@@ -2533,7 +2533,7 @@ class CUP$Sintactico$actions {
 		int dleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).left;
 		int dright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()).right;
 		LinkedList<Nodo> d = (LinkedList<Nodo>)((java_cup.runtime.Symbol) CUP$Sintactico$stack.peek()).value;
-		 /*RESULT = new NFor(aright, aleft, archivo, b, c, d);*/ 
+		 RESULT = new NFor(aright, aleft, archivo, b, c, d); 
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("SENTENCIA_FOR",14, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;

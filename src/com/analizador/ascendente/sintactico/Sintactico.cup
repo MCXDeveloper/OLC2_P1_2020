@@ -84,7 +84,7 @@ non terminal Nodo INSTRUCCION;
 non terminal LinkedList<NCase> LISTA_CASES;
 non terminal LinkedList<Dimension> LISTA_ACCESO;
 non terminal Nodo SENTENCIA_IF;
-non terminal SENTENCIA_FOR;
+non terminal Nodo SENTENCIA_FOR;
 non terminal SENTENCIA_PIE;
 non terminal Nodo DECASI_FUNCION;
 non terminal SENTENCIA_PLOT;
@@ -137,7 +137,7 @@ INSTRUCCION
     |   SENTENCIA_WHILE:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_DOWHILE:a                                                                                         {: RESULT = a; :}
     |   SENTENCIA_DOWHILE:a puco                                                                                    {: RESULT = a; :}
-    |   SENTENCIA_FOR:a                                                                                             {: /*RESULT = a;*/ :}
+    |   SENTENCIA_FOR:a                                                                                             {: RESULT = a; :}
     |   SENTENCIA_BREAK:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_CONTINUE:a                                                                                        {: RESULT = a; :}
     |   SENTENCIA_RETURN:a                                                                                          {: RESULT = a; :}
@@ -281,7 +281,7 @@ SENTENCIA_DOWHILE
 // +---------------------------------------------------+
 
 SENTENCIA_FOR
-    ::= r_for:a par_a identificador:b r_in EXPRESION:c par_c BLOQUE:d                                               {: /*RESULT = new NFor(aright, aleft, archivo, b, c, d);*/ :}
+    ::= r_for:a par_a identificador:b r_in EXPRESION:c par_c BLOQUE:d                                               {: RESULT = new NFor(aright, aleft, archivo, b, c, d); :}
 ;
 
 // +-----------------------------------------------------+

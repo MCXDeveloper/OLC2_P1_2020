@@ -22,6 +22,14 @@ public class Arreglo {
         return tamano;
     }
 
+    public int getArregloSize() {
+        return elementos.size();
+    }
+
+    public Item getElementByPosition(int pos) {
+        return elementos.get(pos);
+    }
+
     public LinkedList<Item> getElementos() {
         return elementos;
     }

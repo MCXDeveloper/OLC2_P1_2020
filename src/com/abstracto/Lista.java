@@ -126,6 +126,10 @@ public class Lista {
 
     }
 
+    public Item getElementByPosition(int pos) {
+        return elementos.get(pos);
+    }
+
     public int getListSize() {
         return elementos.size();
     }
