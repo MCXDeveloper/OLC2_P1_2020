@@ -1,13 +1,12 @@
 package com.arbol;
 
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EAmbito;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
+import com.estaticas.ErrorHandler;
 
 import java.util.LinkedList;
 
@@ -34,13 +33,52 @@ public class NSwitch extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
+        String msj;
         boolean caseFlag = false;
         boolean breakFlag = false;
         Resultado rexp = ((Instruccion)condicion).Ejecutar(ts);
 
+        switch (rexp.getTipoDato()) {
+            case INT:
+            case STRING:
+            case BOOLEAN:
+            case DECIMAL: {
+                /* Esta correcto */
+            }   break;
+            case VECTOR: {
+                Vector v = (Vector)rexp.getValor();
+                rexp.setTipoDato(v.getInnerType());
+                rexp.setValor(v.getElementByPosition(0).getValor());
+            }   break;
+            default: {
+                msj = "Error. La expresión de tipo <"+ rexp.getTipoDato() +"> recibida en el switch no es permitida.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SWITCH]", msj, getLinea(), getColumna());
+                return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
+            }
+        }
+
         for (NCase caso : lista_casos) {
 
             Resultado rcasexp = ((Instruccion)caso.getCondicion()).Ejecutar(ts);
+
+            switch (rcasexp.getTipoDato()) {
+                case INT:
+                case STRING:
+                case BOOLEAN:
+                case DECIMAL: {
+                    /* Esta correcto */
+                }   break;
+                case VECTOR: {
+                    Vector v = (Vector)rcasexp.getValor();
+                    rcasexp.setTipoDato(v.getInnerType());
+                    rcasexp.setValor(v.getElementByPosition(0).getValor());
+                }   break;
+                default: {
+                    msj = "Error. La expresión de tipo <"+ rexp.getTipoDato() +"> recibida en el switch no es permitida.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SWITCH]", msj, getLinea(), getColumna());
+                    return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
+                }
+            }
 
             if (!caseFlag) {
                 if (rcasexp.getValor().equals(rexp.getValor())) {
