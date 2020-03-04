@@ -408,10 +408,10 @@ EXPRESION
     |   r_length:a par_a EXPRESION:b par_c                                                                          {: RESULT = new NLength(aright, aleft, archivo, b); :}
     |   r_ncol:a par_a EXPRESION:b par_c                                                                            {: RESULT = new NCol(aright, aleft, archivo, b); :}
     |   r_nrow:a par_a EXPRESION:b par_c                                                                            {: RESULT = new NRow(aright, aleft, archivo, b); :}
-    |   r_stringlength:a par_a EXPRESION:b par_c                                                                    {: /*RESULT = new NStringLength(aright, aleft, archivo, b);*/ :}
-    |   r_remove:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: /*RESULT = new NRemove(aright, aleft, archivo, b, c);*/ :}
-    |   r_tolowercase:a par_a EXPRESION:b par_c                                                                     {: /*RESULT = new NToLower(aright, aleft, archivo, b);*/ :}
-    |   r_touppercase:a par_a EXPRESION:b par_c                                                                     {: /*RESULT = new NToUpper(aright, aleft, archivo, b);*/ :}
+    |   r_stringlength:a par_a EXPRESION:b par_c                                                                    {: RESULT = new NStringLength(aright, aleft, archivo, b); :}
+    |   r_remove:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: RESULT = new NRemove(aright, aleft, archivo, b, c); :}
+    |   r_tolowercase:a par_a EXPRESION:b par_c                                                                     {: RESULT = new NToLower(aright, aleft, archivo, b); :}
+    |   r_touppercase:a par_a EXPRESION:b par_c                                                                     {: RESULT = new NToUpper(aright, aleft, archivo, b); :}
     |   r_trunk:a par_a EXPRESION:b par_c                                                                           {: /*RESULT = new NTrunk(aright, aleft, archivo, b);*/ :}
     |   r_round:a par_a EXPRESION:b par_c                                                                           {: /*RESULT = new NRound(aright, aleft, archivo, b);*/ :}
     |   r_mean:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NMean(arigth, aleft, archivo, b);*/ :}
