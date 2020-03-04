@@ -160,6 +160,6 @@ public class Lista {
 
     @Override
     public String toString() {
-        return "{ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", " + System.lineSeparator())) +" }";
+        return "{ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" }";
     }
 }

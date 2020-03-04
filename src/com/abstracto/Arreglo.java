@@ -30,6 +30,10 @@ public class Arreglo {
         return elementos.get(pos);
     }
 
+    public Item getElementByMultiplePositions(LinkedList<Integer> posiciones) {
+        return elementos.get(colAccess(posiciones));
+    }
+
     public LinkedList<Item> getElementos() {
         return elementos;
     }

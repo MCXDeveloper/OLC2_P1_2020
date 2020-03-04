@@ -25,116 +25,52 @@ public class NAcceso extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
-        Object rvalor = new Fail();
-        ETipoDato tdr = ETipoDato.ERROR;
-
         String msj;
+        Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
+
         Simbolo s = ts.getSimbolo(id);
 
         if (s == null) {
             msj = "Error. No se encontro la variable <"+ id +">.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
+            return error;
         } else {
 
             /* Verifico que la variable sea de tipo estructura (vector, lista, matriz o arreglo). */
             switch (s.getTipo()) {
-
                 case VECTOR: {
-                    Resultado rvec = accesoVector(ts, s);
-                    if (rvec != null) {
-                        tdr = ETipoDato.NT;
-                        rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
-                    }
-                }   break;
-
+                    Vector v = (Vector)s.getValor();
+                    NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, listaDims);
+                    return nav.Ejecutar(ts);
+                }
                 case LIST: {
-                    if (accesoLista(ts, s)) {
-                        tdr = ETipoDato.NT;
-                        rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
-                    }
-                }   break;
+                    Lista l = (Lista)s.getValor();
+                    NAccesoLista nal = new NAccesoLista(getLinea(), getColumna(), getArchivo(), l, listaDims);
+                    return nal.Ejecutar(ts);
+                }
 
                 case MATRIX: {
-                    /*if (accesoMatriz(ts, s)) {
-                        tdr = ETipoDato.NT;
-                        rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
-                    }*/
-                }   break;
+                    Matriz mat = (Matriz)s.getValor();
+                    NAccesoMatriz nam = new NAccesoMatriz(getLinea(), getColumna(), getArchivo(), mat, listaDims);
+                    return nam.Ejecutar(ts);
+                }
 
-                // TODO - Pendiente hacer los accesos para arreglos.
+                case ARRAY: {
+                    Arreglo array = (Arreglo)s.getValor();
+                    NAccesoArreglo naa = new NAccesoArreglo(getLinea(), getColumna(), getArchivo(), array, listaDims);
+                    return naa.Ejecutar(ts);
+                }
+
                 default: {
                     msj = "Error. No se puede acceder con dimensiones a una variable que no sea de tipo estructura.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
+                    return error;
                 }
 
             }
 
         }
 
-        return new Resultado(tdr, EFlujo.NORMAL, rvalor);
-
-    }
-
-    private Resultado accesoVector(TablaSimbolos ts, Simbolo s) {
-
-
-
-        return null;
-    }
-
-    private boolean accesoLista(TablaSimbolos ts, Simbolo s) {
-        return true;
-    }
-
-    private Resultado accesoMatriz(TablaSimbolos ts, Simbolo s) {
-
-        String msj;
-        Matriz mat = (Matriz)s.getValor();
-
-        if (listaDims.size() > 1) {
-            msj = "Error. El acceso a una matriz se puede realizar únicamente por medio de 1 dimensión.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
-            return null;
-        }
-
-        Dimension dim = listaDims.get(0);
-
-        if (dim.getTipoDim() == ETipoDimension.INNER) {
-            msj = "Error. No se puede acceder al valor de una matriz utilizando la forma de acceso [ [ ] ].";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
-            return null;
-        }
-
-        switch (dim.getTipoDim()) {
-            case ROW:
-            case SIMPLE:
-            case COLUMN: {
-                Resultado rdim = ((Instruccion)dim.getValorDimIzq()).Ejecutar(ts);
-                int pos = validatePositionOfDim(rdim, mat);
-                if (pos != -1) {
-
-                }
-            }   break;
-            case COMPOUND: {
-
-            }   break;
-        }
-
-        return null;
-    }
-
-    private int validatePositionOfDim(Resultado rdim, Matriz mat) {
-
-        String msj;
-
-        if (rdim.getTipoDato() != ETipoDato.INT) {
-            msj = "Error. Se espera que el valor propocionado como posición en la dimension 1 sea de tipo INTEGER.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
-            return -1;
-        }
-
-
-        return -1;
     }
 
 }

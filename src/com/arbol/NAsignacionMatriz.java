@@ -8,10 +8,7 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Optional;
 
 public class NAsignacionMatriz extends Nodo implements Instruccion {
 
