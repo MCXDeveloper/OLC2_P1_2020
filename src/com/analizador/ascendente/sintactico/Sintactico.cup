@@ -404,7 +404,7 @@ EXPRESION
     |   r_list:a par_a LISTA_EXPRESIONES:b par_c                                                                    {: RESULT = new NList(aright, aleft, archivo, b); :}
     |   r_array:a par_a EXPRESION:b coma EXPRESION:c par_c                                                          {: RESULT = new NArray(aright, aleft, archivo, b, c); :}
     |   r_matrix:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                        {: RESULT = new NMatrix(aright, aleft, archivo, b, c, d); :}
-    |   r_typeof:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NTypeOf(aright, aleft, archivo, b);*/ :}
+    |   r_typeof:a par_a EXPRESION:b par_c                                                                          {: RESULT = new NTypeOf(aright, aleft, archivo, b); :}
     |   r_length:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NLength(aright, aleft, archivo, b);*/ :}
     |   r_ncol:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NCol(aright, aleft, archivo, b);*/ :}
     |   r_nrow:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NRow(aright, aleft, archivo, b);*/ :}
