@@ -37,6 +37,8 @@ public enum ETipoNodo {
     EXP_MENOR,
     EXP_MAYOR,
     EXP_ARRAY,
+    EXP_TRUNK,
+    EXP_ROUND,
     EXP_MATRIX,
     EXP_MODULO,
     EXP_ACCESO,
