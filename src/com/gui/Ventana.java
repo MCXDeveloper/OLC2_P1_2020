@@ -543,6 +543,14 @@ public class Ventana extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, message);
     }
 
+    public JTabbedPane getGraphContainer() {
+        return graphContainer;
+    }
+
+    public void addGraph(JPanel imagen) {
+        graphContainer.add(imagen);
+    }
+
     // Variables declaration - do not modify
     private javax.swing.JMenuBar barraMenu;
     private javax.swing.JMenuItem btnAbrir;

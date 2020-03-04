@@ -85,7 +85,7 @@ non terminal LinkedList<NCase> LISTA_CASES;
 non terminal LinkedList<Dimension> LISTA_ACCESO;
 non terminal Nodo SENTENCIA_IF;
 non terminal Nodo SENTENCIA_FOR;
-non terminal SENTENCIA_PIE;
+non terminal Nodo SENTENCIA_PIE;
 non terminal Nodo DECASI_FUNCION;
 non terminal SENTENCIA_PLOT;
 non terminal SENTENCIA_HIST;
@@ -148,11 +148,11 @@ INSTRUCCION
     |   SENTENCIA_LLAMADA:a puco                                                                                    {: RESULT = a; :}
     |   SENTENCIA_PRINT:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_PRINT:a puco                                                                                      {: RESULT = a; :}
-    |   SENTENCIA_PIE:a                                                                                             {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PIE:a                                                                                             {: RESULT = a; :}
     |   SENTENCIA_BARPLOT:a                                                                                         {: /*RESULT = a;*/ :}
     |   SENTENCIA_PLOT:a                                                                                            {: /*RESULT = a;*/ :}
     |   SENTENCIA_HIST:a                                                                                            {: /*RESULT = a;*/ :}
-    |   SENTENCIA_PIE:a puco                                                                                        {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PIE:a puco                                                                                        {: RESULT = a; :}
     |   SENTENCIA_BARPLOT:a puco                                                                                    {: /*RESULT = a;*/ :}
     |   SENTENCIA_PLOT:a puco                                                                                       {: /*RESULT = a;*/ :}
     |   SENTENCIA_HIST:a puco                                                                                       {: /*RESULT = a;*/ :}
@@ -342,7 +342,7 @@ SENTENCIA_PRINT
 // +---------------------------------------------------+
 
 SENTENCIA_PIE
-    ::= r_pie:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                           {: /*RESULT = new NPie(aright, aleft, archivo, b, c, d);*/ :}
+    ::= r_pie:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                           {: RESULT = new NPie(aright, aleft, archivo, b, c, d); :}
 ;
 
 // +-------------------------------------------------------+
