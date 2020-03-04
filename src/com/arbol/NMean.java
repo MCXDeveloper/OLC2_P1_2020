@@ -44,7 +44,7 @@ public class NMean extends Nodo implements Instruccion {
             }
 
             if (trim != null) {
-                Resultado rtrim = validarTrim(trim, ts);
+                Resultado rtrim = validarTrim("[N_MEAN]", trim, ts);
                 if (rtrim != null) {
                     LinkedList<Double> vals = validarDatosEstadisticos(v.getElementos(), rtrim);
                     return new Resultado(ETipoDato.DECIMAL, EFlujo.NORMAL, getMean(vals));

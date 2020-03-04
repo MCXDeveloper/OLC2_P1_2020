@@ -59,7 +59,7 @@ public class Nodo {
         return ret;
     }
 
-    public Resultado validarTrim(Nodo trim, TablaSimbolos ts) {
+    public Resultado validarTrim(String location, Nodo trim, TablaSimbolos ts) {
 
         String msj;
         Resultado rtrim = ((Instruccion)trim).Ejecutar(ts);
@@ -75,12 +75,12 @@ public class Nodo {
                 Vector v = (Vector)rtrim.getValor();
                 if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
                     msj = "Error. El parámetro 'trim' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MEAN]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
                     return null;
                 }
                 if (v.getVectorSize() > 1) {
                     msj = "Error. El parámetro 'trim' no puede ser un vector con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MEAN]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
                     return null;
                 }
                 if (v.getInnerType() == ETipoDato.INT) {
@@ -91,7 +91,7 @@ public class Nodo {
             }
             default: {
                 msj = "Error. El parámetro 'trim' no puede ser una expresión de tipo <"+ rtrim.getTipoDato() +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MEAN]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
                 return null;
             }
         }

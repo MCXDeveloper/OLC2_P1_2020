@@ -98,7 +98,7 @@ non terminal Nodo SENTENCIA_RETURN;
 non terminal Nodo SENTENCIA_DOWHILE;
 non terminal Nodo SENTENCIA_LLAMADA;
 non terminal LinkedList<Nodo> LISTA_EXPRESIONES;
-non terminal SENTENCIA_BARPLOT;
+non terminal Nodo SENTENCIA_BARPLOT;
 non terminal LinkedList<NParam> PARAMETROS_FUNCION;
 non terminal Nodo SENTENCIA_CONTINUE;
 non terminal LinkedList<Nodo> PARAMETROS_LLAMADA;
@@ -149,11 +149,11 @@ INSTRUCCION
     |   SENTENCIA_PRINT:a                                                                                           {: RESULT = a; :}
     |   SENTENCIA_PRINT:a puco                                                                                      {: RESULT = a; :}
     |   SENTENCIA_PIE:a                                                                                             {: RESULT = a; :}
-    |   SENTENCIA_BARPLOT:a                                                                                         {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BARPLOT:a                                                                                         {: RESULT = a; :}
     |   SENTENCIA_PLOT:a                                                                                            {: /*RESULT = a;*/ :}
     |   SENTENCIA_HIST:a                                                                                            {: /*RESULT = a;*/ :}
     |   SENTENCIA_PIE:a puco                                                                                        {: RESULT = a; :}
-    |   SENTENCIA_BARPLOT:a puco                                                                                    {: /*RESULT = a;*/ :}
+    |   SENTENCIA_BARPLOT:a puco                                                                                    {: RESULT = a; :}
     |   SENTENCIA_PLOT:a puco                                                                                       {: /*RESULT = a;*/ :}
     |   SENTENCIA_HIST:a puco                                                                                       {: /*RESULT = a;*/ :}
     |   error puco                                                                                                  {: RESULT = new Nodo(0, 0, archivo, ETipoNodo.ERROR); :}
@@ -350,7 +350,7 @@ SENTENCIA_PIE
 // +-------------------------------------------------------+
 
 SENTENCIA_BARPLOT
-    ::= r_barplot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c     {: /*RESULT = new NBarPlot(aright, aleft, archivo, b, c, d, e, f);*/ :}
+    ::= r_barplot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c     {: RESULT = new NBarPlot(aright, aleft, archivo, b, c, d, e, f); :}
 ;
 
 // +----------------------------------------------------+

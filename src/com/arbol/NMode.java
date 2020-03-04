@@ -44,7 +44,7 @@ public class NMode extends Nodo implements Instruccion {
             }
 
             if (trim != null) {
-                Resultado rtrim = validarTrim(trim, ts);
+                Resultado rtrim = validarTrim("[N_MODE]", trim, ts);
                 if (rtrim != null) {
                     LinkedList<Double> vals = validarDatosEstadisticos(v.getElementos(), rtrim);
                     return new Resultado(ETipoDato.DECIMAL, EFlujo.NORMAL, getMode(vals));

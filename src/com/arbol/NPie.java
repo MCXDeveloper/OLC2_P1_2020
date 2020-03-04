@@ -41,7 +41,11 @@ public class NPie extends Nodo implements Instruccion {
             if (rlabels.size() != rvalores.size()) {
                 msj = "Error. La cantidad de valores del parámetro 'x' no concuerda con la del parámetro 'labels'.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PIE]", msj, getLinea(), getColumna());
-                return error;
+                if (rvalores.size() > rlabels.size()) {
+                    for (int i = rlabels.size(); i < rvalores.size(); i++) {
+                        rlabels.add("Desconocido #" + i);
+                    }
+                }
             }
 
             PieChart pc = new PieChart(rtitulo, rlabels, rvalores);
@@ -53,7 +57,7 @@ public class NPie extends Nodo implements Instruccion {
             return error;
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 
