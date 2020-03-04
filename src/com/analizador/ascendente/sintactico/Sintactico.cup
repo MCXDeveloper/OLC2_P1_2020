@@ -414,12 +414,12 @@ EXPRESION
     |   r_touppercase:a par_a EXPRESION:b par_c                                                                     {: RESULT = new NToUpper(aright, aleft, archivo, b); :}
     |   r_trunk:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NTrunk(aright, aleft, archivo, b); :}
     |   r_round:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NRound(aright, aleft, archivo, b); :}
-    |   r_mean:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NMean(arigth, aleft, archivo, b);*/ :}
-    |   r_median:a par_a EXPRESION:b par_c                                                                          {: /*RESULT = new NMedian(aright, aleft, archivo, b);*/ :}
-    |   r_mode:a par_a EXPRESION:b par_c                                                                            {: /*RESULT = new NMode(aright, aleft, archivo, b);*/ :}
-    |   r_mean:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMean(aright, aleft, archivo, b, c);*/ :}
-    |   r_median:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: /*RESULT = new NMedian(aright, aleft, archivo, b, c);*/ :}
-    |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: /*RESULT = new NMode(aright, aleft, archivo, b, c);*/ :}
+    |   r_mean:a par_a EXPRESION:b par_c                                                                            {: RESULT = new NMean(aright, aleft, archivo, b); :}
+    |   r_median:a par_a EXPRESION:b par_c                                                                          {: RESULT = new NMedian(aright, aleft, archivo, b); :}
+    |   r_mode:a par_a EXPRESION:b par_c                                                                            {: RESULT = new NMode(aright, aleft, archivo, b); :}
+    |   r_mean:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: RESULT = new NMean(aright, aleft, archivo, b, c); :}
+    |   r_median:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: RESULT = new NMedian(aright, aleft, archivo, b, c); :}
+    |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: RESULT = new NMode(aright, aleft, archivo, b, c); :}
     |   identificador:a                                                                                             {: RESULT = new NId(aright, aleft, archivo, a); :}
     |   identificador:a LISTA_ACCESO:b                                                                              {: RESULT = new NAcceso(aright, aleft, archivo, a, b); :}
 ;
