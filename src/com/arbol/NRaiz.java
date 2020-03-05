@@ -10,6 +10,7 @@ import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 import com.main.Main;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class NRaiz extends Nodo implements Instruccion {
@@ -46,6 +47,38 @@ public class NRaiz extends Nodo implements Instruccion {
 
         NFunc func;
 
+        /* Registro todas las funciones reservadas */
+        LinkedList<String> reservadas = new LinkedList<>(Arrays.asList(
+                "c",
+                "pie",
+                "list",
+                "ncol",
+                "nrow",
+                "mean",
+                "mode",
+                "plot",
+                "hist",
+                "print",
+                "array",
+                "trunk",
+                "round",
+                "matrix",
+                "typeof",
+                "length",
+                "remove",
+                "median",
+                "barplot",
+                "tolowercase",
+                "touppercase",
+                "stringlength"
+        ));
+
+        /* Agrego las funciones reservadas a la tabla de simbolos */
+        for (String f : reservadas) {
+            ts.addMetodo(new NFunc(getLinea(), getColumna(), getArchivo(), f, new LinkedList<>(), new LinkedList<>()));
+        }
+
+        /* Procedo a registrar todas las funciones creadas en el archivo */
         if (lista_sentencias.stream().noneMatch(x -> x.getTipoNodo().equals(ETipoNodo.ERROR))) {
             for (Nodo nodito : lista_sentencias) {
                 if (nodito.getTipoNodo().equals(ETipoNodo.STMT_FUNC)) {

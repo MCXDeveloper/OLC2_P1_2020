@@ -33,24 +33,236 @@ public class NCall extends Nodo implements Instruccion {
         Object rvalor = new Fail();
         ETipoDato rtd = ETipoDato.ERROR;
 
-        NFunc funcion = ts.getMetodo(id);
+        switch (id.toUpperCase()) {
 
-        if (funcion == null) {
-            msj = "Error. No se encontró la función <"+ id +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
-        } else {
-            Ambito amb = new Ambito(EAmbito.FUNCION);
-            Simbolo s = new Simbolo(ETipoDato.NT, "return", new NNulo(getLinea(), getColumna(), getArchivo()));
-            amb.addSimbolo(s);
-            if (!registrarParametros(amb, funcion.getParametros(), ts)) {
-                msj = "Error.  No se pudieron registrar los parametros para la función <"+ id +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
-            } else {
-                ts.nuevaLLamada(amb);
-                Resultado r = funcion.Ejecutar(ts);
-                ts.finLLamada();
-                return r;
+            case "C": {
+                NFC call = new NFC(getLinea(), getColumna(), getArchivo(), params);
+                return call.Ejecutar(ts);
             }
+
+            case "PIE": {
+                if (params.size() != 3) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NPie call = new NPie(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "LIST": {
+                NList call = new NList(getLinea(), getColumna(), getArchivo(), params);
+                return call.Ejecutar(ts);
+            }
+
+            case "NCOL": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NCol call = new NCol(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "NROW": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NRow call = new NRow(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "MEAN": {
+                if (params.size() > 2) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NMean call = (params.size() == 1) ? new NMean(getLinea(), getColumna(), getArchivo(), params.get(0)) : new NMean(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "MODE": {
+                if (params.size() > 2) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NMode call = (params.size() == 1) ? new NMode(getLinea(), getColumna(), getArchivo(), params.get(0)) : new NMode(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "PLOT": {
+                if (params.size() != 5) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NPlot call = new NPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "HIST": {
+                /* Sin definir. */
+            }   break;
+
+            case "PRINT": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NPrint call = new NPrint(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "ARRAY": {
+                if (params.size() != 2) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NArray call = new NArray(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "TRUNK": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NTrunk call = new NTrunk(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "ROUND": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NRound call = new NRound(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "MATRIX": {
+                if (params.size() != 3) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NMatrix call = new NMatrix(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "TYPEOF": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NTypeOf call = new NTypeOf(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "LENGTH": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NLength call = new NLength(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "REMOVE": {
+                if (params.size() != 2) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NRemove call = new NRemove(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "MEDIAN": {
+                if (params.size() > 2) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NMedian call = (params.size() == 1) ? new NMedian(getLinea(), getColumna(), getArchivo(), params.get(0)) : new NMedian(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "BARPLOT": {
+                if (params.size() != 5) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NBarPlot call = new NBarPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "TOLOWERCASE": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NToLower call = new NToLower(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "TOUPPERCASE": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NToUpper call = new NToUpper(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            case "STRINGLENGTH": {
+                if (params.size() != 1) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NStringLength call = new NStringLength(getLinea(), getColumna(), getArchivo(), params.get(0));
+                    return call.Ejecutar(ts);
+                }
+            }   break;
+
+            default: {
+
+                NFunc funcion = ts.getMetodo(id);
+
+                if (funcion == null) {
+                    msj = "Error. No se encontró la función <"+ id +">.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    Ambito amb = new Ambito(EAmbito.FUNCION);
+                    Simbolo s = new Simbolo(ETipoDato.NT, "return", new NNulo(getLinea(), getColumna(), getArchivo()));
+                    amb.addSimbolo(s);
+                    if (!registrarParametros(amb, funcion.getParametros(), ts)) {
+                        msj = "Error.  No se pudieron registrar los parametros para la función <"+ id +">.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                    } else {
+                        ts.nuevaLLamada(amb);
+                        Resultado r = funcion.Ejecutar(ts);
+                        ts.finLLamada();
+                        return r;
+                    }
+                }
+
+            }
+
         }
 
         return new Resultado(rtd, EFlujo.NORMAL, rvalor);

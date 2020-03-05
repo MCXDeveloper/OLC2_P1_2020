@@ -8,82 +8,59 @@ package com.analizador.ascendente.sintactico;
 /** CUP generated class containing symbol constants. */
 public class CUPSim {
   /* terminals */
-  public static final int menos = 41;
-  public static final int menor = 54;
-  public static final int r_hist = 36;
-  public static final int mod = 45;
-  public static final int identificador = 67;
-  public static final int r_touppercase = 27;
-  public static final int r_ncol = 23;
-  public static final int r_list = 22;
-  public static final int r_function = 16;
-  public static final int r_for = 13;
-  public static final int r_do = 14;
-  public static final int r_median = 31;
-  public static final int div = 43;
-  public static final int r_false = 39;
-  public static final int r_tolowercase = 26;
-  public static final int menor_igual = 56;
-  public static final int r_array = 20;
-  public static final int r_default = 8;
-  public static final int llave_c = 62;
-  public static final int mas = 40;
-  public static final int cadena = 70;
-  public static final int r_case = 7;
-  public static final int r_switch = 6;
-  public static final int llave_a = 61;
-  public static final int r_mean = 30;
-  public static final int mayor_igual = 57;
-  public static final int r_continue = 10;
-  public static final int r_return = 11;
-  public static final int interrogacion = 53;
-  public static final int r_length = 19;
-  public static final int r_in = 15;
-  public static final int or = 63;
-  public static final int r_while = 12;
-  public static final int uminus = 71;
-  public static final int r_if = 4;
-  public static final int r_c = 2;
-  public static final int r_mode = 32;
-  public static final int r_trunk = 28;
-  public static final int r_break = 9;
-  public static final int diferente_que = 58;
-  public static final int r_nrow = 24;
-  public static final int and = 64;
-  public static final int mayor = 55;
-  public static final int r_print = 17;
-  public static final int puco = 51;
+  public static final int r_true = 16;
+  public static final int r_nulo = 2;
+  public static final int r_return = 10;
+  public static final int mod = 23;
+  public static final int dospu = 30;
+  public static final int flecha = 44;
+  public static final int r_false = 17;
+  public static final int llave_c = 40;
+  public static final int r_function = 15;
+  public static final int llave_a = 39;
+  public static final int r_else = 4;
+  public static final int coma = 28;
+  public static final int igual = 38;
+  public static final int r_switch = 5;
+  public static final int cor_c = 27;
+  public static final int identificador = 45;
+  public static final int cor_a = 26;
+  public static final int r_default = 7;
+  public static final int r_continue = 9;
+  public static final int igualdad = 37;
+  public static final int r_in = 14;
+  public static final int numero_decimal = 47;
+  public static final int menos = 19;
+  public static final int r_if = 3;
+  public static final int menor = 32;
   public static final int EOF = 0;
-  public static final int dospu = 52;
-  public static final int r_remove = 37;
-  public static final int flecha = 66;
-  public static final int cor_c = 49;
-  public static final int r_typeof = 18;
-  public static final int r_matrix = 21;
-  public static final int numero_decimal = 69;
-  public static final int cor_a = 48;
+  public static final int mayor_igual = 35;
+  public static final int mas = 18;
+  public static final int uminus = 49;
   public static final int error = 1;
-  public static final int r_plot = 35;
-  public static final int r_true = 38;
-  public static final int r_round = 29;
-  public static final int pot = 44;
-  public static final int por = 42;
-  public static final int r_barplot = 34;
-  public static final int coma = 50;
-  public static final int par_c = 47;
-  public static final int r_pie = 33;
-  public static final int par_a = 46;
-  public static final int not = 65;
-  public static final int igual = 60;
-  public static final int r_else = 5;
-  public static final int r_stringlength = 25;
-  public static final int r_nulo = 3;
-  public static final int igualdad = 59;
-  public static final int numero_entero = 68;
+  public static final int mayor = 33;
+  public static final int r_for = 12;
+  public static final int or = 41;
+  public static final int pot = 22;
+  public static final int por = 20;
+  public static final int menor_igual = 34;
+  public static final int r_case = 6;
+  public static final int numero_entero = 46;
+  public static final int not = 43;
+  public static final int and = 42;
+  public static final int r_break = 8;
+  public static final int diferente_que = 36;
+  public static final int div = 21;
+  public static final int par_c = 25;
+  public static final int par_a = 24;
+  public static final int puco = 29;
+  public static final int interrogacion = 31;
+  public static final int r_while = 11;
+  public static final int cadena = 48;
+  public static final int r_do = 13;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "r_c",
   "r_nulo",
   "r_if",
   "r_else",
@@ -98,27 +75,6 @@ public class CUPSim {
   "r_do",
   "r_in",
   "r_function",
-  "r_print",
-  "r_typeof",
-  "r_length",
-  "r_array",
-  "r_matrix",
-  "r_list",
-  "r_ncol",
-  "r_nrow",
-  "r_stringlength",
-  "r_tolowercase",
-  "r_touppercase",
-  "r_trunk",
-  "r_round",
-  "r_mean",
-  "r_median",
-  "r_mode",
-  "r_pie",
-  "r_barplot",
-  "r_plot",
-  "r_hist",
-  "r_remove",
   "r_true",
   "r_false",
   "mas",
