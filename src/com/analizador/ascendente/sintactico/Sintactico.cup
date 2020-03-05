@@ -150,11 +150,11 @@ INSTRUCCION
     |   SENTENCIA_PRINT:a puco                                                                                      {: RESULT = a; :}
     |   SENTENCIA_PIE:a                                                                                             {: RESULT = a; :}
     |   SENTENCIA_BARPLOT:a                                                                                         {: RESULT = a; :}
-    |   SENTENCIA_PLOT:a                                                                                            {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PLOT:a                                                                                            {: RESULT = a; :}
     |   SENTENCIA_HIST:a                                                                                            {: /*RESULT = a;*/ :}
     |   SENTENCIA_PIE:a puco                                                                                        {: RESULT = a; :}
     |   SENTENCIA_BARPLOT:a puco                                                                                    {: RESULT = a; :}
-    |   SENTENCIA_PLOT:a puco                                                                                       {: /*RESULT = a;*/ :}
+    |   SENTENCIA_PLOT:a puco                                                                                       {: RESULT = a; :}
     |   SENTENCIA_HIST:a puco                                                                                       {: /*RESULT = a;*/ :}
     |   error puco                                                                                                  {: RESULT = new Nodo(0, 0, archivo, ETipoNodo.ERROR); :}
     |   error llave_c                                                                                               {: RESULT = new Nodo(0, 0, archivo, ETipoNodo.ERROR); :}
@@ -333,42 +333,42 @@ LISTA_EXPRESIONES
 // | ----------------- SENTENCIA PRINT ----------------- |
 // +-----------------------------------------------------+
 
-SENTENCIA_PRINT
+/*SENTENCIA_PRINT
     ::= r_print:a par_a EXPRESION:b par_c                                                                           {: RESULT = new NPrint(aright, aleft, archivo, b); :}
-;
+;*/
 
 // +---------------------------------------------------+
 // | ----------------- SENTENCIA PIE ----------------- |
 // +---------------------------------------------------+
 
-SENTENCIA_PIE
+/*SENTENCIA_PIE
     ::= r_pie:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                           {: RESULT = new NPie(aright, aleft, archivo, b, c, d); :}
-;
+;*/
 
 // +-------------------------------------------------------+
 // | ----------------- SENTENCIA BARPLOT ----------------- |
 // +-------------------------------------------------------+
 
-SENTENCIA_BARPLOT
+/*SENTENCIA_BARPLOT
     ::= r_barplot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c     {: RESULT = new NBarPlot(aright, aleft, archivo, b, c, d, e, f); :}
-;
+;*/
 
 // +----------------------------------------------------+
 // | ----------------- SENTENCIA PLOT ----------------- |
 // +----------------------------------------------------+
 
-SENTENCIA_PLOT
-    ::= r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: /*RESULT = new NPlot(aright, aleft, archivo, b, c, d, e, f);*/ :}
-    |   r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f coma EXPRESION:g coma EXPRESION:h coma EXPRESION:i par_c     {: /*RESULT = new NDispersion(aright, aleft, archivo, b, c, d, e, f, g, h, i);*/ :}
-;
+/*SENTENCIA_PLOT
+    ::= r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: RESULT = new NPlot(aright, aleft, archivo, b, c, d, e, f); :}
+    |   r_plot:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f coma EXPRESION:g coma EXPRESION:h coma EXPRESION:i par_c     {: *//*RESULT = new NDispersion(aright, aleft, archivo, b, c, d, e, f, g, h, i);*//* :}
+;*/
 
 // +----------------------------------------------------+
 // | ----------------- SENTENCIA HIST ----------------- |
 // +----------------------------------------------------+
 
-SENTENCIA_HIST
-    ::= r_hist:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: /*RESULT = new NHist(aright, aleft, archivo, b, c, d, e, f);*/ :}
-;
+/*SENTENCIA_HIST
+    ::= r_hist:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d coma EXPRESION:e coma EXPRESION:f par_c        {: *//*RESULT = new NHist(aright, aleft, archivo, b, c, d, e, f);*//* :}
+;*/
 
 // +-------------------------------------------------+
 // | ----------------- EXPRESIONES ----------------- |
@@ -400,7 +400,7 @@ EXPRESION
     |   r_true:a                                                                                                    {: RESULT = new NPrim(aright, aleft, archivo, true, ETipoDato.BOOLEAN); :}
     |   r_false:a                                                                                                   {: RESULT = new NPrim(aright, aleft, archivo, false, ETipoDato.BOOLEAN); :}
     |   r_nulo:a                                                                                                    {: RESULT = new NNulo(aright, aleft, archivo); :}
-    |   r_c:a par_a LISTA_EXPRESIONES:b par_c                                                                       {: RESULT = new NFC(aright, aleft, archivo, b); :}
+    /*|   r_c:a par_a LISTA_EXPRESIONES:b par_c                                                                       {: RESULT = new NFC(aright, aleft, archivo, b); :}
     |   r_list:a par_a LISTA_EXPRESIONES:b par_c                                                                    {: RESULT = new NList(aright, aleft, archivo, b); :}
     |   r_array:a par_a EXPRESION:b coma EXPRESION:c par_c                                                          {: RESULT = new NArray(aright, aleft, archivo, b, c); :}
     |   r_matrix:a par_a EXPRESION:b coma EXPRESION:c coma EXPRESION:d par_c                                        {: RESULT = new NMatrix(aright, aleft, archivo, b, c, d); :}
@@ -419,7 +419,7 @@ EXPRESION
     |   r_mode:a par_a EXPRESION:b par_c                                                                            {: RESULT = new NMode(aright, aleft, archivo, b); :}
     |   r_mean:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: RESULT = new NMean(aright, aleft, archivo, b, c); :}
     |   r_median:a par_a EXPRESION:b coma EXPRESION:c par_c                                                         {: RESULT = new NMedian(aright, aleft, archivo, b, c); :}
-    |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: RESULT = new NMode(aright, aleft, archivo, b, c); :}
+    |   r_mode:a par_a EXPRESION:b coma EXPRESION:c par_c                                                           {: RESULT = new NMode(aright, aleft, archivo, b, c); :}*/
     |   identificador:a                                                                                             {: RESULT = new NId(aright, aleft, archivo, a); :}
     |   identificador:a LISTA_ACCESO:b                                                                              {: RESULT = new NAcceso(aright, aleft, archivo, a, b); :}
 ;

@@ -5,6 +5,7 @@ public enum ETipoNodo {
     ERROR,
     STMT_IF,
     STMT_FOR,
+    STMT_PLOT,
     STMT_CASE,
     STMT_ELSE,
     STMT_CALL,
