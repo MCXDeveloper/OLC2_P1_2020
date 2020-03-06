@@ -1,11 +1,8 @@
 package com.graficos;
 
-import com.abstracto.Item;
-import com.abstracto.Matriz;
 import com.abstracto.Nodo;
 import com.constantes.ETipoNodo;
 import com.main.Main;
-import org.apache.commons.collections4.MultiValuedMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -22,28 +19,22 @@ public class HistogramChart extends Nodo {
 
     private JFreeChart chart;
 
-    public HistogramChart(int linea, int columna, String archivo, String titulo, String xlab, LinkedList<Double> xlim, LinkedList<Double> ylim, Object valores) {
+    public HistogramChart(int linea, int columna, String archivo, String titulo, String xlab, LinkedList<Double> xlim, LinkedList<Double> ylim, LinkedList<Double> valores) {
 
         super(linea, columna, archivo, ETipoNodo.STMT_HIST);
 
-        chart = ChartFactory.createHistogram(titulo, xlab, "", createDataset(valores, xlim, ylim), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createHistogram(titulo, xlab, "", createDataset(titulo, valores, xlim), PlotOrientation.VERTICAL, true, true, false);
         chart.setBackgroundPaint(Color.white);
 
     }
 
-    private IntervalXYDataset createDataset(Object valores, LinkedList<Double> xlim, LinkedList<Double> ylim) {
+    private IntervalXYDataset createDataset(String titulo, LinkedList<Double> valores, LinkedList<Double> xlim) {
 
-        Matriz mat = (Matriz)valores;
-        LinkedList<Double> ld = new LinkedList<>();
-        for (Item it : mat.getElementos()) {
-            ld.add((double)it.getValor());
-        }
-
-        double[] arr = ld.stream().mapToDouble(Double::doubleValue).toArray();
+        double[] arr = valores.stream().filter(x -> (x >= xlim.get(0) && x <= xlim.get(1))).mapToDouble(Double::doubleValue).toArray();
 
         HistogramDataset dataset = new HistogramDataset();
         dataset.setType(HistogramType.FREQUENCY);
-        dataset.addSeries("Hist", arr, arr.length);
+        dataset.addSeries(titulo, arr, arr.length);
 
         return dataset;
 

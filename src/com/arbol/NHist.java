@@ -6,12 +6,8 @@ import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
-import com.graficos.DispersionChart;
 import com.graficos.HistogramChart;
 import com.main.Main;
-import org.apache.commons.collections4.MultiMap;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 import javax.swing.*;
 import java.util.LinkedList;
@@ -41,10 +37,10 @@ public class NHist extends Nodo implements Instruccion {
 
         /* Obtengo los valores de los parámetros */
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
+        LinkedList<Double> rvalores = validarDatos(((Instruccion)valores).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
         LinkedList<Double> rxlim = validarLimites("xlim", ((Instruccion)xlim).Ejecutar(ts));
         LinkedList<Double> rylim = validarLimites("ylim", ((Instruccion)ylim).Ejecutar(ts));
-        Object rvalores = validarDatos(((Instruccion)valores).Ejecutar(ts));
 
         if (rvalores != null && rxlab != null && rtitulo != null && rxlim != null && rylim != null) {
 
@@ -61,7 +57,7 @@ public class NHist extends Nodo implements Instruccion {
 
     }
 
-    private Object validarDatos(Resultado rvals) {
+    private LinkedList<Double> validarDatos(Resultado rvals) {
 
         String msj;
 
@@ -77,9 +73,9 @@ public class NHist extends Nodo implements Instruccion {
                     return null;
                 }
 
-                MultiValuedMap<Double, Double> ret = new ArrayListValuedHashMap<>();
+                LinkedList<Double> ret = new LinkedList<>();
                 for (int i = 0; i < v.getVectorSize(); i++) {
-                    ret.put((double)i, (v.getInnerType() == ETipoDato.INT ? (double)(int)v.getElementByPosition(i).getValor() : (double)v.getElementByPosition(i).getValor()));
+                    ret.add(v.getInnerType() == ETipoDato.INT ? (double)(int)v.getElementByPosition(i).getValor() : (double)v.getElementByPosition(i).getValor());
                 }
 
                 return ret;
@@ -96,13 +92,12 @@ public class NHist extends Nodo implements Instruccion {
                     return null;
                 }
 
-                // TODO - Esto posiblemente tenga que cambiarse si se define que se pueden utilizar todas las columnas
-                MultiValuedMap<Double, Double> ret = new ArrayListValuedHashMap<>();
-                for (int i = 1; i <= mat.getFilas(); i++) {
-                    ret.put((double)i, (mat.getInnerType() == ETipoDato.INT ? (double)(int)mat.getElementByCoordinates(i, 1).getValor() : (double)mat.getElementByCoordinates(i, 1).getValor()));
+                LinkedList<Double> ret = new LinkedList<>();
+                for (int i = 0; i < mat.getMatrixSize(); i++) {
+                    ret.add(mat.getInnerType() == ETipoDato.INT ? (double)(int)mat.getElementByPosition(i).getValor() : (double)mat.getElementByPosition(i).getValor());
                 }
 
-                return mat;
+                return ret;
 
             }
 
