@@ -28,7 +28,7 @@ public class Ambito {
         this.superior = superior;
     }
 
-    public Simbolo getSimbolo(String id) {
+    public Simbolo getSimbolo(String id, boolean wantRef) {
 
         Simbolo s = null;
         Ambito a = this;
@@ -41,7 +41,7 @@ public class Ambito {
             a = a.superior;
         }
 
-        if (s != null) {
+        if (s != null && !wantRef) {
             switch (s.getTipo()) {
                 case VECTOR: {
                     s = new Simbolo(ETipoDato.VECTOR, ((Vector)s.getValor()).getClone());

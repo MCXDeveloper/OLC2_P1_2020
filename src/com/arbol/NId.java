@@ -27,7 +27,7 @@ public class NId extends Nodo implements Instruccion {
         Object rval = new Fail();
         ETipoDato tdr = ETipoDato.ERROR;
 
-        Simbolo s = ts.getSimbolo(id);
+        Simbolo s = ts.getSimbolo(id, false);
 
         if (s != null) {
             tdr = s.getTipo();

@@ -166,15 +166,23 @@ public class NAsignacionVector extends Nodo implements Instruccion {
     }
 
     private boolean validarExpresionParaVector(Resultado rexp) {
+        String msj;
         switch (rexp.getTipoDato()) {
             case INT:
-            case VECTOR:
             case STRING:
             case DECIMAL:
             case BOOLEAN:
                 break;
+            case VECTOR: {
+                Vector v = (Vector)rexp.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede asignar un vector de más de 1 valor a una posición de un vector.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
+                    return false;
+                }
+            }   break;
             default: {
-                String msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
+                msj = "Error. No se puede asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un vector.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
                 return false;
             }

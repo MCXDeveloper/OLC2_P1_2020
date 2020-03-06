@@ -6,8 +6,10 @@ import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
+import com.graficos.LineChart;
+import com.main.Main;
 
-import java.util.LinkedList;
+import javax.swing.*;
 
 public class NPlot extends Nodo implements Instruccion {
 
@@ -33,23 +35,26 @@ public class NPlot extends Nodo implements Instruccion {
         Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
         /* Obtengo los valores de los parámetros */
-        LinkedList<Double> rvalores = validarDatos(((Instruccion)vatr).Ejecutar(ts));
+        Matriz rmatrix = validarDatos(((Instruccion)vatr).Ejecutar(ts));
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
         String rylab = validarTextos("ylab", ((Instruccion)ylab).Ejecutar(ts));
         String rtype = validarTextos("type", ((Instruccion)type).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
 
-        if (rxlab != null && rylab != null && rtype != null && rtitulo != null && rvalores != null) {
+        if (rxlab != null && rylab != null && rtype != null && rtitulo != null && rmatrix != null) {
 
             rtype = rtype.toUpperCase();
 
             if (!rtype.equals("P") && !rtype.equals("O") && !rtype.equals("I")) {
                 msj = "Error. El valor del parámetro 'type' no acepta el valor <"+ rtype +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                 rtype = "O";
             }
 
-
+            LineChart pc = new LineChart(rtitulo, rxlab, rylab, rtype, rmatrix);
+            JPanel panel = pc.getLineChart();
+            panel.setName("Graph[F:"+ getLinea() +",C:"+ getColumna() +"]");
+            Main.getGUI().addGraph(panel);
 
         } else {
             return error;
@@ -59,31 +64,25 @@ public class NPlot extends Nodo implements Instruccion {
 
     }
 
-    private LinkedList<Double> validarDatos(Resultado rvals) {
+    private Matriz validarDatos(Resultado rvals) {
 
         String msj;
 
-        if (rvals.getTipoDato() == ETipoDato.VECTOR) {
+        if (rvals.getTipoDato() == ETipoDato.MATRIX) {
 
-            Vector v = (Vector)rvals.getValor();
+            Matriz mat = (Matriz)rvals.getValor();
 
-            if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
-                msj = "Error. El valor del parámetro 'H' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+            if (mat.getInnerType() != ETipoDato.INT && mat.getInnerType() != ETipoDato.DECIMAL) {
+                msj = "Error. El valor del parámetro 'V' no puede ser de tipo <MATRIX["+ mat.getInnerType() +"]>. Se espera una matriz de valores numéricos.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                 return null;
             }
 
-            LinkedList<Double> ret = new LinkedList<>();
-            for (Item it : v.getElementos()) {
-                double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
-                ret.add(d);
-            }
-
-            return ret;
+            return mat;
 
         } else {
-            msj = "Error. El valor del parámetro 'H' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+            msj = "Error. El valor del parámetro 'V' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
+            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
             return null;
         }
 
@@ -101,19 +100,19 @@ public class NPlot extends Nodo implements Instruccion {
                 Vector v = (Vector)rcadena.getValor();
                 if (v.getInnerType() != ETipoDato.STRING) {
                     msj = "Error. El valor del parámetro '"+ param +"' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un STRING.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                     return null;
                 }
                 if (v.getVectorSize() > 1) {
                     msj = "Error. El valor del parámetro '"+ param +"' no puede ser un <VECTOR[STRING]> con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                     return null;
                 }
                 return (String)v.getElementByPosition(0).getValor();
             }
             default: {
                 msj = "Error. El valor del parámetro '"+ param +"' no puede ser una expresión de tipo <"+ rcadena.getTipoDato() +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                 return null;
             }
         }

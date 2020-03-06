@@ -96,17 +96,28 @@ public class NCall extends Nodo implements Instruccion {
             }   break;
 
             case "PLOT": {
-                if (params.size() != 5) {
-                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                if (params.size() != 5 && params.size() != 7) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <" + id + "> no concuerdan con las establecidas en la declaración.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
                 } else {
-                    NPlot call = new NPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
-                    return call.Ejecutar(ts);
+                    if (params.size() == 5) {
+                        NPlot call = new NPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                        return call.Ejecutar(ts);
+                    } else {
+                        NDispersion call = new NDispersion(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4), params.get(5), params.get(6));
+                        return call.Ejecutar(ts);
+                    }
                 }
             }   break;
 
             case "HIST": {
-                /* Sin definir. */
+                if (params.size() != 5) {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                } else {
+                    NHist call = new NHist(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                    return call.Ejecutar(ts);
+                }
             }   break;
 
             case "PRINT": {

@@ -39,8 +39,8 @@ public class TablaSimbolos {
         return actual.addSimbolo(sim);
     }
 
-    public Simbolo getSimbolo(String id) {
-        return actual.getSimbolo(id);
+    public Simbolo getSimbolo(String id, boolean wantRef) {
+        return actual.getSimbolo(id, wantRef);
     }
 
     public void nuevaLLamada(Ambito amb) {

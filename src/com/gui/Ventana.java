@@ -93,7 +93,7 @@ public class Ventana extends javax.swing.JFrame {
                 panelAreaTrabajoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(panelAreaTrabajoLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(tabContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+                                .addComponent(tabContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
                                 .addContainerGap())
         );
         panelAreaTrabajoLayout.setVerticalGroup(
@@ -324,6 +324,8 @@ public class Ventana extends javax.swing.JFrame {
                                 .addComponent(panelConsola, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap())
         );
+
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 
         pack();
     }// </editor-fold>

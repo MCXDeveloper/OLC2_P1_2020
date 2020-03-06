@@ -26,7 +26,7 @@ public class PieChart {
 
     public JPanel getPieChart() {
         JTabbedPane jtp = Main.getGUI().getGraphContainer();
-        BufferedImage graph = chart.createBufferedImage(jtp.getWidth(), jtp.getHeight());
+        BufferedImage graph = chart.createBufferedImage(355, 330);
         JLabel imagen = new JLabel();
         imagen.setSize(jtp.getSize());
         imagen.setIcon(new ImageIcon(graph));
