@@ -17,6 +17,7 @@ public class Main {
     public static void main(String[] args) {
         cleaner();
         window = new Ventana();
+        System.out.println("Present Project Directory : "+ System.getProperty("user.dir"));
         window.setVisible(true);
     }
 

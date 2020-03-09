@@ -19,17 +19,20 @@ import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +46,10 @@ public class Ventana extends javax.swing.JFrame {
     /**
      * Creates new form Ventana
      */
+
+    private NRaiz raizGlobal;
+    private TablaSimbolos tsGlobal;
+
     public Ventana() {
         initComponents();
     }
@@ -351,50 +358,56 @@ public class Ventana extends javax.swing.JFrame {
 
     private void btnReporteASTActionPerformed(java.awt.event.ActionEvent evt) {
 
-        Component actualTab = tabContainer.getSelectedComponent();
-        Tab auxTab = (Tab)actualTab;
-        RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
-        RTextArea contenedor = textObject.getTextArea();
-        String texto = contenedor.getText();
+        if (raizGlobal != null && tsGlobal != null) {
 
-        // Limpio las variables manejadoras
-        Main.cleaner();
+            raizGlobal.GenerarDOT(tsGlobal);
 
-        Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
-        lexer.setArchivo(auxTab.ObtenerNombreCompletoArchivo());
-
-        if (!verificarErrores()) {
-
-            Sintactico parser = new Sintactico(lexer);
-            parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+            LinkedList<String> contenido = new LinkedList<>();
+            contenido.add("digraph grafo {");
+            contenido.addAll(tsGlobal.getNodeDeclarations());
+            contenido.addAll(tsGlobal.getNodePointers());
+            contenido.add("}");
 
             try {
 
-                parser.parse();
+                String directory = System.getProperty("user.dir") + "/out";
+                String route = directory + "/ast.dot";
 
-                if (!verificarErrores()) {
+                /* Escribo el contenido del archivo */
+                Files.write(Paths.get(route), contenido, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
-                    NRaiz raiz = parser.getRaiz();
-                    TablaSimbolos ts = new TablaSimbolos();
-                    raiz.GenerarDOT(ts);
+                /* Genero vía comando el gráfico utilizando GraphViz */
+                Runtime rt = Runtime.getRuntime();
+                Process pr = rt.exec("dot -Tpng "+ route +" -o "+ directory +"/ast.png");
+                showMessage("AST generado correctamente.");
 
-                    LinkedList<String> contenido = new LinkedList<>();
-                    contenido.add("digraph grafo {");
-                    contenido.addAll(ts.getNodeDeclarations());
-                    contenido.addAll(ts.getNodePointers());
-                    contenido.add("}");
+                /* Muestro la gráfica en un JPanel en el área de gráficos. */
+                File img = new File(directory + "/ast.png");
+                BufferedImage graph = ImageIO.read(img);
 
-                    System.out.println("*******************************************************");
-                    System.out.println(String.join(System.lineSeparator(), contenido));
-                    System.out.println("*******************************************************");
+                /* Añado la imagen a un JLabel */
+                JLabel imagen = new JLabel();
+                imagen.setIcon(new ImageIcon(graph));
 
-                }
+                /* Creo un panel y le añado el JLabel anterior. */
+                JPanel panelito = new JPanel();
+                panelito.add(imagen);
 
-            } catch (Exception e) {
-                showMessage("Ocurrieron errores al parsear la entrada.  Revisar errores.");
+                /* Creo un JScrollPane para colocar el panel y que no cambie su tamaño al agregar la imagen. */
+                JScrollPane scrollPane = new JScrollPane(panelito);
+                scrollPane.setName("AST");
+                scrollPane.setPreferredSize(new Dimension(355, 330));
+
+                /* Agrego el scrollPanel al área de gráficos. */
+                addGraph(scrollPane);
+
+            } catch (IOException e) {
+                showMessage("Fatal error. No se pudo crear el archivo 'ast.dot'.");
                 e.printStackTrace();
             }
 
+        } else {
+            showMessage("No se puede generar el AST ya que no existe un árbol parseado.");
         }
 
     }
@@ -457,11 +470,11 @@ public class Ventana extends javax.swing.JFrame {
 
                 if (!verificarErrores()) {
 
-                    NRaiz raiz = parser.getRaiz();
-                    TablaSimbolos ts = new TablaSimbolos();
+                    raizGlobal = parser.getRaiz();
+                    tsGlobal = new TablaSimbolos();
 
                     try {
-                        Resultado r = raiz.Ejecutar(ts);
+                        Resultado r = raizGlobal.Ejecutar(tsGlobal);
                         if (r.getTipoDato() == ETipoDato.ERROR) {
                             verificarErrores();
                         }
@@ -599,7 +612,7 @@ public class Ventana extends javax.swing.JFrame {
         return graphContainer;
     }
 
-    public void addGraph(JPanel imagen) {
+    public void addGraph(Component imagen) {
         graphContainer.add(imagen);
     }
 
