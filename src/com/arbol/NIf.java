@@ -80,6 +80,39 @@ public class NIf extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_IF");
+        String tokenif = ts.getDeclararNodo("if");
+        String tokenval = "";
+        if (condicion != null) {
+            tokenval = ((Instruccion)condicion).GenerarDOT(ts);
+        }
+        String listason = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenif);
+        if (condicion != null) {
+            ts.enlazarNodos(subson, tokenval);
+        }
+        ts.enlazarNodos(subson, listason);
+        for (Nodo nodito : sentencias) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(listason, son);
+        }
+        if (secIfs != null) {
+            String subsubson;
+            for (NIf n : secIfs) {
+                subsubson = ts.getDeclararNodo("NODO_ELSE");
+                ts.enlazarNodos(subson, subsubson);
+                son = n.GenerarDOT(ts);
+                ts.enlazarNodos(subsubson, son);
+            }
+        }
+        return parent;
+    }
+
     private Resultado ejecutarElse(TablaSimbolos ts) {
 
         String msj;

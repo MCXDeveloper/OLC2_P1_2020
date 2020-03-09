@@ -111,6 +111,37 @@ public class NSwitch extends Nodo implements Instruccion {
         
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_SWITCH");
+        String tokenswitch = ts.getDeclararNodo("switch");
+        String tokenval = ((Instruccion)condicion).GenerarDOT(ts);
+        String listason = ts.getDeclararNodo("LISTA_CASOS");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenswitch);
+        ts.enlazarNodos(subson, tokenval);
+        ts.enlazarNodos(subson, listason);
+        for (NCase casito : lista_casos) {
+            son = casito.GenerarDOT(ts);
+            ts.enlazarNodos(listason, son);
+        }
+        if (sentencias_default != null) {
+            String ndef = ts.getDeclararNodo("NODO_DEFAULT");
+            String def = ts.getDeclararNodo("default");
+            String deflist = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+            ts.enlazarNodos(listason, ndef);
+            ts.enlazarNodos(ndef, def);
+            ts.enlazarNodos(ndef, deflist);
+            for (Nodo nodito : sentencias_default) {
+                son = ((Instruccion)nodito).GenerarDOT(ts);
+                ts.enlazarNodos(deflist, son);
+            }
+        }
+        return parent;
+    }
+
     private Resultado EjecutarDefault(TablaSimbolos ts) {
 
         if (sentencias_default != null) {

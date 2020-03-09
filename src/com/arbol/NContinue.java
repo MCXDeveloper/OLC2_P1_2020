@@ -30,4 +30,15 @@ public class NContinue extends Nodo implements Instruccion {
         return new Resultado(rtd, EFlujo.CONTINUE);
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_CONTINUE");
+        String tokenret = ts.getDeclararNodo("continue");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenret);
+        return parent;
+    }
+
 }

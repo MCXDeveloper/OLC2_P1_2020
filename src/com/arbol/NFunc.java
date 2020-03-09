@@ -1,9 +1,6 @@
 package com.arbol;
 
-import com.abstracto.Fail;
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
@@ -58,6 +55,39 @@ public class NFunc extends Nodo implements Instruccion {
         }
 
         return new Resultado(ret.getTipo(), EFlujo.NORMAL, ret.getValor());
+
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+
+        String tokenparam;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_FUNCION");
+        String tokenfunc = ts.getDeclararNodo("function");
+        String tokenid = ts.getDeclararNodo(id);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenfunc);
+        ts.enlazarNodos(subson, tokenid);
+
+        if (parametros.size() > 0) {
+            String subsubson = ts.getDeclararNodo("LISTA_PARAMETROS");
+            ts.enlazarNodos(subson, subsubson);
+            for (NParam p : parametros) {
+                tokenparam = p.GenerarDOT(ts);
+                ts.enlazarNodos(subsubson, tokenparam);
+            }
+        }
+
+        String son;
+        String tokenlistains = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        ts.enlazarNodos(subson, tokenlistains);
+        for (Nodo nodito : lstmts) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(tokenlistains, son);
+        }
+
+        return parent;
 
     }
 

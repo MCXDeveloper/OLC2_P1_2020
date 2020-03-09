@@ -64,6 +64,11 @@ public class NMean extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private double getMean(LinkedList<Double> vals) {
         return vals.stream().mapToDouble(i -> i).sum() / vals.size();
     }

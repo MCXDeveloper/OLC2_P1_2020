@@ -108,6 +108,11 @@ public class NArray extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private boolean validateDimensionsValsAndType(Resultado rdims) {
 
         String msj;

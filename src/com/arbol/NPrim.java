@@ -40,4 +40,15 @@ public class NPrim extends Nodo implements Instruccion {
         return r;
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_PRIMITIVO");
+        String son = ts.getDeclararNodo(valor.toString());
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, son);
+        return parent;
+    }
+
 }

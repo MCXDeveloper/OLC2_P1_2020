@@ -94,6 +94,11 @@ public class NAccesoVector extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private int validarPosicionDeDimension(int numDim, Resultado rdim) {
 
         String msj;

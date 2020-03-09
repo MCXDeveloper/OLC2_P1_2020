@@ -51,4 +51,23 @@ public class NTernario extends Nodo implements Instruccion {
         return cond ? ((Instruccion)valorVerdadero).Ejecutar(ts) : ((Instruccion)valorFalso).Ejecutar(ts);
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_TERNARIO");
+        String tokencondi = ((Instruccion)condicion).GenerarDOT(ts);
+        String signo1 = ts.getDeclararNodo("?");
+        String tokenvv = ((Instruccion)valorVerdadero).GenerarDOT(ts);
+        String signo2 = ts.getDeclararNodo(":");
+        String tokenvf = ((Instruccion)valorFalso).GenerarDOT(ts);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokencondi);
+        ts.enlazarNodos(subson, signo1);
+        ts.enlazarNodos(subson, tokenvv);
+        ts.enlazarNodos(subson, signo2);
+        ts.enlazarNodos(subson, tokenvf);
+        return parent;
+    }
+
 }

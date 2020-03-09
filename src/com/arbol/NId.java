@@ -1,9 +1,6 @@
 package com.arbol;
 
-import com.abstracto.Fail;
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
@@ -39,6 +36,16 @@ public class NId extends Nodo implements Instruccion {
 
         return new Resultado(tdr, EFlujo.NORMAL, rval);
 
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_ID");
+        String son = ts.getDeclararNodo(id);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, son);
+        return parent;
     }
 
     public String getId() {

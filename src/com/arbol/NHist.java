@@ -57,6 +57,11 @@ public class NHist extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private LinkedList<Double> validarDatos(Resultado rvals) {
 
         String msj;

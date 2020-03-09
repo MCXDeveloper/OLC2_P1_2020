@@ -50,4 +50,17 @@ public class NParam extends Nodo {
 
     }
 
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("NODO_PARAMETRO");
+        String tokenid = ts.getDeclararNodo(id);
+        ts.enlazarNodos(parent, tokenid);
+        if (valor != null) {
+            String tokenigual = ts.getDeclararNodo("=");
+            String tokenval = ((Instruccion)valor).GenerarDOT(ts);
+            ts.enlazarNodos(parent, tokenigual);
+            ts.enlazarNodos(parent, tokenval);
+        }
+        return parent;
+    }
+
 }

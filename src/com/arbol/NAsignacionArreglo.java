@@ -43,6 +43,11 @@ public class NAsignacionArreglo extends Nodo implements Instruccion {
         return new Resultado(tdr, EFlujo.NORMAL, rvalor);
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private LinkedList<Integer> validarDimensiones(TablaSimbolos ts) {
 
         String msj;

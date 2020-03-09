@@ -47,4 +47,12 @@ public class NPrint extends Nodo implements Instruccion {
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("SENTENCIA_PRINT");
+        String son = ((Instruccion)elemento).GenerarDOT(ts);
+        ts.enlazarNodos(parent, son);
+        return parent;
+    }
+
 }

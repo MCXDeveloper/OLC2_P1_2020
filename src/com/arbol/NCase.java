@@ -45,6 +45,25 @@ public class NCase extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_CASE");
+        String tokencase = ts.getDeclararNodo("case");
+        String tokenval = ((Instruccion)condicion).GenerarDOT(ts);
+        String listason = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokencase);
+        ts.enlazarNodos(subson, tokenval);
+        ts.enlazarNodos(subson, listason);
+        for (Nodo nodito : sentencias) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(listason, son);
+        }
+        return parent;
+    }
+
     public Nodo getCondicion() {
         return condicion;
     }

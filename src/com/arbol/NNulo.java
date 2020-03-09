@@ -20,6 +20,16 @@ public class NNulo extends Nodo implements Instruccion {
     }
 
     @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_NULL");
+        String son = ts.getDeclararNodo("NULL");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, son);
+        return parent;
+    }
+
+    @Override
     public String toString() {
         return "NULL";
     }

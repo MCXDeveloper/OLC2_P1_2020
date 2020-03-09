@@ -1,5 +1,6 @@
 package com.entorno;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 import com.arbol.NFunc;
@@ -10,12 +11,18 @@ import com.estaticas.Manejador;
 
 public class TablaSimbolos {
 
+    private int node;
+    private LinkedList<String> nodePointers;
+    private LinkedList<String> nodeDeclarations;
     private Ambito actual;
     private Ambito global;
     private final Stack<Ambito> llamadas;
     private final Map<String, NFunc> funciones;
 
     public TablaSimbolos() {
+        this.node = 0;
+        this.nodePointers = new LinkedList<>();
+        this.nodeDeclarations = new LinkedList<>();
         this.actual = new Ambito(EAmbito.GLOBAL);
         this.global = this.actual;
         this.llamadas = new Stack<>();
@@ -73,4 +80,26 @@ public class TablaSimbolos {
         actual.updateSimbolo(sim);
     }
 
+    private String getIdNodo() {
+        return "Nodo" + (node++);
+    }
+
+    public String getDeclararNodo(String tag) {
+        String id = getIdNodo();
+        String nodito = id + "[ label = \""+ tag +"\" ]";
+        nodeDeclarations.add(nodito);
+        return id;
+    }
+
+    public void enlazarNodos(String ptr1, String ptr2) {
+         nodePointers.add(ptr1 + " -> " + ptr2);
+    }
+
+    public LinkedList<String> getNodePointers() {
+        return nodePointers;
+    }
+
+    public LinkedList<String> getNodeDeclarations() {
+        return nodeDeclarations;
+    }
 }

@@ -85,4 +85,16 @@ public class NNot extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_NOT");
+        String signo = ts.getDeclararNodo("!");
+        String tokenop = ((Instruccion)op).GenerarDOT(ts);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, signo);
+        ts.enlazarNodos(subson, tokenop);
+        return parent;
+    }
+
 }

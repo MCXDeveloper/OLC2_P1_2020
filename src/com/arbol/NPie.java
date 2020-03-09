@@ -61,6 +61,11 @@ public class NPie extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private String validarTitulo(Resultado rtitulo) {
 
         String msj;

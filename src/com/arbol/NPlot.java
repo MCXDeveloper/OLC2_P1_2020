@@ -64,6 +64,11 @@ public class NPlot extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private Matriz validarDatos(Resultado rvals) {
 
         String msj;

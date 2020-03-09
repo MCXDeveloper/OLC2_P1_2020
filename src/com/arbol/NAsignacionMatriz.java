@@ -172,6 +172,11 @@ public class NAsignacionMatriz extends Nodo implements Instruccion {
         return new Resultado(tdr, EFlujo.NORMAL, rvalor);
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private int validarPosicionDeDimension(Resultado rdim) {
 
         String msj;

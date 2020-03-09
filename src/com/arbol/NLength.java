@@ -57,4 +57,10 @@ public class NLength extends Nodo implements Instruccion {
         return new Resultado(tdr, EFlujo.NORMAL, rval);
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
 }

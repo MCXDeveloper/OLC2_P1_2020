@@ -679,4 +679,18 @@ public class NSuma extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_SUMA");
+        String tokeniz = ((Instruccion)opIzq).GenerarDOT(ts);
+        String signo = ts.getDeclararNodo("+");
+        String tokende = ((Instruccion)opDer).GenerarDOT(ts);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokeniz);
+        ts.enlazarNodos(subson, signo);
+        ts.enlazarNodos(subson, tokende);
+        return parent;
+    }
+
 }

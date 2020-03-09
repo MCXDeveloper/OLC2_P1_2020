@@ -90,4 +90,16 @@ public class NNegativo extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_NEGATIVO");
+        String signo = ts.getDeclararNodo("-");
+        String tokenop = ((Instruccion)opIzq).GenerarDOT(ts);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, signo);
+        ts.enlazarNodos(subson, tokenop);
+        return parent;
+    }
+
 }

@@ -18,7 +18,7 @@ public enum ETipoDato {
 
     private final Object defecto;
     private final String typeOf;
-    private ETipoDato(final Object defecto, final String typeOf) { this.defecto = defecto;  this.typeOf = typeOf; }
+    ETipoDato(final Object defecto, final String typeOf) { this.defecto = defecto;  this.typeOf = typeOf; }
     public Object getDefecto() { return this.defecto; }
     public String getTypeOf() { return this.typeOf; }
 

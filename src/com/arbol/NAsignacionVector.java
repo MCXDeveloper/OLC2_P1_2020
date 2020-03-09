@@ -116,6 +116,11 @@ public class NAsignacionVector extends Nodo implements Instruccion {
         return new Resultado(tdr, EFlujo.NORMAL, rvalor);
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private int validarPosicionDeDimension(int numDim, Resultado rdim) {
 
         String msj;

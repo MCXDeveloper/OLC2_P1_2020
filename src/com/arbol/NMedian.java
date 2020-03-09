@@ -65,6 +65,11 @@ public class NMedian extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private double getMedian(LinkedList<Double> vals) {
         Double[] numArray = vals.toArray(new Double[0]);
         Arrays.sort(numArray);

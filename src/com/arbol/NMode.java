@@ -64,6 +64,11 @@ public class NMode extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private Object getMode(LinkedList<Double> vals) {
 
         double maxValue = 0, maxCount = 0;

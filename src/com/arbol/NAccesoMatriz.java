@@ -123,6 +123,11 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private int validarPosicionDeDimension(Resultado rdim) {
 
         String msj;

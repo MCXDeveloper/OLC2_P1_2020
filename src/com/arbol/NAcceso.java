@@ -73,4 +73,23 @@ public class NAcceso extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("EXPRESION");
+        String subson = ts.getDeclararNodo("NODO_ACCESO");
+        String tokenid = ts.getDeclararNodo(id);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenid);
+        for (Dimension d : listaDims) {
+            son = ((Instruccion)d.getValorDimIzq()).GenerarDOT(ts);
+            ts.enlazarNodos(subson, son);
+            if (d.getTipoDim() == ETipoDimension.COMPOUND) {
+                son = ((Instruccion)d.getValorDimDer()).GenerarDOT(ts);
+                ts.enlazarNodos(subson, son);
+            }
+        }
+        return parent;
+    }
+
 }

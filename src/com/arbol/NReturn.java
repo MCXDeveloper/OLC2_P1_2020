@@ -4,7 +4,6 @@ import com.abstracto.Instruccion;
 import com.abstracto.Nodo;
 import com.abstracto.Resultado;
 import com.constantes.EFlujo;
-import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
 import com.entorno.Simbolo;
 import com.entorno.TablaSimbolos;
@@ -36,6 +35,20 @@ public class NReturn extends Nodo implements Instruccion {
 
         return new Resultado(s.getTipo(), EFlujo.RETURN, s.getValor());
 
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_RETURN");
+        String tokenret = ts.getDeclararNodo("return");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenret);
+        if (valor != null) {
+            String tokenval = ((Instruccion)valor).GenerarDOT(ts);
+            ts.enlazarNodos(subson, tokenval);
+        }
+        return parent;
     }
 
 }

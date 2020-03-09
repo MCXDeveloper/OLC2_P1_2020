@@ -31,4 +31,14 @@ public class NBreak extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_BREAK");
+        String tokenret = ts.getDeclararNodo("break");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenret);
+        return parent;
+    }
+
 }

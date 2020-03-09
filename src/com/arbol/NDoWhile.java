@@ -71,4 +71,26 @@ public class NDoWhile extends Nodo implements Instruccion {
         }
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_DO_WHILE");
+        String tokendo = ts.getDeclararNodo("do");
+        String listason = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        String tokenwhile = ts.getDeclararNodo("while");
+        String tokenval = ((Instruccion)condicion).GenerarDOT(ts);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokendo);
+        ts.enlazarNodos(subson, listason);
+        ts.enlazarNodos(subson, tokenwhile);
+        ts.enlazarNodos(subson, tokenval);
+        for (Nodo nodito : sentencias) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(listason, son);
+        }
+        return parent;
+    }
+
 }

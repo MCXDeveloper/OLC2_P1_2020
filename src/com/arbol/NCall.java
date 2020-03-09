@@ -1,9 +1,6 @@
 package com.arbol;
 
-import com.abstracto.Fail;
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EAmbito;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
@@ -278,6 +275,23 @@ public class NCall extends Nodo implements Instruccion {
 
         return new Resultado(rtd, EFlujo.NORMAL, rvalor);
 
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String callsen = ts.getDeclararNodo("SENTENCIA_LLAMADA");
+        String funcNode = ts.getDeclararNodo(id);
+        String paramscall = ts.getDeclararNodo("LISTA_EXPRESIONES");
+        ts.enlazarNodos(parent, callsen);
+        ts.enlazarNodos(callsen, funcNode);
+        ts.enlazarNodos(callsen, paramscall);
+        for (Nodo nodito : params) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(paramscall, son);
+        }
+        return parent;
     }
 
     private boolean registrarParametros(Ambito amb, LinkedList<NParam> parametros_funcion, TablaSimbolos ts) {

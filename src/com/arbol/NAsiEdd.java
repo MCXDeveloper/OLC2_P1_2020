@@ -89,4 +89,46 @@ public class NAsiEdd extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_ASI_EDD");
+        String tokenvar = ts.getDeclararNodo(id);
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenvar);
+
+        String tokendim;
+        String tokendims;
+        for (Dimension d : listaDims) {
+            switch (d.getTipoDim()) {
+                case ROW:
+                case INNER:
+                case SIMPLE:
+                case COLUMN:
+                    tokendims = ts.getDeclararNodo("NODO_DIM_" + d.getTipoDim());
+                    ts.enlazarNodos(subson, tokendims);
+                    tokendim = ((Instruccion)d.getValorDimIzq()).GenerarDOT(ts);
+                    ts.enlazarNodos(tokendims, tokendim);
+                    break;
+                case COMPOUND:
+                    tokendims = ts.getDeclararNodo("NODO_DIM_COMPOUND");
+                    ts.enlazarNodos(subson, tokendims);
+                    tokendim = ((Instruccion)d.getValorDimIzq()).GenerarDOT(ts);
+                    ts.enlazarNodos(tokendims, tokendim);
+                    tokendim = ((Instruccion)d.getValorDimDer()).GenerarDOT(ts);
+                    ts.enlazarNodos(tokendims, tokendim);
+                    break;
+            }
+        }
+
+        String tokenigual = ts.getDeclararNodo("=");
+        ts.enlazarNodos(subson, tokenigual);
+        String son = ((Instruccion)valor).GenerarDOT(ts);
+        ts.enlazarNodos(subson, son);
+
+        return parent;
+
+    }
+
 }

@@ -53,4 +53,10 @@ public class NTrunk extends Nodo implements Instruccion {
         }
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
 }

@@ -89,6 +89,11 @@ public class NMatrix extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private boolean validateValues(Resultado rval) {
         ETipoDato[] tiposNoPermitidos = new ETipoDato[]{ ETipoDato.LIST, ETipoDato.MATRIX, ETipoDato.ARRAY };
         if (Arrays.asList(tiposNoPermitidos).contains(rval.getTipoDato())) {

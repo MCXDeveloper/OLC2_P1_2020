@@ -32,16 +32,27 @@ public class NRaiz extends Nodo implements Instruccion {
         Resultado r;
         for (Nodo nodito : lista_sentencias) {
             if (nodito.getTipoNodo() != ETipoNodo.STMT_FUNC) {
-                r = ((Instruccion)nodito).Ejecutar(ts);
-                if (r.getTipoDato() == ETipoDato.ERROR) {
-                    return r;
-                }
+                ((Instruccion)nodito).Ejecutar(ts);
             }
         }
 
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INICIO");
+        String listson = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        ts.enlazarNodos(parent, listson);
+        for (Nodo nodito : lista_sentencias) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(listson, son);
+        }
+        return parent;
+    }
+
 
     private void RegistrarFunciones(TablaSimbolos ts) {
 

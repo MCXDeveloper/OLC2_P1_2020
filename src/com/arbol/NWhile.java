@@ -68,6 +68,25 @@ public class NWhile extends Nodo implements Instruccion {
         return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String son;
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("NODO_WHILE");
+        String tokenwhile = ts.getDeclararNodo("while");
+        String tokenval = ((Instruccion)condicion).GenerarDOT(ts);
+        String listason = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
+        ts.enlazarNodos(parent, subson);
+        ts.enlazarNodos(subson, tokenwhile);
+        ts.enlazarNodos(subson, tokenval);
+        ts.enlazarNodos(subson, listason);
+        for (Nodo nodito : sentencias) {
+            son = ((Instruccion)nodito).GenerarDOT(ts);
+            ts.enlazarNodos(listason, son);
+        }
+        return parent;
+    }
+
     private Resultado evaluarCondicion(Resultado rc) {
         String msj;
         switch (rc.getTipoDato()) {

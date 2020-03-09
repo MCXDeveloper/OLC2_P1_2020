@@ -37,6 +37,11 @@ public class NAccesoArreglo extends Nodo implements Instruccion {
 
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
     private LinkedList<Integer> validarDimensiones(TablaSimbolos ts) {
 
         String msj;

@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -349,7 +350,53 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnReporteASTActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO - Agregar funcionalidad de reporte de AST:
+
+        Component actualTab = tabContainer.getSelectedComponent();
+        Tab auxTab = (Tab)actualTab;
+        RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
+        RTextArea contenedor = textObject.getTextArea();
+        String texto = contenedor.getText();
+
+        // Limpio las variables manejadoras
+        Main.cleaner();
+
+        Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
+        lexer.setArchivo(auxTab.ObtenerNombreCompletoArchivo());
+
+        if (!verificarErrores()) {
+
+            Sintactico parser = new Sintactico(lexer);
+            parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
+
+            try {
+
+                parser.parse();
+
+                if (!verificarErrores()) {
+
+                    NRaiz raiz = parser.getRaiz();
+                    TablaSimbolos ts = new TablaSimbolos();
+                    raiz.GenerarDOT(ts);
+
+                    LinkedList<String> contenido = new LinkedList<>();
+                    contenido.add("digraph grafo {");
+                    contenido.addAll(ts.getNodeDeclarations());
+                    contenido.addAll(ts.getNodePointers());
+                    contenido.add("}");
+
+                    System.out.println("*******************************************************");
+                    System.out.println(String.join(System.lineSeparator(), contenido));
+                    System.out.println("*******************************************************");
+
+                }
+
+            } catch (Exception e) {
+                showMessage("Ocurrieron errores al parsear la entrada.  Revisar errores.");
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
     private void btnReporteErroresActionPerformed(java.awt.event.ActionEvent evt) {
@@ -389,6 +436,9 @@ public class Ventana extends javax.swing.JFrame {
         consolaSalida.setText("");
         consolaErrores.setText("");
         consolaSimbolos.setText("");
+
+        // Quito todas las gráficas
+        graphContainer.removeAll();
 
         // Limpio las variables manejadoras
         Main.cleaner();
@@ -437,7 +487,7 @@ public class Ventana extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

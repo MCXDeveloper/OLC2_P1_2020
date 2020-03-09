@@ -30,4 +30,10 @@ public class NCol extends Nodo implements Instruccion {
         }
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
 }

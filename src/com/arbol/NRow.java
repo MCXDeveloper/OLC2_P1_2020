@@ -30,4 +30,10 @@ public class NRow extends Nodo implements Instruccion {
         }
 
     }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
 }

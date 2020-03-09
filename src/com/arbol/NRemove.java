@@ -81,4 +81,9 @@ public class NRemove extends Nodo implements Instruccion {
         return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, op1.replace(op2,""));
     }
 
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
 }

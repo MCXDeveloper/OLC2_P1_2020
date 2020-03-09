@@ -1,9 +1,6 @@
 package com.arbol;
 
-import com.abstracto.Fail;
-import com.abstracto.Instruccion;
-import com.abstracto.Nodo;
-import com.abstracto.Resultado;
+import com.abstracto.*;
 import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoNodo;
@@ -50,6 +47,20 @@ public class NDecAsi extends Nodo implements Instruccion {
 
         return new Resultado(tdr, EFlujo.NORMAL, rval);
 
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        String parent = ts.getDeclararNodo("INSTRUCCION");
+        String subson = ts.getDeclararNodo("SENTENCIA_DECASI");
+        ts.enlazarNodos(parent, subson);
+        String tokenid = ts.getDeclararNodo(id);
+        ts.enlazarNodos(subson, tokenid);
+        String tokenigual = ts.getDeclararNodo(" = ");
+        ts.enlazarNodos(subson, tokenigual);
+        String tokenval = ((Instruccion)valor).GenerarDOT(ts);
+        ts.enlazarNodos(subson, tokenval);
+        return parent;
     }
 
 }
