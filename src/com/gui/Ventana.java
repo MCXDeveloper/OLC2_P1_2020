@@ -8,6 +8,8 @@ package com.gui;
 import com.abstracto.Resultado;
 import com.analizador.ascendente.lexico.Lexico;
 import com.analizador.ascendente.sintactico.Sintactico;
+import com.analizador.descendente.Gramatica;
+import com.analizador.descendente.ParseException;
 import com.arbol.NRaiz;
 import com.bethecoder.ascii_table.ASCIITable;
 import com.constantes.ETipoDato;
@@ -494,7 +496,44 @@ public class Ventana extends javax.swing.JFrame {
     }
 
     private void btnAnalizarDescendenteActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO - Agregar funcionalidad de análisis descendente:
+
+        Component actualTab = tabContainer.getSelectedComponent();
+        Tab auxTab = (Tab)actualTab;
+        RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
+        RTextArea contenedor = textObject.getTextArea();
+        String texto = contenedor.getText();
+
+        // Limpio la consola de salida
+        consolaSalida.setText("");
+        consolaErrores.setText("");
+        consolaSimbolos.setText("");
+
+        // Quito todas las gráficas
+        graphContainer.removeAll();
+
+        // Limpio las variables manejadoras
+        Main.cleaner();
+
+        Gramatica parser = new Gramatica(new BufferedReader(new StringReader(texto)));
+
+        try {
+            raizGlobal = parser.INICIO();
+            if (!verificarErrores()) {
+                tsGlobal = new TablaSimbolos();
+                try {
+                    Resultado r = raizGlobal.Ejecutar(tsGlobal);
+                    if (r.getTipoDato() == ETipoDato.ERROR) {
+                        verificarErrores();
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ParseException e) {
+            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+            e.printStackTrace();
+        }
+
     }
 
     /**

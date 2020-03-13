@@ -1,0 +1,494 @@
+options {
+  IGNORE_CASE = true;
+  STATIC = false;
+}
+
+PARSER_BEGIN(Gramatica)
+
+/* Analizador de expresiones aritmeticas sencillas. */
+package com.analizador.descendente;
+
+import com.arbol.*;
+import com.abstracto.Nodo;
+import com.abstracto.Dimension;
+import com.constantes.ETipoDato;
+import com.constantes.ETipoNodo;
+import com.estaticas.ErrorHandler;
+import com.constantes.ETipoDimension;
+
+import java.util.Arrays;
+import java_cup.runtime.*;
+import java.util.Collections;import java.util.LinkedList;
+
+public class Gramatica {
+    private String archivo;
+    public void setArchivo(String nombre) {
+        this.archivo = nombre;
+    }
+}
+
+PARSER_END(Gramatica)
+
+/* Lexico */
+SKIP : {
+      " "
+    | "\t"
+    | "\r"
+    | "\n"
+    | <"#" (~["\n", "\r"])*>
+    | <"#*" (~["*"])* "*" ("*" | ~["*","#"] (~["*"])* "*")* "#">
+}
+
+TOKEN : {
+      <numero:          (["0"-"9"])+>
+    | <decimal:         (["0"-"9"])+"."(["0"-"9"])+>
+    | <r_nulo:          "null">
+    | <r_if:            "if">
+    | <r_else:          "else">
+    | <r_switch:        "switch">
+    | <r_case:          "case">
+    | <r_default:       "default">
+    | <r_break:         "break">
+    | <r_continue:      "continue">
+    | <r_return:        "return">
+    | <r_while:         "while">
+    | <r_for:           "for">
+    | <r_do:            "do">
+    | <r_in:            "in">
+    | <r_function:      "function">
+    | <r_true:          "true">
+    | <r_false:         "false">
+    | <identificador:   ((((["."])+["A"-"Z","a"-"z","_"])|["A"-"Z","a"-"z"])(["A"-"Z","a"-"z","_","0"-"9"]|".")*|(["."])+)>
+    | <mas:             "+">
+    | <menos:           "-">
+    | <por:             "*">
+    | <div:             "/">
+    | <pot:             "^">
+    | <mod:             "%%">
+    | <par_a:           "(">
+    | <par_c:           ")">
+    | <cor_a:           "[">
+    | <cor_c:           "]">
+    | <coma:            ",">
+    | <puco:            ";">
+    | <dospu:           ":">
+    | <interrogacion:   "?">
+    | <flecha:          "=>">
+    | <menor:           "<">
+    | <mayor:           ">">
+    | <menor_igual:     "<=">
+    | <mayor_igual:     ">=">
+    | <diferente_que:   "!=">
+    | <igualdad:        "==">
+    | <igual:           "=">
+    | <llave_a:         "{">
+    | <llave_c:         "}">
+    | <or:              "|">
+    | <and:             "&">
+    | <not:             "!">
+}
+
+MORE :
+{
+    "\"" : STRING_STATE
+}
+
+<STRING_STATE> MORE:
+{
+    <~["\""]>
+}
+
+<STRING_STATE> TOKEN:
+{
+   <cadena:"\""> : DEFAULT
+}
+
+/* Fin Lexico */
+
+NRaiz INICIO() :
+{
+    Nodo n;
+    LinkedList<Nodo> nodos = new LinkedList<Nodo>();
+}
+{
+    (n = INSTRUCCION() { nodos.add(n); })+ <EOF> { return new NRaiz(token.beginLine, token.beginColumn, archivo, nodos); }
+}
+
+
+Nodo INSTRUCCION() :
+{
+    Nodo a;
+}
+{
+        LOOKAHEAD(3) a = DECASI_FUNCION()                   { return a; }
+    |   LOOKAHEAD(2) a = DECASI_VARIABLE() (<puco>)?        { return a; }
+    |   a = SENTENCIA_IF()                                  { return a; }
+    |   a = SENTENCIA_SWITCH()                              { return a; }
+    |   a = SENTENCIA_WHILE()                               { return a; }
+    |   a = SENTENCIA_DOWHILE() (<puco>)?                   { return a; }
+    |   a = SENTENCIA_FOR()                                 { return a; }
+    |   a = SENTENCIA_BREAK() (<puco>)?                     { return a; }
+    |   a = SENTENCIA_CONTINUE() (<puco>)?                  { return a; }
+    |   a = SENTENCIA_RETURN() (<puco>)?                    { return a; }
+    |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA() (<puco>)?      { return a; }
+}
+
+LinkedList<Nodo> BLOQUE() :
+{
+    Nodo n;
+    LinkedList<Nodo> nodos = new LinkedList<Nodo>();
+}
+{
+    <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>  { return nodos; }
+}
+
+Nodo DECASI_FUNCION() :
+{
+    Nodo exp;
+    NParam parametro;
+    Token tid, tparam;
+    LinkedList<Nodo> block;
+    LinkedList<NParam> params;
+}
+{
+    tid=<identificador> <igual>
+    (
+            <r_function> params=PARAMETROS_FUNCION() block=BLOQUE()                                             { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+        |   <par_a>
+        (
+                <par_c> <flecha> block=BLOQUE()                                                                 { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block); }
+            |   LOOKAHEAD(2) exp=EXPRESION() <par_c> <flecha> block=BLOQUE()                                    { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
+            |   LOOKAHEAD(3) tparam=<identificador> <igual> exp=EXPRESION() <par_c> <flecha> block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(Collections.singletonList(new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp))), block); }
+            |   parametro=PARAMETRO() <coma> params=LISTA_PARAM_FUNCION() <par_c> <flecha> block=BLOQUE()       { params.addFirst(parametro); return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+        )
+    )
+}
+
+LinkedList<NParam> PARAMETROS_FUNCION() :
+{
+    LinkedList<NParam> params = new LinkedList<NParam>();
+}
+{
+    <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>  { return params; }
+}
+
+LinkedList<NParam> LISTA_PARAM_FUNCION() :
+{
+    NParam n;
+    LinkedList<NParam> params = new LinkedList<NParam>();
+}
+{
+    n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*     { return params; }
+}
+
+NParam PARAMETRO() :
+{
+    Nodo exp = null;
+    Token tid;
+}
+{
+    tid=<identificador> (<igual> exp=EXPRESION())?  { return (exp == null) ? new NParam(token.beginLine, token.beginColumn, archivo, tid.image) : new NParam(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
+}
+
+Nodo DECASI_VARIABLE() :
+{
+    Nodo exp;
+    Token tid;
+    Dimension d;
+    LinkedList<Dimension> ldim = new LinkedList<Dimension>();
+}
+{
+    tid=<identificador>
+    (
+            <igual> exp=EXPRESION()                                 { return new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
+        |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
+    )
+}
+
+Nodo SENTENCIA_IF() :
+{
+    NIf ni;
+    LinkedList<NIf> listaElses = null;
+}
+{
+    ni=SIF() (listaElses=SELSE())?  { if (listaElses != null) { ni.setSecIf(listaElses); }    return ni; }
+}
+
+NIf SIF() :
+{
+    Nodo exp;
+    LinkedList<Nodo> block;
+}
+{
+    <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_IF); }
+}
+
+NIf ELSE_IF() :
+{
+    Nodo exp;
+    LinkedList<Nodo> block;
+}
+{
+    <r_else> <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_ELSE_IF); }
+}
+
+LinkedList<NIf> SELSE() :
+{
+    NIf ni;
+    LinkedList<Nodo> block = null;
+    LinkedList<NIf> listaIfs = new LinkedList<NIf>();
+}
+{
+        LOOKAHEAD(2) <r_else> block=BLOQUE()                                             { listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block)); return listaIfs; }
+    |   (LOOKAHEAD(2) ni=ELSE_IF() { listaIfs.add(ni); })+ (<r_else> block=BLOQUE())?    {
+                                                                                            if (block != null) {
+                                                                                                listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block));
+                                                                                            }
+                                                                                            return listaIfs;
+                                                                                         }
+}
+
+Nodo SENTENCIA_SWITCH() :
+{
+    NCase nc;
+    Nodo n, exp;
+    LinkedList<NCase> listaCases = new LinkedList<NCase>();
+    LinkedList<Nodo> listaInsDefault = new LinkedList<Nodo>();
+}
+{
+    <r_switch> <par_a> exp=EXPRESION() <par_c> <llave_a> (nc = CASO() { listaCases.add(nc); })+
+    (
+            <llave_c>                                                                       { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases); }
+        |   <r_default> <dospu> (n = INSTRUCCION() { listaInsDefault.add(n); })* <llave_c>  { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases, listaInsDefault); }
+    )
+}
+
+NCase CASO() :
+{
+    Nodo n, exp;
+    LinkedList<Nodo> listaIns = new LinkedList<Nodo>();
+}
+{
+    <r_case> exp=EXPRESION() <dospu> (n = INSTRUCCION() { listaIns.add(n); })*  { return new NCase(token.beginLine, token.beginColumn, archivo, exp, listaIns); }
+}
+
+Nodo SENTENCIA_WHILE() :
+{
+    Nodo exp;
+    LinkedList<Nodo> block;
+}
+{
+    <r_while> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()    { return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block); }
+}
+
+Nodo SENTENCIA_DOWHILE() :
+{
+    Nodo exp;
+    LinkedList<Nodo> block;
+}
+{
+    <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c>     { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
+}
+
+Nodo SENTENCIA_FOR() :
+{
+    Nodo exp;
+    Token tid;
+    LinkedList<Nodo> block;
+}
+{
+    <r_for> <par_a> tid=<identificador> <r_in> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
+}
+
+Nodo SENTENCIA_BREAK() :
+{}
+{
+    <r_break>   { return new NBreak(token.beginLine, token.beginColumn, archivo); }
+}
+
+Nodo SENTENCIA_CONTINUE() :
+{}
+{
+    <r_continue>   { return new NContinue(token.beginLine, token.beginColumn, archivo); }
+}
+
+Nodo SENTENCIA_RETURN() :
+{
+    Nodo n = null;
+}
+{
+    <r_return> (<par_a> n=EXPRESION() <par_c>)?    { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
+}
+
+Dimension ACCESO() :
+{
+    Nodo a, b;
+}
+{
+    <cor_a>
+    (
+            LOOKAHEAD(3) a=EXPRESION() <cor_c>                          { return new Dimension(ETipoDimension.SIMPLE, a); }
+        |   LOOKAHEAD(3) a=EXPRESION() <coma> <cor_c>                   { return new Dimension(ETipoDimension.ROW, a); }
+        |   LOOKAHEAD(3) a=EXPRESION() <coma> b=EXPRESION() <cor_c>     { return new Dimension(ETipoDimension.COMPOUND, a, b); }
+        |   <coma> a=EXPRESION() <cor_c>                                { return new Dimension(ETipoDimension.COLUMN, a); }
+        |   <cor_a> a=EXPRESION() <cor_c> <cor_c>                       { return new Dimension(ETipoDimension.INNER, a); }
+    )
+}
+
+Nodo SENTENCIA_LLAMADA() :
+{
+    Token param_id;
+    LinkedList<Nodo> parametros = new LinkedList<Nodo>();
+}
+{
+      param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c>    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
+}
+
+LinkedList<Nodo> LISTA_EXPRESIONES() :
+{
+    Nodo exp;
+    LinkedList<Nodo> listaexps = new LinkedList<Nodo>();
+}
+{
+    exp=EXPRESION() { listaexps.add(exp); }
+    (
+        <coma>
+        (
+                exp=EXPRESION() { listaexps.add(exp); }
+            |   <r_default>     { listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo)); }
+        )
+    )*   { return listaexps; }
+}
+
+Nodo EXPRESION() :
+{
+    Nodo a, b, c;
+}
+{
+    a=CONDICION_OR()
+    (
+        <interrogacion> b=CONDICION_OR() <dospu> c=CONDICION_OR() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
+    )*
+    { return a; }
+}
+
+Nodo CONDICION_OR() :
+{
+    Nodo a, b;
+}
+{
+    a=CONDICION_AND()
+    (
+        <or> b=CONDICION_AND() { a = new NOr(token.beginLine, token.beginColumn, archivo, a, b); }
+    )*
+    { return a; }
+}
+
+Nodo CONDICION_AND() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_COMPARACION() (<and> b=EXP_COMPARACION() { a = new NAnd(token.beginLine, token.beginColumn, archivo, a, b); })*   { return a; }
+}
+
+Nodo EXP_COMPARACION() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_RELACIONAL()
+    (
+            <igualdad> b=EXP_RELACIONAL()       { a = new NIgualdad(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <diferente_que> b=EXP_RELACIONAL()  { a = new NDiferente(token.beginLine, token.beginColumn, archivo, a, b); }
+    )*
+    { return a; }
+}
+
+Nodo EXP_RELACIONAL() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_ADITIVA()
+    (
+            <mayor> b=EXP_ADITIVA()         { a = new NMayor(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <menor> b=EXP_ADITIVA()         { a = new NMenor(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <mayor_igual> b=EXP_ADITIVA()   { a = new NMayorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <menor_igual> b=EXP_ADITIVA()   { a = new NMenorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
+    )*
+    { return a; }
+}
+
+Nodo EXP_ADITIVA() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_MULTIPLICATIVA()
+    (
+            <mas> b=EXP_MULTIPLICATIVA()         { a = new NSuma(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <menos> b=EXP_MULTIPLICATIVA()       { a = new NResta(token.beginLine, token.beginColumn, archivo, a, b); }
+    )*
+    { return a; }
+}
+
+Nodo EXP_MULTIPLICATIVA() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_POTENCIA()
+    (
+            <por> b=EXP_POTENCIA()  { a = new NMultiplicacion(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <div> b=EXP_POTENCIA()  { a = new NDivision(token.beginLine, token.beginColumn, archivo, a, b); }
+        |   <mod> b=EXP_POTENCIA()  { a = new NModulo(token.beginLine, token.beginColumn, archivo, a, b); }
+    )*
+    { return a; }
+}
+
+Nodo EXP_POTENCIA() :
+{
+    Nodo a, b;
+}
+{
+    a=EXP_UNARIA()
+    (<pot> b=EXP_UNARIA()  { a = new NPotencia(token.beginLine, token.beginColumn, archivo, a, b); })*
+    { return a; }
+}
+
+Nodo EXP_UNARIA() :
+{
+    Nodo a;
+}
+{
+        <menos> a=EXP_UNARIA()  { return new NNegativo(token.beginLine, token.beginColumn, archivo, a); }
+    |   <not> a=EXP_UNARIA()    { return new NNot(token.beginLine, token.beginColumn, archivo, a); }
+    |   a=PRIMITIVO()           { return a; }
+}
+
+Nodo PRIMITIVO() :
+{
+    Nodo n;
+    Token t;
+    String cad;
+    Dimension d;
+    LinkedList<Dimension> ldim = new LinkedList<Dimension>();
+}
+{
+      t=<numero>                                                        { return new NPrim(token.beginLine, token.beginColumn, archivo, Integer.parseInt(t.image), ETipoDato.INT); }
+    | t=<decimal>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, Double.parseDouble(t.image), ETipoDato.DECIMAL); }
+    | t=<r_true>                                                        { return new NPrim(token.beginLine, token.beginColumn, archivo, true, ETipoDato.BOOLEAN); }
+    | t=<r_false>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, false, ETipoDato.BOOLEAN); }
+    | t=<r_nulo>                                                        { return new NNulo(token.beginLine, token.beginColumn, archivo); }
+    | LOOKAHEAD(2) n=SENTENCIA_LLAMADA()                                { return n; }
+    | t=<cadena>                                                        {
+                                                                            cad = t.image.substring(1,t.image.length()-1);
+                                                                            cad = cad.replace("\\","\\");
+                                                                            cad = cad.replace("\\n","\n");
+                                                                            cad = cad.replace("\\t","\t");
+                                                                            return new NPrim(token.beginLine, token.beginColumn, archivo, cad, ETipoDato.STRING);
+                                                                        }
+    | LOOKAHEAD(2) t=<identificador> (d=ACCESO() { ldim.add(d); })*     { return (ldim.size() > 0) ? new NAcceso(token.beginLine, token.beginColumn, archivo, t.image, ldim) : new NId(token.beginLine, token.beginColumn, archivo, t.image); }
+    | <par_a> n=EXPRESION() <par_c>                                     { return n; }
+}
