@@ -10,6 +10,7 @@ import com.graficos.LineChart;
 import com.main.Main;
 
 import javax.swing.*;
+import java.util.LinkedList;
 
 public class NPlot extends Nodo implements Instruccion {
 
@@ -35,13 +36,13 @@ public class NPlot extends Nodo implements Instruccion {
         Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
         /* Obtengo los valores de los parámetros */
-        Matriz rmatrix = validarDatos(((Instruccion)vatr).Ejecutar(ts));
+        LinkedList<Double> rvalues = validarDatos(((Instruccion)vatr).Ejecutar(ts));
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
         String rylab = validarTextos("ylab", ((Instruccion)ylab).Ejecutar(ts));
         String rtype = validarTextos("type", ((Instruccion)type).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
 
-        if (rxlab != null && rylab != null && rtype != null && rtitulo != null && rmatrix != null) {
+        if (rxlab != null && rylab != null && rtype != null && rtitulo != null && rvalues != null) {
 
             rtype = rtype.toUpperCase();
 
@@ -51,7 +52,7 @@ public class NPlot extends Nodo implements Instruccion {
                 rtype = "O";
             }
 
-            LineChart pc = new LineChart(rtitulo, rxlab, rylab, rtype, rmatrix);
+            LineChart pc = new LineChart(rtitulo, rxlab, rylab, rtype, rvalues);
             JPanel panel = pc.getLineChart();
             panel.setName("Graph[F:"+ getLinea() +",C:"+ getColumna() +"]");
             Main.getGUI().addGraph(panel);
@@ -69,26 +70,56 @@ public class NPlot extends Nodo implements Instruccion {
         return null;
     }
 
-    private Matriz validarDatos(Resultado rvals) {
+    private LinkedList<Double> validarDatos(Resultado rvals) {
 
         String msj;
 
-        if (rvals.getTipoDato() == ETipoDato.MATRIX) {
+        switch (rvals.getTipoDato()) {
 
-            Matriz mat = (Matriz)rvals.getValor();
+            case VECTOR: {
 
-            if (mat.getInnerType() != ETipoDato.INT && mat.getInnerType() != ETipoDato.DECIMAL) {
-                msj = "Error. El valor del parámetro 'V' no puede ser de tipo <MATRIX["+ mat.getInnerType() +"]>. Se espera una matriz de valores numéricos.";
+                Vector vec = (Vector)rvals.getValor();
+
+                if (vec.getInnerType() != ETipoDato.INT && vec.getInnerType() != ETipoDato.DECIMAL) {
+                    msj = "Error. El valor del parámetro 'V' no puede ser de tipo <VECTOR["+ vec.getInnerType() +"]>. Se espera un vector de valores numéricos.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
+                    return null;
+                }
+
+                LinkedList<Double> ret = new LinkedList<>();
+                for (Item it : vec.getElementos()) {
+                    ret.add(vec.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor());
+                }
+
+                return ret;
+
+            }
+
+            case MATRIX: {
+
+                Matriz mat = (Matriz)rvals.getValor();
+
+                if (mat.getInnerType() != ETipoDato.INT && mat.getInnerType() != ETipoDato.DECIMAL) {
+                    msj = "Error. El valor del parámetro 'V' no puede ser de tipo <MATRIX["+ mat.getInnerType() +"]>. Se espera una matriz de valores numéricos.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
+                    return null;
+                }
+
+                LinkedList<Double> ret = new LinkedList<>();
+                for (Item it : mat.getElementos()) {
+                    ret.add(mat.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor());
+                }
+
+                return ret;
+
+            }
+
+            default: {
+                msj = "Error. El valor del parámetro 'V' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                 return null;
             }
 
-            return mat;
-
-        } else {
-            msj = "Error. El valor del parámetro 'V' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
-            return null;
         }
 
     }

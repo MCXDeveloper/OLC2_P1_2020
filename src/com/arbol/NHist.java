@@ -66,53 +66,26 @@ public class NHist extends Nodo implements Instruccion {
 
         String msj;
 
-        switch (rvals.getTipoDato()) {
+        if (rvals.getTipoDato() == ETipoDato.VECTOR) {
+            Vector v = (Vector) rvals.getValor();
 
-            case VECTOR: {
-
-                Vector v = (Vector)rvals.getValor();
-
-                if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
-                    msj = "Error. El valor del parámetro 'v' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
-                    return null;
-                }
-
-                LinkedList<Double> ret = new LinkedList<>();
-                for (int i = 0; i < v.getVectorSize(); i++) {
-                    ret.add(v.getInnerType() == ETipoDato.INT ? (double)(int)v.getElementByPosition(i).getValor() : (double)v.getElementByPosition(i).getValor());
-                }
-
-                return ret;
-
-            }
-
-            case MATRIX: {
-
-                Matriz mat = (Matriz)rvals.getValor();
-
-                if (mat.getInnerType() != ETipoDato.INT && mat.getInnerType() != ETipoDato.DECIMAL) {
-                    msj = "Error. El valor del parámetro 'v' no puede ser de tipo <MATRIX["+ mat.getInnerType() +"]>. Se espera una matriz de valores numéricos.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
-                    return null;
-                }
-
-                LinkedList<Double> ret = new LinkedList<>();
-                for (int i = 0; i < mat.getMatrixSize(); i++) {
-                    ret.add(mat.getInnerType() == ETipoDato.INT ? (double)(int)mat.getElementByPosition(i).getValor() : (double)mat.getElementByPosition(i).getValor());
-                }
-
-                return ret;
-
-            }
-
-            default: {
-                msj = "Error. El valor del parámetro 'v' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
+            if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
+                msj = "Error. El valor del parámetro 'v' no puede ser de tipo <VECTOR[" + v.getInnerType() + "]>. Se espera un vector de valores numéricos.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
                 return null;
             }
 
+            LinkedList<Double> ret = new LinkedList<>();
+            for (int i = 0; i < v.getVectorSize(); i++) {
+                ret.add(v.getInnerType() == ETipoDato.INT ? (double) (int) v.getElementByPosition(i).getValor() : (double) v.getElementByPosition(i).getValor());
+            }
+
+            return ret;
         }
+
+        msj = "Error. El valor del parámetro 'v' no puede ser una expresión de tipo <" + rvals.getTipoDato() + ">.";
+        ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
+        return null;
 
     }
 

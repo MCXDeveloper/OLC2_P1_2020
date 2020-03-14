@@ -477,9 +477,10 @@ public class Ventana extends javax.swing.JFrame {
 
                     try {
                         Resultado r = raizGlobal.Ejecutar(tsGlobal);
-                        if (r.getTipoDato() == ETipoDato.ERROR) {
+                        /*if (r.getTipoDato() == ETipoDato.ERROR) {
                             verificarErrores();
-                        }
+                        }*/
+                        verificarErrores();
                     } catch (Exception ex) {
                         Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
                     }

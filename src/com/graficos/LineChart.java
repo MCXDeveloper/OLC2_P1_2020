@@ -15,14 +15,15 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 public class LineChart {
 
     private JFreeChart chart;
 
-    public LineChart(String titulo, String xlab, String ylab, String type, Matriz matrix) {
+    public LineChart(String titulo, String xlab, String ylab, String type, LinkedList<Double> valores) {
 
-        chart = ChartFactory.createXYLineChart(titulo, xlab, ylab, createDataset(matrix), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createXYLineChart(titulo, xlab, ylab, createDataset(valores), PlotOrientation.VERTICAL, true, true, false);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize( new java.awt.Dimension( 100 , 100 ) );
@@ -60,18 +61,16 @@ public class LineChart {
         return panelito;
     }
 
-    private XYDataset createDataset(Matriz matrix) {
+    private XYDataset createDataset(LinkedList<Double> valores) {
 
         XYSeries series;
         XYSeriesCollection dataset = new XYSeriesCollection();
 
-        for (int col = 1; col <= matrix.getColumnas(); col++) {
-            series = new XYSeries("Columna #" + col);
-            for (int row = 1; row <= matrix.getFilas(); row++) {
-                series.add(row, (matrix.getInnerType() == ETipoDato.INT ? ((int)matrix.getElementByCoordinates(row, col).getValor()) : ((double)matrix.getElementByCoordinates(row, col).getValor())));
-            }
-            dataset.addSeries(series);
+        series = new XYSeries("Linea");
+        for (int i = 0; i < valores.size(); i++) {
+            series.add(i+1, valores.get(i));
         }
+        dataset.addSeries(series);
 
         return dataset;
 
