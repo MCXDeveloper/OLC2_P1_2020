@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Lista {
+public class Lista implements Estructura {
 
     private LinkedList<Item> elementos;
 
@@ -138,16 +138,22 @@ public class Lista {
         return elementos;
     }
 
-    public Lista getClone() {
+    @Override
+    public String toString() {
+        return "{ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" }";
+    }
+
+    @Override
+    public Object getClone() {
         LinkedList<Item> copia = new LinkedList<>();
         for (Item it : elementos) {
             switch (it.getTipo()) {
                 case VECTOR: {
-                    Vector v = ((Vector)it.getValor()).getClone();
+                    Vector v = (Vector)((Vector)it.getValor()).getClone();
                     copia.add(new Item(ETipoDato.VECTOR, v));
                 }   break;
                 case LIST: {
-                    Lista l = ((Lista)it.getValor()).getClone();
+                    Lista l = (Lista)((Lista)it.getValor()).getClone();
                     copia.add(new Item(ETipoDato.LIST, l));
                 }   break;
                 default: {
@@ -156,10 +162,5 @@ public class Lista {
             }
         }
         return new Lista(copia);
-    }
-
-    @Override
-    public String toString() {
-        return "{ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" }";
     }
 }

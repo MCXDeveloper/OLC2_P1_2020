@@ -42,7 +42,7 @@ public class NFunc extends Nodo implements Instruccion {
     public Resultado Ejecutar(TablaSimbolos ts) {
 
         Resultado r;
-        Simbolo ret = ts.getSimbolo("return", false);
+        Simbolo ret = ts.getSimbolo("return");
 
         for (Nodo nd : lstmts) {
             try {

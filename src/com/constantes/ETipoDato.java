@@ -4,22 +4,24 @@ import com.abstracto.Fail;
 import com.arbol.NNulo;
 
 public enum ETipoDato {
-    INT(0, "INTEGER"),
-    ANY(null, "ANY"),
-    LIST(null, "LIST"),
-    ERROR(new Fail(), "ERROR"),
-    ARRAY(null, "ARRAY"),
-    VECTOR(null, "VECTOR"),
-    MATRIX(null, "MATRIX"),
-    DECIMAL(0.0, "NUMERIC"),
-    BOOLEAN(false, "BOOLEAN"),
-    NT(new NNulo(0,0,"[NO_FILE]"), "NULL"),
-    STRING(new NNulo(0,0,"[NO_FILE]"), "STRING");
+    INT(0, "INTEGER", false),
+    ANY(null, "ANY", false),
+    LIST(null, "LIST", true),
+    ERROR(new Fail(), "ERROR", false),
+    ARRAY(null, "ARRAY", true),
+    VECTOR(null, "VECTOR", true),
+    MATRIX(null, "MATRIX", true),
+    DECIMAL(0.0, "NUMERIC", false),
+    BOOLEAN(false, "BOOLEAN", false),
+    NT(new NNulo(0,0,"[NO_FILE]"), "NULL", false),
+    STRING(new NNulo(0,0,"[NO_FILE]"), "STRING", false);
 
     private final Object defecto;
     private final String typeOf;
-    ETipoDato(final Object defecto, final String typeOf) { this.defecto = defecto;  this.typeOf = typeOf; }
+    private final boolean isEDD;
+    ETipoDato(final Object defecto, final String typeOf, final boolean isEDD) { this.defecto = defecto;  this.typeOf = typeOf; this.isEDD = isEDD; }
     public Object getDefecto() { return this.defecto; }
     public String getTypeOf() { return this.typeOf; }
+    public boolean isEDD() { return this.isEDD; }
 
 }

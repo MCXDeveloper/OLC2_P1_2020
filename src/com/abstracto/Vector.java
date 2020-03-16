@@ -7,7 +7,7 @@ import com.arbol.NNulo;
 import com.constantes.ETipoDato;
 import java.util.stream.Collectors;
 
-public class Vector {
+public class Vector implements Estructura {
 
     private LinkedList<Item> elementos;
 
@@ -176,14 +176,6 @@ public class Vector {
         }
     }
 
-    public Vector getClone() {
-        LinkedList<Item> copia = new LinkedList<>();
-        for (Item it : elementos) {
-            copia.add(new Item(it.getTipo(), it.getValor()));
-        }
-        return new Vector(copia);
-    }
-
     @Override
     public String toString() {
         return getVectorSize() > 1 ? "[ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ]" : elementos.get(0).getStringItem();
@@ -191,5 +183,14 @@ public class Vector {
 
     public LinkedList<Item> getElementos() {
         return elementos;
+    }
+
+    @Override
+    public Object getClone() {
+        LinkedList<Item> copia = new LinkedList<>();
+        for (Item it : elementos) {
+            copia.add(new Item(it.getTipo(), it.getValor()));
+        }
+        return new Vector(copia);
     }
 }

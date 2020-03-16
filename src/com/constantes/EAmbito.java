@@ -8,5 +8,6 @@ public enum EAmbito {
     CICLO,
     GLOBAL,
     FUNCION,
-    DEFAULT
+    DEFAULT,
+    CICLO_FOR
 }

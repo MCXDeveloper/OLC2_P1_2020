@@ -24,11 +24,15 @@ public class NId extends Nodo implements Instruccion {
         Object rval = new Fail();
         ETipoDato tdr = ETipoDato.ERROR;
 
-        Simbolo s = ts.getSimbolo(id, false);
+        Simbolo s = ts.getSimbolo(id);
 
         if (s != null) {
             tdr = s.getTipo();
-            rval = s.getValor();
+            if (tdr.isEDD()) {
+                rval = ts.enCicloFor() ? s.getValor() : ((Estructura)s.getValor()).getClone();
+            } else {
+                rval = s.getValor();
+            }
         } else {
             msj = "Error. No se encontró la variable <"+ id +">";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ID]", msj, getLinea(), getColumna());

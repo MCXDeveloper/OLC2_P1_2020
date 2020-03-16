@@ -46,8 +46,8 @@ public class TablaSimbolos {
         return actual.addSimbolo(sim);
     }
 
-    public Simbolo getSimbolo(String id, boolean wantRef) {
-        return actual.getSimbolo(id, wantRef);
+    public Simbolo getSimbolo(String id) {
+        return actual.getSimbolo(id);
     }
 
     public void nuevaLLamada(Ambito amb) {
@@ -62,6 +62,10 @@ public class TablaSimbolos {
 
     public boolean enCiclo(){
         return actual.enCiclo();
+    }
+
+    public boolean enCicloFor() {
+        return actual.enCicloFor();
     }
 
     public void addAmbito(EAmbito tipo){

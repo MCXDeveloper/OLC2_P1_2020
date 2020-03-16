@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class Matriz {
+public class Matriz implements Estructura {
 
     int filas;
     int columnas;
@@ -211,17 +211,18 @@ public class Matriz {
 
     }
 
-    public Matriz getClone() {
+    @Override
+    public String toString() {
+        String[][] data = getStringArrayElements().toArray(new String[0][]);
+        return ASCIITable.getInstance().getTable(getColsHeader(), data);
+    }
+
+    @Override
+    public Object getClone() {
         LinkedList<Item> copia = new LinkedList<>();
         for (Item it : elementos) {
             copia.add(new Item(it.getTipo(), it.getValor()));
         }
         return new Matriz(filas, columnas, copia);
-    }
-
-    @Override
-    public String toString() {
-        String[][] data = getStringArrayElements().toArray(new String[0][]);
-        return ASCIITable.getInstance().getTable(getColsHeader(), data);
     }
 }

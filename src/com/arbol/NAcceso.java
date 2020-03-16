@@ -28,7 +28,7 @@ public class NAcceso extends Nodo implements Instruccion {
         String msj;
         Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
-        Simbolo s = ts.getSimbolo(id, false);
+        Simbolo s = ts.getSimbolo(id);
 
         if (s == null) {
             msj = "Error. No se encontro la variable <"+ id +">.";

@@ -31,7 +31,7 @@ public class NAsiEdd extends Nodo implements Instruccion {
         ETipoDato tdr = ETipoDato.ERROR;
 
         /* Verifico que el identificador exista en la TS. */
-        Simbolo s = ts.getSimbolo(id, true);
+        Simbolo s = ts.getSimbolo(id);
 
         if (s == null) {
             msj = "Error. No se encontro la variable <"+ id +">.";

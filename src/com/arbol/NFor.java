@@ -32,9 +32,13 @@ public class NFor extends Nodo implements Instruccion {
         ETipoDato tdr = ETipoDato.ERROR;
 
         Resultado rst = null;
-        Resultado rv = ((Instruccion)valor).Ejecutar(ts);
 
-        Simbolo s = ts.getSimbolo(id, true);
+        /* Creo un ámbito para obtener el valor de la estructura por referencia y no por valor */
+        ts.addAmbito(EAmbito.CICLO_FOR);
+        Resultado rv = ((Instruccion)valor).Ejecutar(ts);
+        ts.destruirAmbito();
+
+        Simbolo s = ts.getSimbolo(id);
 
         switch (rv.getTipoDato()) {
 
@@ -43,7 +47,7 @@ public class NFor extends Nodo implements Instruccion {
             case DECIMAL:
             case BOOLEAN: {
 
-                ts.addAmbito(EAmbito.CICLO);
+                ts.addAmbito(EAmbito.CICLO_FOR);
 
                 if (s != null) {
                     s.setTipo(rv.getTipoDato());
@@ -100,9 +104,9 @@ public class NFor extends Nodo implements Instruccion {
 
                     it = listaItems.get(i);
 
-                    ts.addAmbito(EAmbito.CICLO);
+                    ts.addAmbito(EAmbito.CICLO_FOR);
 
-                    s = ts.getSimbolo(id, true);
+                    s = ts.getSimbolo(id);
 
                     if (s != null) {
                         s.setTipo(it.getTipo());

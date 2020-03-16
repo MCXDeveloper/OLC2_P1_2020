@@ -25,7 +25,7 @@ public class NReturn extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
-        Simbolo s = ts.getSimbolo("return", false);
+        Simbolo s = ts.getSimbolo("return");
 
         if (valor != null) {
             Resultado r = ((Instruccion)valor).Ejecutar(ts);

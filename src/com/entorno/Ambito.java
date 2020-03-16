@@ -28,7 +28,7 @@ public class Ambito {
         this.superior = superior;
     }
 
-    public Simbolo getSimbolo(String id, boolean wantRef) {
+    public Simbolo getSimbolo(String id) {
 
         Simbolo s = null;
         Ambito a = this;
@@ -39,23 +39,6 @@ public class Ambito {
                 break;
 
             a = a.superior;
-        }
-
-        if (s != null && !wantRef) {
-            switch (s.getTipo()) {
-                case VECTOR: {
-                    s = new Simbolo(ETipoDato.VECTOR, ((Vector)s.getValor()).getClone());
-                }   break;
-                case LIST: {
-                    s = new Simbolo(ETipoDato.LIST, ((Lista)s.getValor()).getClone());
-                }   break;
-                case MATRIX: {
-                    s = new Simbolo(ETipoDato.MATRIX, ((Matriz)s.getValor()).getClone());
-                }   break;
-                case ARRAY: {
-                    s = new Simbolo(ETipoDato.ARRAY, ((Arreglo)s.getValor()).getClone());
-                }   break;
-            }
         }
 
         return s;
@@ -87,7 +70,18 @@ public class Ambito {
     public boolean enCiclo(){
         Ambito a = this;
         while(a != null){
-            if(a.tipo == EAmbito.CICLO || a.tipo == EAmbito.CASE || a.tipo == EAmbito.DEFAULT) {
+            if(a.tipo == EAmbito.CICLO || a.tipo == EAmbito.CICLO_FOR || a.tipo == EAmbito.CASE || a.tipo == EAmbito.DEFAULT) {
+                return true;
+            }
+            a = a.superior;
+        }
+        return false;
+    }
+
+    public boolean enCicloFor() {
+        Ambito a = this;
+        while(a != null){
+            if(a.tipo == EAmbito.CICLO_FOR) {
                 return true;
             }
             a = a.superior;
