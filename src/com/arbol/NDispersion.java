@@ -39,7 +39,7 @@ public class NDispersion extends Nodo implements Instruccion {
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
         String rylab = validarTextos("ylab", ((Instruccion)ylab).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
-        LinkedList<Double> rylim = validarLimites("ylim", ((Instruccion)ylim).Ejecutar(ts));
+        LinkedList<Double> rylim = validarLimites(((Instruccion)ylim).Ejecutar(ts));
 
         if (rmatrix != null && rxlab != null && rylab != null && rtitulo != null && rylim != null) {
 
@@ -100,11 +100,6 @@ public class NDispersion extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
                     return null;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. El valor del parámetro '"+ param +"' no puede ser un <VECTOR[STRING]> con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
-                    return null;
-                }
                 return (String)v.getElementByPosition(0).getValor();
             }
             default: {
@@ -116,7 +111,7 @@ public class NDispersion extends Nodo implements Instruccion {
 
     }
 
-    private LinkedList<Double> validarLimites(String param, Resultado rlimit) {
+    private LinkedList<Double> validarLimites(Resultado rlimit) {
 
         String msj;
 
@@ -125,19 +120,21 @@ public class NDispersion extends Nodo implements Instruccion {
             Vector v = (Vector)rlimit.getValor();
 
             if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
-                msj = "Error. El valor del parámetro '"+ param +"' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
+                msj = "Error. El valor del parámetro 'ylim' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
                 return null;
             }
 
-            if (v.getVectorSize() != 2) {
-                msj = "Error. El valor del parámetro '"+ param +"' no puede ser un vector con más de 2 elementos.";
+            if (v.getVectorSize() < 2) {
+                msj = "Error. El valor del parámetro 'ylim' no puede ser un vector con menos de 2 elementos.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
                 return null;
             }
 
+            Item it;
             LinkedList<Double> ret = new LinkedList<>();
-            for (Item it : v.getElementos()) {
+            for (int i = 0; i < 2; i++) {
+                it = v.getElementByPosition(i);
                 double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
                 ret.add(d);
             }
@@ -151,7 +148,7 @@ public class NDispersion extends Nodo implements Instruccion {
 
             /* Minimo > Máximo */
             if (ret.get(0) > ret.get(1)) {
-                msj = "Error. El valor del parámetro '"+ param +"' presenta como mínimo un valor más grande que el valor máximo.";
+                msj = "Error. El valor del parámetro '"+ "ylim" +"' presenta como mínimo un valor más grande que el valor máximo.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
                 ret.set(0, Double.NEGATIVE_INFINITY);
                 flag = true;
@@ -159,7 +156,7 @@ public class NDispersion extends Nodo implements Instruccion {
 
             /* Máximo < Mínimo */
             if ((ret.get(1) < ret.get(0)) && !flag) {
-                msj = "Error. El valor del parámetro '"+ param +"' presenta como máximo un valor más pequeño que el valor mínimo.";
+                msj = "Error. El valor del parámetro '"+ "ylim" +"' presenta como máximo un valor más pequeño que el valor mínimo.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
                 ret.set(1, Double.POSITIVE_INFINITY);
             }
@@ -167,40 +164,9 @@ public class NDispersion extends Nodo implements Instruccion {
             return ret;
 
         } else {
-            msj = "Error. El valor del parámetro '"+ param +"' no puede ser una expresión de tipo <"+ rlimit.getTipoDato() +">.";
+            msj = "Error. El valor del parámetro '"+ "ylim" +"' no puede ser una expresión de tipo <"+ rlimit.getTipoDato() +">.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
             return null;
-        }
-
-    }
-
-    private Boolean validarOrdenamiento(Resultado rbyrow) {
-
-        String msj;
-
-        switch (rbyrow.getTipoDato()) {
-            case BOOLEAN: {
-                return (boolean)rbyrow.getValor();
-            }
-            case VECTOR: {
-                Vector v = (Vector)rbyrow.getValor();
-                if (v.getInnerType() != ETipoDato.STRING) {
-                    msj = "Error. El valor del parámetro 'byrow' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un BOOLEAN.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
-                    return null;
-                }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. El valor del parámetro 'byrow' no puede ser un <VECTOR[STRING]> con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
-                    return null;
-                }
-                return (boolean)v.getElementByPosition(0).getValor();
-            }
-            default: {
-                msj = "Error. El valor del parámetro 'byrow' no puede ser una expresión de tipo <"+ rbyrow.getTipoDato() +">.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
-                return null;
-            }
         }
 
     }

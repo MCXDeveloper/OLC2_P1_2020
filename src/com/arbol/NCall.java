@@ -282,7 +282,7 @@ public class NCall extends Nodo implements Instruccion {
         Resultado rparam = ((Instruccion)lastParam).Ejecutar(ts);
         if (rparam.getTipoDato() == ETipoDato.VECTOR) {
             Vector v = (Vector)rparam.getValor();
-            return ((v.getInnerType() == ETipoDato.INT || v.getInnerType() == ETipoDato.DECIMAL) && v.getVectorSize() > 1);
+            return ((v.getInnerType() == ETipoDato.INT || v.getInnerType() == ETipoDato.DECIMAL) && v.getVectorSize() >= 2);
         }
         return false;
     }

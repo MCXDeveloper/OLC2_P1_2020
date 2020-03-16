@@ -139,11 +139,6 @@ public class NPlot extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
                     return null;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. El valor del parámetro '"+ param +"' no puede ser un <VECTOR[STRING]> con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
-                    return null;
-                }
                 return (String)v.getElementByPosition(0).getValor();
             }
             default: {

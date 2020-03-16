@@ -52,7 +52,7 @@ public class LineChart {
 
     public JPanel getLineChart() {
         JTabbedPane jtp = Main.getGUI().getGraphContainer();
-        BufferedImage graph = chart.createBufferedImage(355, 330);
+        BufferedImage graph = chart.createBufferedImage(455, 360);
         JLabel imagen = new JLabel();
         imagen.setSize(jtp.getSize());
         imagen.setIcon(new ImageIcon(graph));
