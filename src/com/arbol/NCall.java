@@ -108,11 +108,11 @@ public class NCall extends Nodo implements Instruccion {
             }   break;
 
             case "HIST": {
-                if (params.size() != 5) {
+                if (params.size() != 3) {
                     msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
                 } else {
-                    NHist call = new NHist(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                    NHist call = new NHist(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2));
                     return call.Ejecutar(ts);
                 }
             }   break;

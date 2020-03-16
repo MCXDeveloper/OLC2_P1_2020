@@ -5,7 +5,11 @@ import com.constantes.ETipoNodo;
 import com.main.Main;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.IntervalXYDataset;
@@ -19,22 +23,31 @@ public class HistogramChart extends Nodo {
 
     private JFreeChart chart;
 
-    public HistogramChart(int linea, int columna, String archivo, String titulo, String xlab, LinkedList<Double> xlim, LinkedList<Double> ylim, LinkedList<Double> valores) {
-
+    public HistogramChart(int linea, int columna, String archivo, String titulo, String xlab, LinkedList<Double> valores) {
         super(linea, columna, archivo, ETipoNodo.STMT_HIST);
-
-        chart = ChartFactory.createHistogram(titulo, xlab, "", createDataset(titulo, valores, xlim), PlotOrientation.VERTICAL, true, true, false);
-        chart.setBackgroundPaint(Color.white);
-
+        ChartFactory.setChartTheme(StandardChartTheme.createDarknessTheme());
+        chart = ChartFactory.createHistogram(titulo, xlab, "", createDataset(titulo, valores), PlotOrientation.VERTICAL, true, true, false);
+        chart.setBackgroundPaint(Color.black);
+        XYPlot plot = chart.getXYPlot();
+        plot.getDomainAxis().setLowerMargin(0.0);
+        plot.getDomainAxis().setUpperMargin(0.0);
+        ((XYBarRenderer) plot.getRenderer()).setBarPainter(new StandardXYBarPainter());
     }
 
-    private IntervalXYDataset createDataset(String titulo, LinkedList<Double> valores, LinkedList<Double> xlim) {
+    private IntervalXYDataset createDataset(String titulo, LinkedList<Double> valores) {
 
-        double[] arr = valores.stream().filter(x -> (x >= xlim.get(0) && x <= xlim.get(1))).mapToDouble(Double::doubleValue).toArray();
+        double[] arr = valores.stream().mapToDouble(Double::doubleValue).toArray();
+        double min = valores.stream().min(Double::compare).get();
+        double max = valores.stream().max(Double::compare).get();
+        int bins = (int)Math.round((max - min) / 5);
 
         HistogramDataset dataset = new HistogramDataset();
         dataset.setType(HistogramType.FREQUENCY);
-        dataset.addSeries(titulo, arr, arr.length);
+        if (min == max) {
+            dataset.addSeries(titulo, arr, (bins == 0 ? 1 : bins), 0, max);
+        } else {
+            dataset.addSeries(titulo, arr, (bins == 0 ? 1 : bins), min, max);
+        }
 
         return dataset;
 
@@ -42,7 +55,7 @@ public class HistogramChart extends Nodo {
 
     public JPanel getHistogramChart() {
         JTabbedPane jtp = Main.getGUI().getGraphContainer();
-        BufferedImage graph = chart.createBufferedImage(355, 330);
+        BufferedImage graph = chart.createBufferedImage(455, 360);
         JLabel imagen = new JLabel();
         imagen.setSize(jtp.getSize());
         imagen.setIcon(new ImageIcon(graph));
