@@ -1,5 +1,6 @@
 package com.graficos;
 
+import com.abstracto.Item;
 import com.abstracto.Matriz;
 import com.abstracto.Nodo;
 import com.constantes.ETipoDato;
@@ -24,11 +25,11 @@ public class DispersionChart extends Nodo {
 
     private JFreeChart chart;
 
-    public DispersionChart(int linea, int columna, String archivo, String titulo, String xlab, String ylab, LinkedList<Double> xlim, LinkedList<Double> ylim, Matriz matrix, boolean byrow) {
+    public DispersionChart(int linea, int columna, String archivo, String titulo, String xlab, String ylab, LinkedList<Double> ylim, Matriz matrix) {
 
         super(linea, columna, archivo, ETipoNodo.STMT_DISPERSION);
 
-        chart = ChartFactory.createScatterPlot(titulo, xlab, ylab, createDataset(matrix, xlim, ylim, byrow), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createScatterPlot(titulo, xlab, ylab, createDataset(matrix, ylim), PlotOrientation.VERTICAL, true, true, false);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize( new java.awt.Dimension( 100 , 100 ) );
@@ -41,47 +42,28 @@ public class DispersionChart extends Nodo {
 
     }
 
-    private XYDataset createDataset(Matriz matrix, LinkedList<Double> xlim, LinkedList<Double> ylim, boolean byrow) {
+    private XYDataset createDataset(Matriz matrix, LinkedList<Double> ylim) {
 
-        XYSeries series;
+        ETipoDato matrixType = matrix.getInnerType();
+        XYSeries series = new XYSeries("Valores");
         XYSeriesCollection dataset = new XYSeriesCollection();
 
         String msj;
         double val;
-        String tag = byrow ? "Fila" : "Columna";
-        int klimit = byrow ? matrix.getFilas() : matrix.getColumnas();
-        int vlimit = byrow ? matrix.getColumnas() : matrix.getFilas();
+        int cnt = 1;
 
-        for (int k = 1; k <= klimit; k++) {
-
-            series = new XYSeries(tag + " #" + k);
-
-            for (int v = 1; v <= vlimit; v++) {
-
-                if (matrix.getInnerType() == ETipoDato.INT) {
-                    val = byrow ? (double)(int)matrix.getElementByCoordinates(k, v).getValor() : (double)(int)matrix.getElementByCoordinates(v, k).getValor();
-                } else {
-                    val = byrow ? (double)matrix.getElementByCoordinates(k, v).getValor() : (double)matrix.getElementByCoordinates(v, k).getValor();
-                }
-
-                if (v >= xlim.get(0) && v <= xlim.get(1)) {
-                    if (val >= ylim.get(0) && val <= ylim.get(1)) {
-                        series.add(v, val);
-                    } else {
-                        msj = "Error. El valor <"+ val +"> no es permitido en el rango definido por del parámetro 'ylim'.";
-                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION_CHART]", msj, getLinea(), getColumna());
-                    }
-                } else {
-                    msj = "Error. El valor <"+ val +"> no es permitido en el rango definido por del parámetro 'xlim'.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION_CHART]", msj, getLinea(), getColumna());
-                }
-
+        for (Item it : matrix.getElementos()) {
+            val = (matrixType == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
+            if (val >= ylim.get(0) && val <= ylim.get(1)) {
+                series.add(cnt, val);
+                cnt++;
+            } else {
+                msj = "Error. El valor <"+ val +"> no es permitido en el rango definido por del parámetro 'ylim'.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION_CHART]", msj, getLinea(), getColumna());
             }
-
-            dataset.addSeries(series);
-
         }
 
+        dataset.addSeries(series);
         return dataset;
 
     }

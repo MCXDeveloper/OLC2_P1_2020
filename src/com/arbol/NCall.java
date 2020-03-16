@@ -93,15 +93,16 @@ public class NCall extends Nodo implements Instruccion {
             }   break;
 
             case "PLOT": {
-                if (params.size() != 5 && params.size() != 7) {
+                if (params.size() != 5) {
                     msj = "Error.  La cantidad de parámetros definida en la función <" + id + "> no concuerdan con las establecidas en la declaración.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
                 } else {
-                    if (params.size() == 5) {
-                        NPlot call = new NPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
+                    Nodo lastParam = params.get(4);
+                    if(validarGraficaEsDispersion(ts, lastParam)) {
+                        NDispersion call = new NDispersion(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
                         return call.Ejecutar(ts);
                     } else {
-                        NDispersion call = new NDispersion(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4), params.get(5), params.get(6));
+                        NPlot call = new NPlot(getLinea(), getColumna(), getArchivo(), params.get(0), params.get(1), params.get(2), params.get(3), params.get(4));
                         return call.Ejecutar(ts);
                     }
                 }
@@ -275,6 +276,15 @@ public class NCall extends Nodo implements Instruccion {
 
         return new Resultado(rtd, EFlujo.NORMAL, rvalor);
 
+    }
+
+    private boolean validarGraficaEsDispersion(TablaSimbolos ts, Nodo lastParam) {
+        Resultado rparam = ((Instruccion)lastParam).Ejecutar(ts);
+        if (rparam.getTipoDato() == ETipoDato.VECTOR) {
+            Vector v = (Vector)rparam.getValor();
+            return ((v.getInnerType() == ETipoDato.INT || v.getInnerType() == ETipoDato.DECIMAL) && v.getVectorSize() > 1);
+        }
+        return false;
     }
 
     @Override

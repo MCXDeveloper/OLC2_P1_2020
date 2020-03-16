@@ -16,19 +16,15 @@ public class NDispersion extends Nodo implements Instruccion {
 
     private Nodo xlab;
     private Nodo ylab;
-    private Nodo xlim;
     private Nodo ylim;
-    private Nodo byrow;
     private Nodo titulo;
     private Nodo valores;
 
-    public NDispersion(int linea, int columna, String archivo, Nodo valores, Nodo titulo, Nodo xlab, Nodo ylab, Nodo xlim, Nodo ylim, Nodo byrow) {
+    public NDispersion(int linea, int columna, String archivo, Nodo valores, Nodo xlab, Nodo ylab, Nodo titulo, Nodo ylim) {
         super(linea, columna, archivo, ETipoNodo.STMT_DISPERSION);
         this.xlab = xlab;
         this.ylab = ylab;
-        this.xlim = xlim;
         this.ylim = ylim;
-        this.byrow = byrow;
         this.titulo = titulo;
         this.valores = valores;
     }
@@ -40,16 +36,14 @@ public class NDispersion extends Nodo implements Instruccion {
 
         /* Obtengo los valores de los parámetros */
         Matriz rmatrix = validarDatos(((Instruccion)valores).Ejecutar(ts));
-        Boolean rbyrow = validarOrdenamiento(((Instruccion)byrow).Ejecutar(ts));
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
         String rylab = validarTextos("ylab", ((Instruccion)ylab).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
-        LinkedList<Double> rxlim = validarLimites("xlim", ((Instruccion)xlim).Ejecutar(ts));
         LinkedList<Double> rylim = validarLimites("ylim", ((Instruccion)ylim).Ejecutar(ts));
 
-        if (rmatrix != null && rbyrow != null && rxlab != null && rylab != null && rtitulo != null && rxlim != null && rylim != null) {
+        if (rmatrix != null && rxlab != null && rylab != null && rtitulo != null && rylim != null) {
 
-            DispersionChart pc = new DispersionChart(getLinea(), getColumna(), getArchivo(), rtitulo, rxlab, rylab, rxlim, rylim, rmatrix, rbyrow);
+            DispersionChart pc = new DispersionChart(getLinea(), getColumna(), getArchivo(), rtitulo, rxlab, rylab, rylim, rmatrix);
             JPanel panel = pc.getDispersionChart();
             panel.setName("Graph[F:"+ getLinea() +",C:"+ getColumna() +"]");
             Main.getGUI().addGraph(panel);
