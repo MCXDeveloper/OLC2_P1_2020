@@ -25,11 +25,11 @@ public class DispersionChart extends Nodo {
 
     private JFreeChart chart;
 
-    public DispersionChart(int linea, int columna, String archivo, String titulo, String xlab, String ylab, LinkedList<Double> ylim, Matriz matrix) {
+    public DispersionChart(int linea, int columna, String archivo, String titulo, String xlab, String ylab, LinkedList<Double> ylim, LinkedList<Double> valores) {
 
         super(linea, columna, archivo, ETipoNodo.STMT_DISPERSION);
 
-        chart = ChartFactory.createScatterPlot(titulo, xlab, ylab, createDataset(matrix, ylim), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createScatterPlot(titulo, xlab, ylab, createDataset(valores, ylim), PlotOrientation.VERTICAL, true, true, false);
 
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize( new java.awt.Dimension( 100 , 100 ) );
@@ -42,21 +42,17 @@ public class DispersionChart extends Nodo {
 
     }
 
-    private XYDataset createDataset(Matriz matrix, LinkedList<Double> ylim) {
+    private XYDataset createDataset(LinkedList<Double> valores, LinkedList<Double> ylim) {
 
-        ETipoDato matrixType = matrix.getInnerType();
         XYSeries series = new XYSeries("Valores");
         XYSeriesCollection dataset = new XYSeriesCollection();
 
         String msj;
         double val;
-        int cnt = 1;
-
-        for (Item it : matrix.getElementos()) {
-            val = (matrixType == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
+        for (int i = 0; i < valores.size(); i++) {
+            val = valores.get(i);
             if (val >= ylim.get(0) && val <= ylim.get(1)) {
-                series.add(cnt, val);
-                cnt++;
+                series.add(i, val);
             } else {
                 msj = "Error. El valor <"+ val +"> no es permitido en el rango definido por del parámetro 'ylim'.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION_CHART]", msj, getLinea(), getColumna());

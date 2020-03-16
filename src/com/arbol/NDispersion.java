@@ -35,19 +35,17 @@ public class NDispersion extends Nodo implements Instruccion {
         Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
         /* Obtengo los valores de los parámetros */
-        Matriz rmatrix = validarDatos(((Instruccion)valores).Ejecutar(ts));
+        LinkedList<Double> rylim = validarLimites(((Instruccion)ylim).Ejecutar(ts));
         String rxlab = validarTextos("xlab", ((Instruccion)xlab).Ejecutar(ts));
         String rylab = validarTextos("ylab", ((Instruccion)ylab).Ejecutar(ts));
+        LinkedList<Double> rvalores = validarDatos(((Instruccion)valores).Ejecutar(ts));
         String rtitulo = validarTextos("main", ((Instruccion)titulo).Ejecutar(ts));
-        LinkedList<Double> rylim = validarLimites(((Instruccion)ylim).Ejecutar(ts));
 
-        if (rmatrix != null && rxlab != null && rylab != null && rtitulo != null && rylim != null) {
-
-            DispersionChart pc = new DispersionChart(getLinea(), getColumna(), getArchivo(), rtitulo, rxlab, rylab, rylim, rmatrix);
+        if (rvalores != null && rxlab != null && rylab != null && rtitulo != null && rylim != null) {
+            DispersionChart pc = new DispersionChart(getLinea(), getColumna(), getArchivo(), rtitulo, rxlab, rylab, rylim, rvalores);
             JPanel panel = pc.getDispersionChart();
             panel.setName("Graph[F:"+ getLinea() +",C:"+ getColumna() +"]");
             Main.getGUI().addGraph(panel);
-
         } else {
             return error;
         }
@@ -61,7 +59,7 @@ public class NDispersion extends Nodo implements Instruccion {
         return null;
     }
 
-    private Matriz validarDatos(Resultado rvals) {
+    private LinkedList<Double> validarDatos(Resultado rvals) {
 
         String msj;
 
@@ -75,7 +73,18 @@ public class NDispersion extends Nodo implements Instruccion {
                 return null;
             }
 
-            return mat;
+            LinkedList<Double> ret = new LinkedList<>();
+            for (Item it : mat.getElementos()) {
+                double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
+                if (d < 0) {
+                    msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_DISPERSION]", msj, getLinea(), getColumna());
+                    return null;
+                }
+                ret.add(d);
+            }
+
+            return ret;
 
         } else {
             msj = "Error. El valor del parámetro 'mat' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";

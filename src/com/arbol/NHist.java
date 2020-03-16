@@ -61,6 +61,7 @@ public class NHist extends Nodo implements Instruccion {
         String msj;
 
         if (rvals.getTipoDato() == ETipoDato.VECTOR) {
+
             Vector v = (Vector) rvals.getValor();
 
             if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
@@ -69,12 +70,20 @@ public class NHist extends Nodo implements Instruccion {
                 return null;
             }
 
+            double d;
             LinkedList<Double> ret = new LinkedList<>();
             for (int i = 0; i < v.getVectorSize(); i++) {
-                ret.add(v.getInnerType() == ETipoDato.INT ? (double) (int) v.getElementByPosition(i).getValor() : (double) v.getElementByPosition(i).getValor());
+                d = v.getInnerType() == ETipoDato.INT ? (double) (int) v.getElementByPosition(i).getValor() : (double) v.getElementByPosition(i).getValor();
+                if (d < 0) {
+                    msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
+                    return null;
+                }
+                ret.add(d);
             }
 
             return ret;
+
         }
 
         msj = "Error. El valor del parámetro 'v' no puede ser una expresión de tipo <" + rvals.getTipoDato() + ">.";

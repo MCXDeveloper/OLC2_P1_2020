@@ -86,9 +86,16 @@ public class NPlot extends Nodo implements Instruccion {
                     return null;
                 }
 
+                double d;
                 LinkedList<Double> ret = new LinkedList<>();
                 for (Item it : vec.getElementos()) {
-                    ret.add(vec.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor());
+                    d = vec.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor();
+                    if (d < 0) {
+                        msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
+                        return null;
+                    }
+                    ret.add(d);
                 }
 
                 return ret;
@@ -105,9 +112,16 @@ public class NPlot extends Nodo implements Instruccion {
                     return null;
                 }
 
+                double d;
                 LinkedList<Double> ret = new LinkedList<>();
                 for (Item it : mat.getElementos()) {
-                    ret.add(mat.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor());
+                    d = mat.getInnerType() == ETipoDato.INT ? (double)(int)it.getValor() : (double)it.getValor();
+                    if (d < 0) {
+                        msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PLOT]", msj, getLinea(), getColumna());
+                        return null;
+                    }
+                    ret.add(d);
                 }
 
                 return ret;

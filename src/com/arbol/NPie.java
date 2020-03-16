@@ -138,6 +138,11 @@ public class NPie extends Nodo implements Instruccion {
             LinkedList<Double> ret = new LinkedList<>();
             for (Item it : v.getElementos()) {
                 double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
+                if (d < 0) {
+                    msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_PIE]", msj, getLinea(), getColumna());
+                    return null;
+                }
                 ret.add(d);
             }
 
