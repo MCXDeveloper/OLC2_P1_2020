@@ -37,11 +37,6 @@ public class NTrunk extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_TRUNK]", msj, getLinea(), getColumna());
                     return error;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede realizar la función TRUNK a un vector con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_TRUNK]", msj, getLinea(), getColumna());
-                    return error;
-                }
                 double d = ((double)v.getElementByPosition(0).getValor());
                 return new Resultado(ETipoDato.INT, EFlujo.NORMAL, new BigDecimal(String.valueOf(d)).intValue());
             }

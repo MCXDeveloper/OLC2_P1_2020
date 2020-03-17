@@ -39,11 +39,6 @@ public class NRemove extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_REMOVE]", msj, getLinea(), getColumna());
                     return error;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede realizar la función REMOVE a un vector con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_REMOVE]", msj, getLinea(), getColumna());
-                    return error;
-                }
                 op1 = (String)v.getElementByPosition(0).getValor();
             }   break;
             default: {
@@ -61,11 +56,6 @@ public class NRemove extends Nodo implements Instruccion {
                 Vector v = (Vector)rcquitar.getValor();
                 if (v.getInnerType() != ETipoDato.STRING) {
                     msj = "Error. No se puede realizar la función REMOVE a un <VECTOR["+ v.getInnerType() +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_REMOVE]", msj, getLinea(), getColumna());
-                    return error;
-                }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede realizar la función REMOVE a un vector con más de 1 valor.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_REMOVE]", msj, getLinea(), getColumna());
                     return error;
                 }

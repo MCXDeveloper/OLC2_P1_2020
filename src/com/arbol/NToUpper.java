@@ -34,11 +34,6 @@ public class NToUpper extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_TO_UPPER]", msj, getLinea(), getColumna());
                     return error;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede realizar la función TO_UPPER_CASE a un vector con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_TO_UPPER]", msj, getLinea(), getColumna());
-                    return error;
-                }
                 return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, ((String)v.getElementByPosition(0).getValor()).toUpperCase());
             }
             default: {

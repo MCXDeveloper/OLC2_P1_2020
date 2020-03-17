@@ -37,11 +37,6 @@ public class NRound extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ROUND]", msj, getLinea(), getColumna());
                     return error;
                 }
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede realizar la función ROUND a un vector con más de 1 valor.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ROUND]", msj, getLinea(), getColumna());
-                    return error;
-                }
                 double d = ((double)v.getElementByPosition(0).getValor());
                 return new Resultado(ETipoDato.INT, EFlujo.NORMAL, ((int)Math.round(d)));
             }
