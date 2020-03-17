@@ -5,6 +5,7 @@ import com.constantes.ETipoDato;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public class Arreglo implements Estructura {
 
@@ -51,6 +52,30 @@ public class Arreglo implements Estructura {
         elementos.set(pos, new Item(tipo, valor));
     }
 
+    public boolean rehashing() {
+
+        /* Se procede a realizar el casteo en base a prioridades. */
+        Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
+        if (priori1.isPresent()) {
+            convertToString();
+        } else {
+            Optional<Item> priori2 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.DECIMAL).findAny();
+            if (priori2.isPresent()) {
+                convertToDecimal();
+            } else {
+                Optional<Item> priori3 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.INT).findAny();
+                if (priori3.isPresent()) {
+                    convertToInteger();
+                } else {
+                    return elementos.stream().allMatch(i -> i.getTipo() == ETipoDato.BOOLEAN);
+                }
+            }
+        }
+
+        return true;
+
+    }
+
     public boolean validarIndices(LinkedList<Integer> posiciones) {
         for (int i = 0; i < listaTamanoDims.size(); i++) {
             if (posiciones.get(i) > listaTamanoDims.get(i)) {
@@ -84,12 +109,46 @@ public class Arreglo implements Estructura {
         for (int i = 0; i < sizes[0]; i++) {
             if (sizes.length == 1) {
                 posiciones.add(i+1);
-                ((String[]) array)[i] = v + (i+1) + " = <"+ elementos.get(colAccess(posiciones)).getStringItem() +">";
+                ((String[]) array)[i] = v + (i+1) + " = < "+ elementos.get(colAccess(posiciones)).getStringItem() +" >";
                 posiciones.removeLast();
             } else {
                 posiciones.add(i+1);
                 fillWithSomeValues(Array.get(array, i), v + (i+1) + "-", posiciones, tail(sizes));
                 posiciones.removeLast();
+            }
+        }
+    }
+
+    private void convertToString() {
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() != ETipoDato.STRING) {
+                elementos.set(i, new Item(ETipoDato.STRING, ((pivot.getTipo() != ETipoDato.NT) ? pivot.getValor().toString() : pivot.getValor())));
+            }
+        }
+    }
+
+    private void convertToDecimal() {
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() != ETipoDato.DECIMAL) {
+                if (pivot.getTipo() == ETipoDato.BOOLEAN) {
+                    elementos.set(i, new Item(ETipoDato.DECIMAL, ((boolean)pivot.getValor() ? Double.valueOf("1") : Double.valueOf("0"))));
+                } else {
+                    elementos.set(i, new Item(ETipoDato.DECIMAL, Double.valueOf(pivot.getValor().toString())));
+                }
+            }
+        }
+    }
+
+    private void convertToInteger() {
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() != ETipoDato.INT) {
+                elementos.set(i, new Item(ETipoDato.INT, ((boolean)pivot.getValor() ? 1 : 0)));
             }
         }
     }

@@ -178,7 +178,7 @@ public class Vector implements Estructura {
 
     @Override
     public String toString() {
-        return getVectorSize() > 1 ? "[ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ]" : elementos.get(0).getStringItem();
+        return getVectorSize() > 1 ? "⟦"+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +"⟧" : elementos.get(0).getStringItem();
     }
 
     public LinkedList<Item> getElementos() {

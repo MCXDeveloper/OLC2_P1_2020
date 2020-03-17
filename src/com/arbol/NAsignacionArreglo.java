@@ -27,6 +27,7 @@ public class NAsignacionArreglo extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
+        String msj;
         Object rvalor = new Fail();
         ETipoDato tdr = ETipoDato.ERROR;
         LinkedList<Integer> listaValsDims = validarDimensiones(ts);
@@ -35,8 +36,13 @@ public class NAsignacionArreglo extends Nodo implements Instruccion {
             Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
             if (validarExpresion(rexp)) {
                 array.actualizarValorPorPosiciones(listaValsDims, rexp.getTipoDato(), rexp.getValor());
-                tdr = ETipoDato.NT;
-                rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
+                if (!array.rehashing()) {
+                    msj = "Error. No se pudo castear los valores internos del arreglo.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_ARREGLO]", msj, getLinea(), getColumna());
+                } else {
+                    tdr = ETipoDato.NT;
+                    rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
+                }
             }
         }
 

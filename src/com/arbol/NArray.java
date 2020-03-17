@@ -51,7 +51,9 @@ public class NArray extends Nodo implements Instruccion {
                     }
 
                     tdr = ETipoDato.ARRAY;
-                    rvalor = new Arreglo(arrSize, lints, li);
+                    Arreglo arr = new Arreglo(arrSize, lints, li);
+                    arr.rehashing();
+                    rvalor = arr;
 
                 }   break;
 
@@ -66,21 +68,19 @@ public class NArray extends Nodo implements Instruccion {
                     int arrSize = getArraySize(lints);
 
                     Item it;
-                    Vector vec;
+                    Object target;
                     LinkedList<Item> li = new LinkedList<>();
+                    ETipoDato tipoTarget = rvals.getTipoDato();
                     for (int i = 0; i < arrSize; i++) {
 
                         it = itemVals.get(cnt);
 
-                        if (it.getTipo() == ETipoDato.VECTOR) {
-                            vec = (Vector)it.getValor();
-                            if (vec.getVectorSize() == 1) {
-                                li.add(new Item(vec.getInnerType(), vec.getElementByPosition(0).getValor()));
-                            } else {
-                                li.add(new Item(it.getTipo(), it.getValor()));
-                            }
+                        if (tipoTarget == ETipoDato.VECTOR) {
+                            target = new Vector(it.getTipo(), it.getValor());
+                            li.add(new Item(ETipoDato.VECTOR, target));
                         } else {
-                            li.add(new Item(it.getTipo(), it.getValor()));
+                            target = new Lista(it.getTipo(), it.getValor());
+                            li.add(new Item(ETipoDato.LIST, target));
                         }
 
                         cnt++;
@@ -91,7 +91,9 @@ public class NArray extends Nodo implements Instruccion {
                     }
 
                     tdr = ETipoDato.ARRAY;
-                    rvalor = new Arreglo(arrSize, lints, li);
+                    Arreglo arr = new Arreglo(arrSize, lints, li);
+                    arr.rehashing();
+                    rvalor = arr;
 
                 }   break;
 

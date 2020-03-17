@@ -140,7 +140,7 @@ public class Lista implements Estructura {
 
     @Override
     public String toString() {
-        return "{ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" }";
+        return "⎨ "+ elementos.stream().map(Item::getStringItem).collect(Collectors.joining(", ")) +" ⎬";
     }
 
     @Override
