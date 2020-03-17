@@ -69,7 +69,13 @@ public class Ventana extends javax.swing.JFrame {
         tabContainer = new javax.swing.JTabbedPane();
         panelConsola = new javax.swing.JPanel();
         jspConsola = new javax.swing.JScrollPane();
-        consolaSalida = new javax.swing.JTextPane();
+        consolaSalida = new javax.swing.JTextPane() {
+            @Override
+            public boolean getScrollableTracksViewportWidth() {
+                return getUI().getPreferredSize(this).width
+                        <= getParent().getSize().width;
+            }
+        };
         btnAnalizarAscendente = new javax.swing.JButton();
         btnAnalizarDescendente = new javax.swing.JButton();
         panelGraficos = new javax.swing.JPanel();
@@ -88,10 +94,22 @@ public class Ventana extends javax.swing.JFrame {
         innerPanelConsola = new javax.swing.JPanel();
         innerPanelErrores = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        consolaErrores = new javax.swing.JTextPane();
+        consolaErrores = new javax.swing.JTextPane() {
+            @Override
+            public boolean getScrollableTracksViewportWidth() {
+                return getUI().getPreferredSize(this).width
+                        <= getParent().getSize().width;
+            }
+        };
         innerPanelSimbolos = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        consolaSimbolos = new javax.swing.JTextPane();
+        consolaSimbolos = new javax.swing.JTextPane() {
+            @Override
+            public boolean getScrollableTracksViewportWidth() {
+                return getUI().getPreferredSize(this).width
+                        <= getParent().getSize().width;
+            }
+        };
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
