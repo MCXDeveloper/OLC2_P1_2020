@@ -69,9 +69,9 @@ public class NAsignacionVector extends Nodo implements Instruccion {
                     /*
                      * Verifico si el acceso al vector posee más de una dimension. Si eso se cumple,
                      * se tiene que validar que las siguientes dimensiones proporcionen un entero como
-                     * valor de posicion y este tiene que ser exactamente igual que el primero, de lo
-                     * contrario se debe reportar error.  Éste multiple acceso simula la recursión interna
-                     * de la relación entre vectores y tipos primitivos (que también se consideran vectores).
+                     * valor de posicion y este tiene que ser exactamente igual a 1, de lo contrario se
+                     * debe reportar error.  Éste multiple acceso simula la recursión interna de la
+                     * relación entre vectores y tipos primitivos (que también se consideran vectores).
                      *
                      * Una vez finalizado el ciclo y si todas las dimensiones se validaron correctamente
                      * significa que todas las posiciones son iguales, por lo que se procede a tomar la
@@ -84,7 +84,7 @@ public class NAsignacionVector extends Nodo implements Instruccion {
                         r = ((Instruccion)listaDims.get(i).getValorDimIzq()).Ejecutar(ts);
                         actualPos = validarPosicionDeDimension((i+1), r);
                         if (actualPos != -1) {
-                            if (actualPos != firstPos) {
+                            if (actualPos != 1) {
                                 flag = true;
                                 msj = "Error. No se puede acceder a una posición inexistente de un vector [Dimension = "+ (i+1) +" | Valor = "+ actualPos +"].";
                                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
@@ -138,12 +138,6 @@ public class NAsignacionVector extends Nodo implements Instruccion {
 
                 if (v.getInnerType() != ETipoDato.INT) {
                     msj = "Error. No se puede recibir como valor de posicion en la dimensión #"+ numDim +" un <VECTOR["+ v.getInnerType() +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
-                    return -1;
-                }
-
-                if (v.getVectorSize() != 1) {
-                    msj = "Error. No se puede recibir como valor de posicion en la dimensión #"+ numDim +" un <VECTOR[INT]> de más de 1 elemento.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
                     return -1;
                 }

@@ -81,7 +81,7 @@ public class NSwitch extends Nodo implements Instruccion {
             }
 
             if (!caseFlag) {
-                if (rcasexp.getValor().equals(rexp.getValor())) {
+                if (validarCaseConSwitch(ts, rcasexp.getTipoDato(), rcasexp.getValor(), rexp.getTipoDato(), rexp.getValor())) {
                     Resultado rcase = caso.Ejecutar(ts);
                     caseFlag = true;
                     if (rcase.getFlujo() == EFlujo.BREAK) {
@@ -109,6 +109,17 @@ public class NSwitch extends Nodo implements Instruccion {
 
         return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
         
+    }
+
+    private boolean validarCaseConSwitch(TablaSimbolos ts, ETipoDato tipoCase, Object valorCase, ETipoDato tipoSwitch, Object valorSwitch) {
+        NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), valorSwitch, tipoSwitch);
+        NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), valorCase, tipoCase);
+        NIgualdad ni = new NIgualdad(getLinea(), getColumna(), getArchivo(), op1, op2);
+        Resultado rigualdad = ni.Ejecutar(ts);
+        if (rigualdad.getTipoDato() == ETipoDato.BOOLEAN) {
+            return (boolean)rigualdad.getValor();
+        }
+        return false;
     }
 
     @Override
