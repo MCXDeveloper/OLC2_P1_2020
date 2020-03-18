@@ -15,6 +15,7 @@ import com.bethecoder.ascii_table.ASCIITable;
 import com.constantes.ETipoDato;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
+import com.estaticas.Helper;
 import com.estaticas.Manejador;
 import com.main.Main;
 import org.fife.ui.rsyntaxtextarea.*;
@@ -23,6 +24,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -360,20 +363,80 @@ public class Ventana extends javax.swing.JFrame {
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {
         RSyntaxTextArea textArea = getColoredArea();
-        Tab pestana = new Tab(textArea, "NuevoTab", "arit");
+        Tab pestana = new Tab(textArea, "NuevoTab_" + Helper.getRandomName(), "arit");
         tabContainer.addTab(pestana.ObtenerNombreCompletoArchivo(), pestana);
     }
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO - Agregar funcionalidad de Abrir:
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jfc.setDialogTitle("Selecciona un archivo");
+        jfc.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(".ARIT Files", "arit");
+        jfc.addChoosableFileFilter(filter);
+        int returnValue = jfc.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            String _path_ = jfc.getSelectedFile().getPath();
+            String[] strPath = Helper.ObtenerComponentesPath(_path_);
+            if (strPath != null) {
+                RSyntaxTextArea textArea = getColoredArea();
+                String contenido = Helper.ObtenerContenidoArchivo(_path_);
+                if(contenido != null) {
+                    textArea.setText(contenido);
+                    Tab pestana = new Tab(textArea, _path_);
+                    tabContainer.addTab(pestana.ObtenerNombreCompletoArchivo(), pestana);
+                    tabContainer.setSelectedComponent(pestana);
+                }else{
+                    showMessage("Ocurrió un error al obtener el contenido del archivo.  Intente de nuevo.");
+                }
+            } else {
+                showMessage("Ocurrió un error al obtener los componentes del path.  Intente de nuevo.");
+            }
+        }
     }
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO - Agregar funcionalidad de Guardar:
+        if(tabContainer.getTabCount() > 0) {
+            Component actualTab = tabContainer.getSelectedComponent();
+            Tab auxTab = (Tab)actualTab;
+            if (auxTab.ObtenerNombreCompletoArchivo().contains("NuevoTab_")) {
+                btnGuardarComoActionPerformed(evt);
+            } else {
+                RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
+                RTextArea contenedor = textObject.getTextArea();
+                String texto = contenedor.getText();
+                try{
+                    try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(auxTab.getPath() + "/" + auxTab.ObtenerNombreCompletoArchivo()))) {
+                        fileWriter.write(texto);
+                        showMessage("Archivo guardado existosamente.");
+                    }
+                }catch(IOException ex){
+                    showMessage("Ocurrió un error al guardar el contenido del archivo.  Intente de nuevo.");
+                }
+            }
+        }
     }
 
     private void btnGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO - Agregar funcionalidad de Guardar Como:
+        if(tabContainer.getTabCount() > 0) {
+            Component actualTab = tabContainer.getSelectedComponent();
+            RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
+            RTextArea contenedor = textObject.getTextArea();
+            String texto = contenedor.getText();
+            JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+            jfc.setSelectedFile(new File(((Tab)actualTab).ObtenerNombreCompletoArchivo()));
+            int returnValue = jfc.showSaveDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+                try{
+                    try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(selectedFile.getAbsolutePath()))) {
+                        fileWriter.write(texto);
+                        showMessage("Archivo guardado existosamente.");
+                    }
+                }catch(IOException ex){
+                    showMessage("Ocurrió un error al guardar el contenido del archivo.  Intente de nuevo.");
+                }
+            }
+        }
     }
 
     private void btnReporteASTActionPerformed(java.awt.event.ActionEvent evt) {
