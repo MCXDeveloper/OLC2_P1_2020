@@ -542,37 +542,22 @@ public class Ventana extends javax.swing.JFrame {
         Lexico lexer = new Lexico(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)))));
         lexer.setArchivo(auxTab.ObtenerNombreCompletoArchivo());
 
-        if (!verificarErrores()) {
+        Sintactico parser = new Sintactico(lexer);
+        parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
 
-            Sintactico parser = new Sintactico(lexer);
-            parser.setNombreArchivo(auxTab.ObtenerNombreCompletoArchivo());
-
+        try {
+            parser.parse();
+            raizGlobal = parser.getRaiz();
+            tsGlobal = new TablaSimbolos();
             try {
-
-                parser.parse();
-
-                if (!verificarErrores()) {
-
-                    raizGlobal = parser.getRaiz();
-                    tsGlobal = new TablaSimbolos();
-
-                    try {
-                        Resultado r = raizGlobal.Ejecutar(tsGlobal);
-                        /*if (r.getTipoDato() == ETipoDato.ERROR) {
-                            verificarErrores();
-                        }*/
-                        verificarErrores();
-                    } catch (Exception ex) {
-                        Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-
-            } catch (Exception e) {
-                appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
-                e.printStackTrace();
+                Resultado r = raizGlobal.Ejecutar(tsGlobal);
+                verificarErrores();
+            } catch (Exception ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
-
+        } catch (Exception e) {
+            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+            e.printStackTrace();
         }
 
     }
@@ -666,7 +651,7 @@ public class Ventana extends javax.swing.JFrame {
         }
         area.setSyntaxEditingStyle("text/example");
         area.setCodeFoldingEnabled(true);
-        //setFont(area, new Font("Consolas", Font.PLAIN, 16));
+        setFont(area, new Font("Source Code Pro", Font.PLAIN, 14));
         return area;
     }
 
@@ -689,6 +674,7 @@ public class Ventana extends javax.swing.JFrame {
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, color);
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
         int len = consolaSalida.getDocument().getLength();
         consolaSalida.setCaretPosition(len);
         consolaSalida.setCharacterAttributes(aset, false);
@@ -700,6 +686,7 @@ public class Ventana extends javax.swing.JFrame {
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.PINK);
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
         int len = consolaErrores.getDocument().getLength();
         consolaErrores.setCaretPosition(len);
         consolaErrores.setCharacterAttributes(aset, false);
@@ -711,6 +698,7 @@ public class Ventana extends javax.swing.JFrame {
         AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.YELLOW);
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
         int len = consolaSimbolos.getDocument().getLength();
         consolaSimbolos.setCaretPosition(len);
         consolaSimbolos.setCharacterAttributes(aset, false);

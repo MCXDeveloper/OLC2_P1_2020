@@ -98,8 +98,10 @@ public class NIf extends Nodo implements Instruccion {
         }
         ts.enlazarNodos(subson, listason);
         for (Nodo nodito : sentencias) {
-            son = ((Instruccion)nodito).GenerarDOT(ts);
-            ts.enlazarNodos(listason, son);
+            if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                son = ((Instruccion)nodito).GenerarDOT(ts);
+                ts.enlazarNodos(listason, son);
+            }
         }
         if (secIfs != null) {
             String subsubson;

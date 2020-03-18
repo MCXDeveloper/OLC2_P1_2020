@@ -146,8 +146,10 @@ public class NSwitch extends Nodo implements Instruccion {
             ts.enlazarNodos(ndef, def);
             ts.enlazarNodos(ndef, deflist);
             for (Nodo nodito : sentencias_default) {
-                son = ((Instruccion)nodito).GenerarDOT(ts);
-                ts.enlazarNodos(deflist, son);
+                if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                    son = ((Instruccion)nodito).GenerarDOT(ts);
+                    ts.enlazarNodos(deflist, son);
+                }
             }
         }
         return parent;

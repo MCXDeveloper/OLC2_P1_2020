@@ -83,8 +83,10 @@ public class NFunc extends Nodo implements Instruccion {
         String tokenlistains = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
         ts.enlazarNodos(subson, tokenlistains);
         for (Nodo nodito : lstmts) {
-            son = ((Instruccion)nodito).GenerarDOT(ts);
-            ts.enlazarNodos(tokenlistains, son);
+            if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                son = ((Instruccion)nodito).GenerarDOT(ts);
+                ts.enlazarNodos(tokenlistains, son);
+            }
         }
 
         return parent;

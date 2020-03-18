@@ -31,6 +31,8 @@ public class NDoWhile extends Nodo implements Instruccion {
         do{
             ts.addAmbito(EAmbito.CICLO);
             for( Nodo nd : sentencias){
+                if(nd.getTipoNodo() == ETipoNodo.ERROR)
+                    continue;
                 ev = ((Instruccion)nd).Ejecutar(ts);
                 if(ev.getFlujo() != EFlujo.NORMAL){
                     break;
@@ -87,8 +89,10 @@ public class NDoWhile extends Nodo implements Instruccion {
         ts.enlazarNodos(subson, tokenwhile);
         ts.enlazarNodos(subson, tokenval);
         for (Nodo nodito : sentencias) {
-            son = ((Instruccion)nodito).GenerarDOT(ts);
-            ts.enlazarNodos(listason, son);
+            if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                son = ((Instruccion)nodito).GenerarDOT(ts);
+                ts.enlazarNodos(listason, son);
+            }
         }
         return parent;
     }

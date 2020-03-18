@@ -32,7 +32,9 @@ public class NRaiz extends Nodo implements Instruccion {
         Resultado r;
         for (Nodo nodito : lista_sentencias) {
             if (nodito.getTipoNodo() != ETipoNodo.STMT_FUNC) {
-                ((Instruccion)nodito).Ejecutar(ts);
+                if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                    ((Instruccion)nodito).Ejecutar(ts);
+                }
             }
         }
 
@@ -47,8 +49,10 @@ public class NRaiz extends Nodo implements Instruccion {
         String listson = ts.getDeclararNodo("LISTA_INSTRUCCIONES");
         ts.enlazarNodos(parent, listson);
         for (Nodo nodito : lista_sentencias) {
-            son = ((Instruccion)nodito).GenerarDOT(ts);
-            ts.enlazarNodos(listson, son);
+            if (nodito.getTipoNodo() != ETipoNodo.ERROR) {
+                son = ((Instruccion)nodito).GenerarDOT(ts);
+                ts.enlazarNodos(listson, son);
+            }
         }
         return parent;
     }
@@ -90,17 +94,13 @@ public class NRaiz extends Nodo implements Instruccion {
         }
 
         /* Procedo a registrar todas las funciones creadas en el archivo */
-        if (lista_sentencias.stream().noneMatch(x -> x.getTipoNodo().equals(ETipoNodo.ERROR))) {
-            for (Nodo nodito : lista_sentencias) {
-                if (nodito.getTipoNodo().equals(ETipoNodo.STMT_FUNC)) {
-                    func = (NFunc) nodito;
-                    if (!ts.addMetodo(func)) {
-                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_RAIZ]", "Error. Ya se registro la función {"+ func.getId() +"}", getLinea(), getColumna());
-                    }
+        for (Nodo nodito : lista_sentencias) {
+            if (nodito.getTipoNodo().equals(ETipoNodo.STMT_FUNC)) {
+                func = (NFunc) nodito;
+                if (!ts.addMetodo(func)) {
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_RAIZ]", "Error. Ya se registro la función {"+ func.getId() +"}", getLinea(), getColumna());
                 }
             }
-        } else {
-            Main.getGUI().showMessage("Se detectaron errores en la lista de sentencias.  Revisar pestaña de errores.");
         }
 
     }
