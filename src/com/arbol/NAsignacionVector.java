@@ -105,7 +105,7 @@ public class NAsignacionVector extends Nodo implements Instruccion {
             if (!flag) {
                 Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
                 if (validarExpresionParaVector(rexp)) {
-                    vec.updateVectorValue(actualPos, rexp.getTipoDato(), rexp.getValor());
+                    vec.updateVectorValue(firstPos, rexp.getTipoDato(), rexp.getValor());
                     tdr = ETipoDato.NT;
                     rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                 }
