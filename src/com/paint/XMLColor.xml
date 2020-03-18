@@ -27,7 +27,7 @@
 
    <!-- Syntax tokens. -->
    <tokenStyles>
-      <style token="IDENTIFIER" fg="F9F9F9"/>
+      <style token="IDENTIFIER" fg="FFF68F"/>
       <style token="RESERVED_WORD" fg="F92672" bold="true"/>
       <style token="RESERVED_WORD_2" fg="A6E22E" bold="true"/>
       <style token="ANNOTATION" fg="FD971F"/>
@@ -61,7 +61,6 @@
       <style token="SEPARATOR" fg="F0F0F0"/>
       <style token="VARIABLE" fg="FD971F" bold="false"/>
       <style token="WHITESPACE" fg="E0E2E4"/>
-
       <style token="ERROR_IDENTIFIER" fg="E0E2E4" bg="383A38"/>
       <style token="ERROR_NUMBER_FORMAT" fg="E0E2E4" bg="383A38"/>
       <style token="ERROR_STRING_DOUBLE" fg="E0E2E4" bg="383A38"/>

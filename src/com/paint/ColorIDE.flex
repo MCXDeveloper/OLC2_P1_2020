@@ -1,4 +1,4 @@
-package paint;
+package com.paint;
 
 import java.io.*;
 import javax.swing.text.Segment;
@@ -203,86 +203,77 @@ Identifier                              = ({IdentifierStart}{IdentifierPart}*)
 <YYINITIAL> {
 
    /* Keywords */
-   "#definir" 	|
-   "#importar"   |
-   "if" 	|
-   "else" 	|
-   "regresar"   	|
-   "siga"  |
-   "zro"  	|
-   "switch" |
-   "case" |
-   "default" |
-   "repeat" |
-   "when" |
-   "for" |
-   "while" |
-   "romper"    |
-   "ent"        |
-   "dec"        |
-   "bul"        |
-   "chr"        |
-   "_atxt"        |
-   "_conc"        |
-   "_aent"        |
-   "_adec"        |
-   "_eqls"        |
-   "_write"        |
-   "_apend"        |
-   "_wf"        |
-   "_close"        |
-   "_read"        |
-   "Rlbl"        |
-   "Input"        |
-   "Rtxt"        |
-   "RtxtA"        |
-   "RtxtP"        |
-   "RtxtN"        |
-   "Rbton"        |
-   "RString"        |
-   "Rmensage"        |
-   "iniciar_ventana"        |
-   "_Nuevo_GUI"        |
-   "_alto_y_ancho"        |
-   "settexto"        |
-   "setancho"        |
-   "setalto"        |
-   "setpos"        |
-   "gettexto"        |
-   "getancho"        |
-   "getalto"        |
-   "getpos"        |
-   "_imp"   { addToken(Token.RESERVED_WORD); }
+    "null"          |
+    "if"            |
+    "else"          |
+    "switch"        |
+    "case"          |
+    "default"       |
+    "break"         |
+    "continue"      |
+    "return"        |
+    "while"         |
+    "for"           |
+    "do"            |
+    "in"            |
+    "function"      |
+    "true"          |
+    "false"         { addToken(Token.RESERVED_WORD); }
 
 
-   {Identifier}            { addToken(Token.IDENTIFIER); }
 
-   {WhiteSpace}            { addToken(Token.WHITESPACE); }
+   {Identifier}                     { addToken(Token.IDENTIFIER); }
+   {WhiteSpace}                     { addToken(Token.WHITESPACE); }
 
    /* String/Character literals. */
-   {CharLiteral}            { addToken(Token.LITERAL_CHAR); }
-   {UnclosedCharLiteral}      { addToken(Token.ERROR_CHAR); addNullToken(); return firstToken; }
-   {ErrorCharLiteral}         { addToken(Token.ERROR_CHAR); }
-   {StringLiteral}            { addToken(Token.LITERAL_STRING_DOUBLE_QUOTE); }
-   {UnclosedStringLiteral}      { addToken(Token.ERROR_STRING_DOUBLE); addNullToken(); return firstToken; }
-   {ErrorStringLiteral}      { addToken(Token.ERROR_STRING_DOUBLE); }
+   {CharLiteral}                    { addToken(Token.LITERAL_CHAR); }
+   {UnclosedCharLiteral}            { addToken(Token.ERROR_CHAR); addNullToken(); return firstToken; }
+   {ErrorCharLiteral}               { addToken(Token.ERROR_CHAR); }
+   {StringLiteral}                  { addToken(Token.LITERAL_STRING_DOUBLE_QUOTE); }
+   {UnclosedStringLiteral}          { addToken(Token.ERROR_STRING_DOUBLE); addNullToken(); return firstToken; }
+   {ErrorStringLiteral}             { addToken(Token.ERROR_STRING_DOUBLE); }
 
    /* Comment literals. */
-   {MLCBegin}               { start = zzMarkedPos-2; yybegin(MLC); }
-   {LineCommentBegin}.*      { addToken(Token.COMMENT_EOL); addNullToken(); return firstToken; }
+   {MLCBegin}                       { start = zzMarkedPos-2; yybegin(MLC); }
+   {LineCommentBegin}.*             { addToken(Token.COMMENT_EOL); addNullToken(); return firstToken; }
 
    /* Separators. */
-   {Separator}               { addToken(Token.SEPARATOR); }
-   {Separator2}            { addToken(Token.IDENTIFIER); }
+   {Separator}                      { addToken(Token.SEPARATOR); }
+   {Separator2}                     { addToken(Token.IDENTIFIER); }
 
    /* Operators. */
-   "!" | "%" | "%=" | "&" | "&&" | "*" | "*=" | "+" | "++" | "+=" | "," | "-" | "--" | "-=" |
-   "/" | "/=" | "::" | "<" | "<=" | ":=:" | "==" | ">" | "<>" | ">=" | "?" | "^" | "|" | "(" | ")" |
-   "||" | "~"      { addToken(Token.OPERATOR); }
+    "+"             |
+    "-"             |
+    "*"             |
+    "/"             |
+    "^"             |
+    "%%"            |
+    "("             |
+    ")"             |
+    "["             |
+    "]"             |
+    ","             |
+    ";"             |
+    ":"             |
+    "?"             |
+    "=>"            |
+    "<"             |
+    ">"             |
+    "<="            |
+    ">="            |
+    "!="            |
+    "=="            |
+    "="             |
+    "{"             |
+    "}"             |
+    "|"             |
+    "&"             |
+    "!"             |
+    "\""            { addToken(Token.OPERATOR); }
 
    /* Numbers */
-   {IntegerLiteral}         { addToken(Token.LITERAL_NUMBER_DECIMAL_INT); }
-   {ErrorNumberFormat}         { addToken(Token.ERROR_NUMBER_FORMAT); }
+   {IntegerLiteral}             { addToken(Token.LITERAL_NUMBER_DECIMAL_INT); }
+   {ErrorNumberFormat}          { addToken(Token.ERROR_NUMBER_FORMAT); }
 
    /* Ended with a line not in a string or comment. */
    \n |
