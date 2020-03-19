@@ -23,11 +23,18 @@ public class Lista implements Estructura {
 
     public boolean rehashing() {
 
-        /* Primero valido que si vienen listas internas, los unifico. */
-        Optional<Item> hasVector = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
+        /* Si dentro de la lista vienen vectores, los rehasheo */
+        for (Item it : elementos) {
+            if (it.getTipo() == ETipoDato.VECTOR) {
+                ((Vector)it.getValor()).rehashing();
+            }
+        }
+
+        /* Esta funcion ya no se utiliza ya que no se unifican las listas. */
+        /*Optional<Item> hasVector = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
         if (hasVector.isPresent()) {
             mergeLists();
-        }
+        }*/
         
         return true;
 
@@ -70,7 +77,7 @@ public class Lista implements Estructura {
 
         }
 
-        return true;
+        return rehashing();
 
     }
 
