@@ -35,7 +35,14 @@ public class NAsignacionArreglo extends Nodo implements Instruccion {
         if (listaValsDims != null) {
             Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
             if (validarExpresion(rexp)) {
-                array.actualizarValorPorPosiciones(listaValsDims, rexp.getTipoDato(), rexp.getValor());
+
+                if (rexp.getTipoDato() == ETipoDato.VECTOR) {
+                    Vector v = (Vector)rexp.getValor();
+                    array.actualizarValorPorPosiciones(listaValsDims, v.getInnerType(), v.getElementByPosition(0).getValor());
+                } else {
+                    array.actualizarValorPorPosiciones(listaValsDims, rexp.getTipoDato(), rexp.getValor());
+                }
+
                 if (!array.rehashing()) {
                     msj = "Error. No se pudo castear los valores internos del arreglo.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_ARREGLO]", msj, getLinea(), getColumna());
@@ -147,17 +154,34 @@ public class NAsignacionArreglo extends Nodo implements Instruccion {
     }
 
     private boolean validarExpresion(Resultado rexp) {
+        String msj;
         switch (rexp.getTipoDato()) {
             case INT:
-            case LIST:
-            case VECTOR:
             case STRING:
             case DECIMAL:
             case BOOLEAN: {
                 return true;
             }
+            case LIST: {
+                Lista l = (Lista)rexp.getValor();
+                if (l.getListSize() > 1) {
+                    msj = "Error. No se puede asignar una lista con más de 1 valor a una posición de un arreglo.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_ARREGLO]", msj, getLinea(), getColumna());
+                    return false;
+                }
+                return true;
+            }
+            case VECTOR: {
+                Vector v = (Vector)rexp.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede asignar un vector con más de 1 valor a una posición de un arreglo.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_ARREGLO]", msj, getLinea(), getColumna());
+                    return false;
+                }
+                return true;
+            }
             default: {
-                String msj = "Error. No se asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un arreglo.";
+                msj = "Error. No se asignar un valor de tipo <"+ rexp.getTipoDato() +"> a una posición de un arreglo.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_ARREGLO]", msj, getLinea(), getColumna());
                 return false;
             }

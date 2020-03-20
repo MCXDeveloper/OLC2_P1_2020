@@ -55,25 +55,29 @@ public class Arreglo implements Estructura {
     public boolean rehashing() {
 
         /* Se procede a realizar el casteo en base a prioridades. */
-        Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
-        if (priori1.isPresent()) {
-            convertToString();
+        Optional<Item> hasLists = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
+        if (hasLists.isPresent()) {
+            convertToList();
         } else {
-            Optional<Item> priori2 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.DECIMAL).findAny();
-            if (priori2.isPresent()) {
-                convertToDecimal();
+            Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
+            if (priori1.isPresent()) {
+                convertToString();
             } else {
-                Optional<Item> priori3 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.INT).findAny();
-                if (priori3.isPresent()) {
-                    convertToInteger();
+                Optional<Item> priori2 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.DECIMAL).findAny();
+                if (priori2.isPresent()) {
+                    convertToDecimal();
                 } else {
-                    return elementos.stream().allMatch(i -> i.getTipo() == ETipoDato.BOOLEAN);
+                    Optional<Item> priori3 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.INT).findAny();
+                    if (priori3.isPresent()) {
+                        convertToInteger();
+                    } else {
+                        return elementos.stream().allMatch(i -> i.getTipo() == ETipoDato.BOOLEAN);
+                    }
                 }
             }
         }
 
         return true;
-
     }
 
     public boolean validarIndices(LinkedList<Integer> posiciones) {
@@ -115,6 +119,19 @@ public class Arreglo implements Estructura {
                 posiciones.add(i+1);
                 fillWithSomeValues(Array.get(array, i), v + (i+1) + "-", posiciones, tail(sizes));
                 posiciones.removeLast();
+            }
+        }
+    }
+
+    private void convertToList() {
+        Lista l;
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() != ETipoDato.LIST) {
+                l = new Lista(pivot.getTipo(), pivot.getValor());
+                l.rehashing();
+                elementos.set(i, new Item(ETipoDato.LIST, l));
             }
         }
     }

@@ -75,12 +75,11 @@ public class NArray extends Nodo implements Instruccion {
 
                         it = itemVals.get(cnt);
 
-                        if (tipoTarget == ETipoDato.VECTOR) {
-                            target = new Vector(it.getTipo(), it.getValor());
-                            li.add(new Item(ETipoDato.VECTOR, target));
-                        } else {
+                        if (tipoTarget == ETipoDato.LIST) {
                             target = new Lista(it.getTipo(), it.getValor());
                             li.add(new Item(ETipoDato.LIST, target));
+                        } else {
+                            li.add(new Item(it.getTipo(), it.getValor()));
                         }
 
                         cnt++;
