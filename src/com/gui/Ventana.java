@@ -23,6 +23,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.AttributeSet;
@@ -68,6 +70,7 @@ public class Ventana extends javax.swing.JFrame {
 
         panelAreaTrabajo = new javax.swing.JPanel();
         tabContainer = new javax.swing.JTabbedPane();
+        lblRowCol = new javax.swing.JLabel();
         panelConsola = new javax.swing.JPanel();
         jspConsola = new javax.swing.JScrollPane();
         consolaSalida = new javax.swing.JTextPane() {
@@ -116,20 +119,28 @@ public class Ventana extends javax.swing.JFrame {
 
         panelAreaTrabajo.setBorder(javax.swing.BorderFactory.createTitledBorder("Área de trabajo"));
 
+        lblRowCol.setText("Linea: NA ~ Columna: NA");
+
         javax.swing.GroupLayout panelAreaTrabajoLayout = new javax.swing.GroupLayout(panelAreaTrabajo);
         panelAreaTrabajo.setLayout(panelAreaTrabajoLayout);
         panelAreaTrabajoLayout.setHorizontalGroup(
                 panelAreaTrabajoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(panelAreaTrabajoLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(tabContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
+                                .addGroup(panelAreaTrabajoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(tabContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
+                                        .addGroup(panelAreaTrabajoLayout.createSequentialGroup()
+                                                .addComponent(lblRowCol)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
                                 .addContainerGap())
         );
         panelAreaTrabajoLayout.setVerticalGroup(
                 panelAreaTrabajoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(panelAreaTrabajoLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(tabContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                                .addComponent(tabContainer, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblRowCol)
                                 .addContainerGap())
         );
 
@@ -643,7 +654,47 @@ public class Ventana extends javax.swing.JFrame {
         area.setSyntaxEditingStyle("text/example");
         area.setCodeFoldingEnabled(true);
         setFont(area, new Font("Source Code Pro", Font.PLAIN, 14));
+
+        area.addCaretListener(new CaretListener() {
+            // Each time the caret is moved, it will trigger the listener and its method caretUpdate.
+            // It will then pass the event to the update method including the source of the event (which is our textarea control)
+            public void caretUpdate(CaretEvent e) {
+
+                RSyntaxTextArea editArea = (RSyntaxTextArea)e.getSource();
+
+                // Lets start with some default values for the line and column.
+                int linenum = 1;
+                int columnnum = 1;
+
+                // We create a try catch to catch any exceptions. We will simply ignore such an error for our demonstration.
+                try {
+                    // First we find the position of the caret. This is the number of where the caret is in relation to the start of the JTextArea
+                    // in the upper left corner. We use this position to find offset values (eg what line we are on for the given position as well as
+                    // what position that line starts on.
+                    int caretpos = editArea.getCaretPosition();
+                    linenum = editArea.getLineOfOffset(caretpos);
+
+                    // We subtract the offset of where our line starts from the overall caret position.
+                    // So lets say that we are on line 5 and that line starts at caret position 100, if our caret position is currently 106
+                    // we know that we must be on column 6 of line 5.
+                    columnnum = caretpos - editArea.getLineStartOffset(linenum);
+
+                    // We have to add one here because line numbers start at 0 for getLineOfOffset and we want it to start at 1 for display.
+                    linenum += 1;
+                }
+                catch(Exception ex) { }
+
+                // Once we know the position of the line and the column, pass it to a helper function for updating the status bar.
+                updateLineAndColumn(linenum, columnnum);
+            }
+
+        });
+
         return area;
+    }
+
+    private void updateLineAndColumn(int line, int column) {
+        lblRowCol.setText("Linea: " + line + " ~ Columna: " + column);
     }
 
     public static void setFont(RSyntaxTextArea textArea, Font font) {
@@ -730,6 +781,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JTextPane consolaSalida;
     private javax.swing.JTabbedPane graphContainer;
     private javax.swing.JScrollPane jspConsola;
+    private javax.swing.JLabel lblRowCol;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenu menuReportes;
     private javax.swing.JPanel panelAreaTrabajo;
