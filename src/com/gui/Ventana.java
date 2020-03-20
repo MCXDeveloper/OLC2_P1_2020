@@ -12,7 +12,6 @@ import com.analizador.descendente.Gramatica;
 import com.analizador.descendente.ParseException;
 import com.arbol.NRaiz;
 import com.bethecoder.ascii_table.ASCIITable;
-import com.constantes.ETipoDato;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 import com.estaticas.Helper;
@@ -35,7 +34,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
@@ -566,6 +564,7 @@ public class Ventana extends javax.swing.JFrame {
 
         Component actualTab = tabContainer.getSelectedComponent();
         Tab auxTab = (Tab)actualTab;
+        String archivo = auxTab.ObtenerNombreCompletoArchivo();
         RTextScrollPane textObject = (RTextScrollPane)actualTab.getComponentAt(0,0);
         RTextArea contenedor = textObject.getTextArea();
         String texto = contenedor.getText();
@@ -582,24 +581,16 @@ public class Ventana extends javax.swing.JFrame {
         Main.cleaner();
 
         Gramatica parser = new Gramatica(new BufferedReader(new StringReader(texto)));
-
+        parser.setArchivo(archivo);
         try {
-            raizGlobal = parser.INICIO();
-            if (!verificarErrores()) {
-                tsGlobal = new TablaSimbolos();
-                try {
-                    Resultado r = raizGlobal.Ejecutar(tsGlobal);
-                    if (r.getTipoDato() == ETipoDato.ERROR) {
-                        verificarErrores();
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        } catch (ParseException e) {
-            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+            parser.INICIO(new LinkedList<>());
+            raizGlobal = parser.getRoot();
+            tsGlobal = new TablaSimbolos();
+            raizGlobal.Ejecutar(tsGlobal);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        verificarErrores();
 
     }
 

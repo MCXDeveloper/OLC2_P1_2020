@@ -22,8 +22,15 @@ import java.util.Collections;import java.util.LinkedList;
 
 public class Gramatica {
     private String archivo;
+    private NRaiz root;
     public void setArchivo(String nombre) {
         this.archivo = nombre;
+    }
+    public String getArchivo() {
+        return this.archivo;
+    }
+    public NRaiz getRoot() {
+        return this.root;
     }
 }
 
@@ -104,33 +111,69 @@ MORE :
 }
 
 /* Fin Lexico */
+JAVACODE
+void error_skipto(int location, int kind) {
+    
+    ParseException e = generateParseException();  // generate the exception object
+    
+    System.err.println("El error ocurrió en la función #" + location);
 
-NRaiz INICIO() :
+    String realMessage = e.getMessage().split("Was")[0].replace("\n", "").replace("\r", "");
+    ErrorHandler.AddError("Sintáctico", getArchivo(), "[JAVACC_PARSER]", realMessage, token.beginLine, token.beginColumn);
+    
+    Token t;
+    // consume tokens all the way up to a token of "kind" - use a do-while loop
+    // rather than a while because the current token is the one immediately before
+    // the erroneous token (in our case the token immediately before what should
+    // have been "if"/"while".
+    do {
+        t = getNextToken();
+    }
+    while (t.kind != kind);
+}
+
+
+void INICIO(LinkedList<Nodo> nodos) :
 {
     Nodo n;
-    LinkedList<Nodo> nodos = new LinkedList<Nodo>();
+    Token t;
 }
 {
-    (n = INSTRUCCION() { nodos.add(n); })+ <EOF> { return new NRaiz(token.beginLine, token.beginColumn, archivo, nodos); }
+    try {
+        (n=INSTRUCCION() { nodos.add(n); })+ <EOF>      { root = new NRaiz(token.beginLine, token.beginColumn, archivo, nodos); }
+    } catch (ParseException e) {
+        error_skipto(1,puco);
+        t = getNextToken();
+        if (t.kind == EOF) {
+            root = new NRaiz(token.beginLine, token.beginColumn, archivo, nodos);
+        } else {
+            INICIO(nodos);
+        }
+    }
 }
-
 
 Nodo INSTRUCCION() :
 {
     Nodo a;
 }
 {
-        LOOKAHEAD(3) a = DECASI_FUNCION()                   { return a; }
-    |   LOOKAHEAD(2) a = DECASI_VARIABLE() (<puco>)?        { return a; }
-    |   a = SENTENCIA_IF()                                  { return a; }
-    |   a = SENTENCIA_SWITCH()                              { return a; }
-    |   a = SENTENCIA_WHILE()                               { return a; }
-    |   a = SENTENCIA_DOWHILE() (<puco>)?                   { return a; }
-    |   a = SENTENCIA_FOR()                                 { return a; }
-    |   a = SENTENCIA_BREAK() (<puco>)?                     { return a; }
-    |   a = SENTENCIA_CONTINUE() (<puco>)?                  { return a; }
-    |   a = SENTENCIA_RETURN() (<puco>)?                    { return a; }
-    |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA() (<puco>)?      { return a; }
+    try {
+            LOOKAHEAD(3) a = DECASI_FUNCION()                      { return a; }
+        |   LOOKAHEAD(2) a = DECASI_VARIABLE()           { return a; }
+        |   a = SENTENCIA_IF()                                     { return a; }
+        |   a = SENTENCIA_SWITCH()                                 { return a; }
+        |   a = SENTENCIA_WHILE()                                  { return a; }
+        |   a = SENTENCIA_DOWHILE()                      { return a; }
+        |   a = SENTENCIA_FOR()                                    { return a; }
+        |   a = SENTENCIA_BREAK()                         { return a; }
+        |   a = SENTENCIA_CONTINUE()                      { return a; }
+        |   a = SENTENCIA_RETURN()                        { return a; }
+        |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA()         { return a; }
+    } catch (ParseException e) {
+        error_skipto(2,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
+    }
+    
 }
 
 LinkedList<Nodo> BLOQUE() :
@@ -139,7 +182,11 @@ LinkedList<Nodo> BLOQUE() :
     LinkedList<Nodo> nodos = new LinkedList<Nodo>();
 }
 {
-    <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>  { return nodos; }
+    try {
+        <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>  { return nodos; }
+    } catch (ParseException e) {
+        error_skipto(3,puco);
+    }
 }
 
 Nodo DECASI_FUNCION() :
@@ -151,17 +198,21 @@ Nodo DECASI_FUNCION() :
     LinkedList<NParam> params;
 }
 {
-    tid=<identificador> <igual>
-    (
-            <r_function> params=PARAMETROS_FUNCION() block=BLOQUE()                                             { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
-        |   <par_a>
+    try {
+        tid=<identificador> <igual>
         (
-                <par_c> <flecha> block=BLOQUE()                                                                 { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block); }
-            |   LOOKAHEAD(2) exp=EXPRESION() <par_c> <flecha> block=BLOQUE()                                    { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
-            |   LOOKAHEAD(3) tparam=<identificador> <igual> exp=EXPRESION() <par_c> <flecha> block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(Collections.singletonList(new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp))), block); }
-            |   parametro=PARAMETRO() <coma> params=LISTA_PARAM_FUNCION() <par_c> <flecha> block=BLOQUE()       { params.addFirst(parametro); return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+                <r_function> params=PARAMETROS_FUNCION() block=BLOQUE()                                             { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+            |   <par_a>
+            (
+                    <par_c> <flecha> block=BLOQUE()                                                                 { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block); }
+                |   LOOKAHEAD(2) exp=EXPRESION() <par_c> <flecha> block=BLOQUE()                                    { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
+                |   LOOKAHEAD(3) tparam=<identificador> <igual> exp=EXPRESION() <par_c> <flecha> block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(Collections.singletonList(new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp))), block); }
+                |   parametro=PARAMETRO() <coma> params=LISTA_PARAM_FUNCION() <par_c> <flecha> block=BLOQUE()       { params.addFirst(parametro); return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+            )
         )
-    )
+    } catch (ParseException e) {
+        error_skipto(4,puco);
+    }
 }
 
 LinkedList<NParam> PARAMETROS_FUNCION() :
@@ -169,7 +220,11 @@ LinkedList<NParam> PARAMETROS_FUNCION() :
     LinkedList<NParam> params = new LinkedList<NParam>();
 }
 {
-    <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>  { return params; }
+    try {
+        <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>  { return params; }
+    } catch (ParseException e) {
+        error_skipto(5,puco);
+    }
 }
 
 LinkedList<NParam> LISTA_PARAM_FUNCION() :
@@ -178,7 +233,11 @@ LinkedList<NParam> LISTA_PARAM_FUNCION() :
     LinkedList<NParam> params = new LinkedList<NParam>();
 }
 {
-    n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*     { return params; }
+    try {
+        n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*     { return params; }
+    } catch (ParseException e) {
+        error_skipto(6,puco);
+    }
 }
 
 NParam PARAMETRO() :
@@ -187,7 +246,11 @@ NParam PARAMETRO() :
     Token tid;
 }
 {
-    tid=<identificador> (<igual> exp=EXPRESION())?  { return (exp == null) ? new NParam(token.beginLine, token.beginColumn, archivo, tid.image) : new NParam(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
+    try {
+        tid=<identificador> (<igual> exp=EXPRESION())?  { return (exp == null) ? new NParam(token.beginLine, token.beginColumn, archivo, tid.image) : new NParam(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
+    } catch (ParseException e) {
+        error_skipto(7,puco);
+    }
 }
 
 Nodo DECASI_VARIABLE() :
@@ -198,11 +261,17 @@ Nodo DECASI_VARIABLE() :
     LinkedList<Dimension> ldim = new LinkedList<Dimension>();
 }
 {
-    tid=<identificador>
-    (
-            <igual> exp=EXPRESION()                                 { return new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
-        |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
-    )
+    try {
+        tid=<identificador>
+        (
+                <igual> exp=EXPRESION()                                 { return new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
+            |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
+        )
+        (<puco>)?
+    } catch (ParseException e) {
+        error_skipto(8,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
+    }
 }
 
 Nodo SENTENCIA_IF() :
@@ -211,7 +280,11 @@ Nodo SENTENCIA_IF() :
     LinkedList<NIf> listaElses = null;
 }
 {
-    ni=SIF() (listaElses=SELSE())?  { if (listaElses != null) { ni.setSecIf(listaElses); }    return ni; }
+    try {
+        ni=SIF() (listaElses=SELSE())?  { if (listaElses != null) { ni.setSecIf(listaElses); }    return ni; }
+    } catch (ParseException e) {
+        error_skipto(9,puco);
+    }
 }
 
 NIf SIF() :
@@ -220,7 +293,11 @@ NIf SIF() :
     LinkedList<Nodo> block;
 }
 {
-    <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_IF); }
+    try {
+        <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_IF); }
+    } catch (ParseException e) {
+        error_skipto(10,puco);
+    }
 }
 
 NIf ELSE_IF() :
@@ -229,7 +306,11 @@ NIf ELSE_IF() :
     LinkedList<Nodo> block;
 }
 {
-    <r_else> <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_ELSE_IF); }
+    try {
+        <r_else> <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_ELSE_IF); }
+    } catch (ParseException e) {
+        error_skipto(11,puco);
+    }
 }
 
 LinkedList<NIf> SELSE() :
@@ -239,13 +320,17 @@ LinkedList<NIf> SELSE() :
     LinkedList<NIf> listaIfs = new LinkedList<NIf>();
 }
 {
-        LOOKAHEAD(2) <r_else> block=BLOQUE()                                             { listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block)); return listaIfs; }
-    |   (LOOKAHEAD(2) ni=ELSE_IF() { listaIfs.add(ni); })+ (<r_else> block=BLOQUE())?    {
-                                                                                            if (block != null) {
-                                                                                                listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block));
+    try {
+            LOOKAHEAD(2) <r_else> block=BLOQUE()                                             { listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block)); return listaIfs; }
+        |   (LOOKAHEAD(2) ni=ELSE_IF() { listaIfs.add(ni); })+ (<r_else> block=BLOQUE())?    {
+                                                                                                if (block != null) {
+                                                                                                    listaIfs.add(new NIf(token.beginLine, token.beginColumn, archivo, block));
+                                                                                                }
+                                                                                                return listaIfs;
                                                                                             }
-                                                                                            return listaIfs;
-                                                                                         }
+    } catch (ParseException e) {
+        error_skipto(12,puco);
+    }
 }
 
 Nodo SENTENCIA_SWITCH() :
@@ -256,11 +341,15 @@ Nodo SENTENCIA_SWITCH() :
     LinkedList<Nodo> listaInsDefault = new LinkedList<Nodo>();
 }
 {
-    <r_switch> <par_a> exp=EXPRESION() <par_c> <llave_a> (nc = CASO() { listaCases.add(nc); })+
-    (
-            <llave_c>                                                                       { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases); }
-        |   <r_default> <dospu> (n = INSTRUCCION() { listaInsDefault.add(n); })* <llave_c>  { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases, listaInsDefault); }
-    )
+    try {
+        <r_switch> <par_a> exp=EXPRESION() <par_c> <llave_a> (nc = CASO() { listaCases.add(nc); })+
+        (
+                <llave_c>                                                                       { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases); }
+            |   <r_default> <dospu> (n = INSTRUCCION() { listaInsDefault.add(n); })* <llave_c>  { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases, listaInsDefault); }
+        )
+    } catch (ParseException e) {
+        error_skipto(13,puco);
+    }
 }
 
 NCase CASO() :
@@ -269,7 +358,11 @@ NCase CASO() :
     LinkedList<Nodo> listaIns = new LinkedList<Nodo>();
 }
 {
-    <r_case> exp=EXPRESION() <dospu> (n = INSTRUCCION() { listaIns.add(n); })*  { return new NCase(token.beginLine, token.beginColumn, archivo, exp, listaIns); }
+    try {
+        <r_case> exp=EXPRESION() <dospu> (n = INSTRUCCION() { listaIns.add(n); })*  { return new NCase(token.beginLine, token.beginColumn, archivo, exp, listaIns); }
+    } catch (ParseException e) {
+        error_skipto(14,puco);
+    }
 }
 
 Nodo SENTENCIA_WHILE() :
@@ -278,7 +371,11 @@ Nodo SENTENCIA_WHILE() :
     LinkedList<Nodo> block;
 }
 {
-    <r_while> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()    { return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block); }
+    try {
+        <r_while> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()    { return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block); }
+    } catch (ParseException e) {
+        error_skipto(15,puco);
+    }
 }
 
 Nodo SENTENCIA_DOWHILE() :
@@ -287,7 +384,11 @@ Nodo SENTENCIA_DOWHILE() :
     LinkedList<Nodo> block;
 }
 {
-    <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c>     { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
+    try {
+        <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c> (<puco>)?    { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
+    } catch (ParseException e) {
+        error_skipto(16,puco);
+    }
 }
 
 Nodo SENTENCIA_FOR() :
@@ -297,19 +398,31 @@ Nodo SENTENCIA_FOR() :
     LinkedList<Nodo> block;
 }
 {
-    <r_for> <par_a> tid=<identificador> <r_in> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
+    try {
+        <r_for> <par_a> tid=<identificador> <r_in> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
+    } catch (ParseException e) {
+        error_skipto(17,puco);
+    }
 }
 
 Nodo SENTENCIA_BREAK() :
 {}
 {
-    <r_break>   { return new NBreak(token.beginLine, token.beginColumn, archivo); }
+    try {
+        <r_break> (<puco>)?  { return new NBreak(token.beginLine, token.beginColumn, archivo); }
+    } catch (ParseException e) {
+        error_skipto(18,puco);
+    }
 }
 
 Nodo SENTENCIA_CONTINUE() :
 {}
 {
-    <r_continue>   { return new NContinue(token.beginLine, token.beginColumn, archivo); }
+    try {
+        <r_continue> (<puco>)?  { return new NContinue(token.beginLine, token.beginColumn, archivo); }
+    } catch (ParseException e) {
+        error_skipto(19,puco);
+    }
 }
 
 Nodo SENTENCIA_RETURN() :
@@ -317,7 +430,11 @@ Nodo SENTENCIA_RETURN() :
     Nodo n = null;
 }
 {
-    <r_return> (<par_a> n=EXPRESION() <par_c>)?    { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
+    try {
+        <r_return> (<par_a> n=EXPRESION() <par_c>)? (<puco>)?   { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
+    } catch (ParseException e) {
+        error_skipto(20,puco);
+    }
 }
 
 Dimension ACCESO() :
@@ -325,14 +442,18 @@ Dimension ACCESO() :
     Nodo a, b;
 }
 {
-    <cor_a>
-    (
-            LOOKAHEAD(3) a=EXPRESION() <cor_c>                          { return new Dimension(ETipoDimension.SIMPLE, a); }
-        |   LOOKAHEAD(3) a=EXPRESION() <coma> <cor_c>                   { return new Dimension(ETipoDimension.ROW, a); }
-        |   LOOKAHEAD(3) a=EXPRESION() <coma> b=EXPRESION() <cor_c>     { return new Dimension(ETipoDimension.COMPOUND, a, b); }
-        |   <coma> a=EXPRESION() <cor_c>                                { return new Dimension(ETipoDimension.COLUMN, a); }
-        |   <cor_a> a=EXPRESION() <cor_c> <cor_c>                       { return new Dimension(ETipoDimension.INNER, a); }
-    )
+    try {
+        <cor_a>
+        (
+                LOOKAHEAD(3) a=EXPRESION() <cor_c>                          { return new Dimension(ETipoDimension.SIMPLE, a); }
+            |   LOOKAHEAD(3) a=EXPRESION() <coma> <cor_c>                   { return new Dimension(ETipoDimension.ROW, a); }
+            |   LOOKAHEAD(3) a=EXPRESION() <coma> b=EXPRESION() <cor_c>     { return new Dimension(ETipoDimension.COMPOUND, a, b); }
+            |   <coma> a=EXPRESION() <cor_c>                                { return new Dimension(ETipoDimension.COLUMN, a); }
+            |   <cor_a> a=EXPRESION() <cor_c> <cor_c>                       { return new Dimension(ETipoDimension.INNER, a); }
+        )    
+    } catch (ParseException e) {
+        error_skipto(21,puco);
+    }
 }
 
 Nodo SENTENCIA_LLAMADA() :
@@ -341,7 +462,12 @@ Nodo SENTENCIA_LLAMADA() :
     LinkedList<Nodo> parametros = new LinkedList<Nodo>();
 }
 {
-      param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c>    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
+    try {
+        param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c> (LOOKAHEAD(2) <puco>)?    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
+    } catch (ParseException e) {
+        error_skipto(22,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
+    }
 }
 
 LinkedList<Nodo> LISTA_EXPRESIONES() :
@@ -350,14 +476,18 @@ LinkedList<Nodo> LISTA_EXPRESIONES() :
     LinkedList<Nodo> listaexps = new LinkedList<Nodo>();
 }
 {
-    exp=EXPRESION() { listaexps.add(exp); }
-    (
-        <coma>
+    try {
+        exp=EXPRESION() { listaexps.add(exp); }
         (
-                exp=EXPRESION() { listaexps.add(exp); }
-            |   <r_default>     { listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo)); }
-        )
-    )*   { return listaexps; }
+            <coma>
+            (
+                    exp=EXPRESION() { listaexps.add(exp); }
+                |   <r_default>     { listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo)); }
+            )
+        )*   { return listaexps; }
+    } catch (ParseException e) {
+        error_skipto(23,puco);
+    }
 }
 
 Nodo EXPRESION() :
@@ -365,11 +495,15 @@ Nodo EXPRESION() :
     Nodo a, b, c;
 }
 {
-    a=CONDICION_OR()
-    (
-        <interrogacion> b=CONDICION_OR() <dospu> c=CONDICION_OR() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
-    )*
-    { return a; }
+    try {
+        a=CONDICION_OR()
+        (
+            <interrogacion> b=CONDICION_OR() <dospu> c=CONDICION_OR() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(24,puco);
+    }
 }
 
 Nodo CONDICION_OR() :
@@ -377,11 +511,15 @@ Nodo CONDICION_OR() :
     Nodo a, b;
 }
 {
-    a=CONDICION_AND()
-    (
-        <or> b=CONDICION_AND() { a = new NOr(token.beginLine, token.beginColumn, archivo, a, b); }
-    )*
-    { return a; }
+    try {
+        a=CONDICION_AND()
+        (
+            <or> b=CONDICION_AND() { a = new NOr(token.beginLine, token.beginColumn, archivo, a, b); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(25,puco);
+    }
 }
 
 Nodo CONDICION_AND() :
@@ -389,7 +527,11 @@ Nodo CONDICION_AND() :
     Nodo a, b;
 }
 {
-    a=EXP_COMPARACION() (<and> b=EXP_COMPARACION() { a = new NAnd(token.beginLine, token.beginColumn, archivo, a, b); })*   { return a; }
+    try {
+        a=EXP_COMPARACION() (<and> b=EXP_COMPARACION() { a = new NAnd(token.beginLine, token.beginColumn, archivo, a, b); })*   { return a; }
+    } catch (ParseException e) {
+        error_skipto(26,puco);
+    }
 }
 
 Nodo EXP_COMPARACION() :
@@ -397,12 +539,16 @@ Nodo EXP_COMPARACION() :
     Nodo a, b;
 }
 {
-    a=EXP_RELACIONAL()
-    (
-            <igualdad> b=EXP_RELACIONAL()       { a = new NIgualdad(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <diferente_que> b=EXP_RELACIONAL()  { a = new NDiferente(token.beginLine, token.beginColumn, archivo, a, b); }
-    )*
-    { return a; }
+    try {
+        a=EXP_RELACIONAL()
+        (
+                <igualdad> b=EXP_RELACIONAL()       { a = new NIgualdad(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <diferente_que> b=EXP_RELACIONAL()  { a = new NDiferente(token.beginLine, token.beginColumn, archivo, a, b); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(27,puco);
+    }
 }
 
 Nodo EXP_RELACIONAL() :
@@ -410,14 +556,18 @@ Nodo EXP_RELACIONAL() :
     Nodo a, b;
 }
 {
-    a=EXP_ADITIVA()
-    (
-            <mayor> b=EXP_ADITIVA()         { a = new NMayor(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <menor> b=EXP_ADITIVA()         { a = new NMenor(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <mayor_igual> b=EXP_ADITIVA()   { a = new NMayorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <menor_igual> b=EXP_ADITIVA()   { a = new NMenorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
-    )*
-    { return a; }
+    try {
+        a=EXP_ADITIVA()
+        (
+                <mayor> b=EXP_ADITIVA()         { a = new NMayor(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <menor> b=EXP_ADITIVA()         { a = new NMenor(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <mayor_igual> b=EXP_ADITIVA()   { a = new NMayorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <menor_igual> b=EXP_ADITIVA()   { a = new NMenorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(28,puco);
+    }
 }
 
 Nodo EXP_ADITIVA() :
@@ -425,12 +575,16 @@ Nodo EXP_ADITIVA() :
     Nodo a, b;
 }
 {
-    a=EXP_MULTIPLICATIVA()
-    (
-            <mas> b=EXP_MULTIPLICATIVA()         { a = new NSuma(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <menos> b=EXP_MULTIPLICATIVA()       { a = new NResta(token.beginLine, token.beginColumn, archivo, a, b); }
-    )*
-    { return a; }
+    try {
+        a=EXP_MULTIPLICATIVA()
+        (
+                <mas> b=EXP_MULTIPLICATIVA()         { a = new NSuma(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <menos> b=EXP_MULTIPLICATIVA()       { a = new NResta(token.beginLine, token.beginColumn, archivo, a, b); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(29,puco);
+    }
 }
 
 Nodo EXP_MULTIPLICATIVA() :
@@ -438,13 +592,17 @@ Nodo EXP_MULTIPLICATIVA() :
     Nodo a, b;
 }
 {
-    a=EXP_POTENCIA()
-    (
-            <por> b=EXP_POTENCIA()  { a = new NMultiplicacion(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <div> b=EXP_POTENCIA()  { a = new NDivision(token.beginLine, token.beginColumn, archivo, a, b); }
-        |   <mod> b=EXP_POTENCIA()  { a = new NModulo(token.beginLine, token.beginColumn, archivo, a, b); }
-    )*
-    { return a; }
+    try {
+        a=EXP_POTENCIA()
+        (
+                <por> b=EXP_POTENCIA()  { a = new NMultiplicacion(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <div> b=EXP_POTENCIA()  { a = new NDivision(token.beginLine, token.beginColumn, archivo, a, b); }
+            |   <mod> b=EXP_POTENCIA()  { a = new NModulo(token.beginLine, token.beginColumn, archivo, a, b); }
+        )*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(30,puco);
+    }
 }
 
 Nodo EXP_POTENCIA() :
@@ -452,9 +610,13 @@ Nodo EXP_POTENCIA() :
     Nodo a, b;
 }
 {
-    a=EXP_UNARIA()
-    (<pot> b=EXP_UNARIA()  { a = new NPotencia(token.beginLine, token.beginColumn, archivo, a, b); })*
-    { return a; }
+    try {
+        a=EXP_UNARIA()
+        (<pot> b=EXP_UNARIA()  { a = new NPotencia(token.beginLine, token.beginColumn, archivo, a, b); })*
+        { return a; }
+    } catch (ParseException e) {
+        error_skipto(31,puco);
+    }
 }
 
 Nodo EXP_UNARIA() :
@@ -462,9 +624,13 @@ Nodo EXP_UNARIA() :
     Nodo a;
 }
 {
-        <menos> a=EXP_UNARIA()  { return new NNegativo(token.beginLine, token.beginColumn, archivo, a); }
-    |   <not> a=EXP_UNARIA()    { return new NNot(token.beginLine, token.beginColumn, archivo, a); }
-    |   a=PRIMITIVO()           { return a; }
+    try {
+            <menos> a=EXP_UNARIA()  { return new NNegativo(token.beginLine, token.beginColumn, archivo, a); }
+        |   <not> a=EXP_UNARIA()    { return new NNot(token.beginLine, token.beginColumn, archivo, a); }
+        |   a=PRIMITIVO()           { return a; }
+    } catch (ParseException e) {
+        error_skipto(32,puco);
+    }
 }
 
 Nodo PRIMITIVO() :
@@ -476,19 +642,23 @@ Nodo PRIMITIVO() :
     LinkedList<Dimension> ldim = new LinkedList<Dimension>();
 }
 {
-      t=<numero>                                                        { return new NPrim(token.beginLine, token.beginColumn, archivo, Integer.parseInt(t.image), ETipoDato.INT); }
-    | t=<decimal>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, Double.parseDouble(t.image), ETipoDato.DECIMAL); }
-    | t=<r_true>                                                        { return new NPrim(token.beginLine, token.beginColumn, archivo, true, ETipoDato.BOOLEAN); }
-    | t=<r_false>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, false, ETipoDato.BOOLEAN); }
-    | t=<r_nulo>                                                        { return new NNulo(token.beginLine, token.beginColumn, archivo); }
-    | LOOKAHEAD(2) n=SENTENCIA_LLAMADA()                                { return n; }
-    | t=<cadena>                                                        {
-                                                                            cad = t.image.substring(1,t.image.length()-1);
-                                                                            cad = cad.replace("\\","\\");
-                                                                            cad = cad.replace("\\n","\n");
-                                                                            cad = cad.replace("\\t","\t");
-                                                                            return new NPrim(token.beginLine, token.beginColumn, archivo, cad, ETipoDato.STRING);
-                                                                        }
-    | LOOKAHEAD(2) t=<identificador> (d=ACCESO() { ldim.add(d); })*     { return (ldim.size() > 0) ? new NAcceso(token.beginLine, token.beginColumn, archivo, t.image, ldim) : new NId(token.beginLine, token.beginColumn, archivo, t.image); }
-    | <par_a> n=EXPRESION() <par_c>                                     { return n; }
+    try {
+            t=<numero>                                                      { return new NPrim(token.beginLine, token.beginColumn, archivo, Integer.parseInt(t.image), ETipoDato.INT); }
+        | t=<decimal>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, Double.parseDouble(t.image), ETipoDato.DECIMAL); }
+        | t=<r_true>                                                        { return new NPrim(token.beginLine, token.beginColumn, archivo, true, ETipoDato.BOOLEAN); }
+        | t=<r_false>                                                       { return new NPrim(token.beginLine, token.beginColumn, archivo, false, ETipoDato.BOOLEAN); }
+        | t=<r_nulo>                                                        { return new NNulo(token.beginLine, token.beginColumn, archivo); }
+        | LOOKAHEAD(2) n=SENTENCIA_LLAMADA()                                { return n; }
+        | t=<cadena>                                                        {
+                                                                                cad = t.image.substring(1,t.image.length()-1);
+                                                                                cad = cad.replace("\\","\\");
+                                                                                cad = cad.replace("\\n","\n");
+                                                                                cad = cad.replace("\\t","\t");
+                                                                                return new NPrim(token.beginLine, token.beginColumn, archivo, cad, ETipoDato.STRING);
+                                                                            }
+        | LOOKAHEAD(2) t=<identificador> (d=ACCESO() { ldim.add(d); })*     { return (ldim.size() > 0) ? new NAcceso(token.beginLine, token.beginColumn, archivo, t.image, ldim) : new NId(token.beginLine, token.beginColumn, archivo, t.image); }
+        | <par_a> n=EXPRESION() <par_c>                                     { return n; }
+    } catch (ParseException e) {
+        error_skipto(33,puco);
+    }
 }
