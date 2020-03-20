@@ -30,25 +30,55 @@ public class Lista implements Estructura {
             }
         }
 
-        /* Esta funcion ya no se utiliza ya que no se unifican las listas. */
-        /*Optional<Item> hasVector = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
-        if (hasVector.isPresent()) {
+        Optional<Item> hasLists = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
+        if (hasLists.isPresent()) {
             mergeLists();
-        }*/
+        }
         
         return true;
 
     }
 
     private void mergeLists() {
-        Item pivot;
+
+        Lista l;
+        Vector v;
+        LinkedList<Item> li = new LinkedList<>();
+
+        for (Item it : elementos) {
+            switch (it.getTipo()) {
+                case NT:
+                case INT:
+                case STRING:
+                case DECIMAL:
+                case BOOLEAN: {
+                    li.add(new Item(it.getTipo(), it.getValor()));
+                }   break;
+                case VECTOR: {
+                    v = (Vector)it.getValor();
+                    for (Item ivec : v.getElementos()) {
+                        li.add(new Item(ivec.getTipo(), ivec.getValor()));
+                    }
+                }   break;
+                case LIST: {
+                    l = (Lista)it.getValor();
+                    for (Item ilist : l.getElementos()) {
+                        li.add(new Item(ilist.getTipo(), ilist.getValor()));
+                    }
+                }   break;
+            }
+        }
+
+        elementos = li;
+
+        /*Item pivot;
         for (int i = 0; i < elementos.size(); i++) {
             pivot = elementos.get(i);
             if (pivot.getTipo() == ETipoDato.LIST) {
                 elementos.remove(i);
                 elementos.addAll(i, ((Lista)pivot.getValor()).getElementos());
             }
-        }
+        }*/
     }
 
     public boolean updateListValue(int pos, ETipoDato type, Object value) {
