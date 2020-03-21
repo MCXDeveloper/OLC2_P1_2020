@@ -26,7 +26,7 @@ public class HistogramChart extends Nodo {
     public HistogramChart(int linea, int columna, String archivo, String titulo, String xlab, LinkedList<Double> valores) {
         super(linea, columna, archivo, ETipoNodo.STMT_HIST);
         ChartFactory.setChartTheme(StandardChartTheme.createDarknessTheme());
-        chart = ChartFactory.createHistogram(titulo, xlab, "", createDataset(titulo, valores), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createHistogram(xlab, titulo, "", createDataset(xlab, valores), PlotOrientation.VERTICAL, true, true, false);
         chart.setBackgroundPaint(Color.black);
         XYPlot plot = chart.getXYPlot();
         plot.getDomainAxis().setLowerMargin(0.0);

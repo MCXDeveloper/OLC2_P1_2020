@@ -116,7 +116,7 @@ public class NAsignacionVector extends Nodo implements Instruccion {
                         /* Convierto el vector en lista y procedo a actualizar el valor en la posición indicada. */
                         Lista l = vec.transformVectorToList();
                         l.updateListValue(firstPos, rexp.getTipoDato(), rexp.getValor());
-                        l.rehashing();
+                        l.rehashing(true);
 
                         /* Actualizo el valor del simbolo porque ahora es una lista */
                         simVec.setTipo(ETipoDato.LIST);

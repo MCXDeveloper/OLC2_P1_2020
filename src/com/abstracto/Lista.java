@@ -21,7 +21,7 @@ public class Lista implements Estructura {
         this.elementos = le;
     }
 
-    public boolean rehashing() {
+    public boolean rehashing(boolean rehashLists) {
 
         /* Si dentro de la lista vienen vectores, los rehasheo */
         for (Item it : elementos) {
@@ -30,11 +30,13 @@ public class Lista implements Estructura {
             }
         }
 
-        Optional<Item> hasLists = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
-        if (hasLists.isPresent()) {
-            mergeLists();
+        if (rehashLists) {
+            Optional<Item> hasLists = elementos.stream().filter(i -> i.getTipo() == ETipoDato.LIST).findAny();
+            if (hasLists.isPresent()) {
+                mergeLists();
+            }
         }
-        
+
         return true;
 
     }
@@ -107,8 +109,26 @@ public class Lista implements Estructura {
 
         }
 
-        return rehashing();
+        return rehashing(false);
 
+    }
+
+    public Item getElementoTipo1(int pos) {
+        int finalPos = pos - 1;
+        Item it = elementos.get(finalPos);
+        if (it.getTipo() != ETipoDato.LIST && it.getTipo() != ETipoDato.VECTOR) {
+            it = new Item(ETipoDato.VECTOR, new Vector(it.getTipo(), it.getValor()));
+        }
+        return new Item(ETipoDato.LIST, new Lista(it.getTipo(), it.getValor()));
+    }
+
+    public Item getElementoTipo2(int pos) {
+        int finalPos = pos - 1;
+        Item it = elementos.get(finalPos);
+        if (it.getTipo() != ETipoDato.LIST && it.getTipo() != ETipoDato.VECTOR) {
+            it = new Item(ETipoDato.VECTOR, new Vector(it.getTipo(), it.getValor()));
+        }
+        return it;
     }
 
     public Item getElementoTipo1ParaAsignacion(int pos) {

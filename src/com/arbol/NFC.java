@@ -60,7 +60,7 @@ public class NFC extends Nodo implements Instruccion {
 
             if (optListaItems.isPresent()) {
                 Lista l = new Lista(listaItems);
-                if (l.rehashing()) {
+                if (l.rehashing(true)) {
                     tdr = ETipoDato.LIST;
                     rvalor = l;
                 } else {

@@ -130,7 +130,7 @@ public class Arreglo implements Estructura {
             pivot = elementos.get(i);
             if (pivot.getTipo() != ETipoDato.LIST) {
                 l = new Lista(pivot.getTipo(), pivot.getValor());
-                l.rehashing();
+                l.rehashing(false);
                 elementos.set(i, new Item(ETipoDato.LIST, l));
             }
         }

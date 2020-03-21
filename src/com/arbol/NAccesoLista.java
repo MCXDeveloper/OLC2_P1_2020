@@ -53,7 +53,12 @@ public class NAccesoLista extends Nodo implements Instruccion {
             if (posicion != -1) {
                 if (pivote instanceof Lista) {
                     Lista l = ((Lista) pivote);
-                    pivote = (dim.getTipoDim() == ETipoDimension.SIMPLE) ? l.getElementoTipo1ParaAsignacion(posicion) : l.getElementoTipo2ParaAsignacion(posicion);
+                    if (posicion > l.getListSize()) {
+                        msj = "Error. No se puede acceder a una posición inexistente de una lista [Valor = "+ posicion +"].";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_LISTA]", msj, getLinea(), getColumna());
+                        return error;
+                    }
+                    pivote = (dim.getTipoDim() == ETipoDimension.SIMPLE) ? l.getElementoTipo1(posicion) : l.getElementoTipo2(posicion);
                 } else if (pivote instanceof Vector) {
                     if (dim.getTipoDim() != ETipoDimension.SIMPLE) {
                         msj = "Error. La dimension #"+ (cnt-1) +" devuelve un vector y a este no se le puede hacer un acceso de tipo [[]].";
