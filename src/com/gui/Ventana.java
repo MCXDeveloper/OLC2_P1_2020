@@ -10,6 +10,7 @@ import com.analizador.ascendente.lexico.Lexico;
 import com.analizador.ascendente.sintactico.Sintactico;
 import com.analizador.descendente.Gramatica;
 import com.analizador.descendente.ParseException;
+import com.analizador.descendente.TokenMgrError;
 import com.arbol.NRaiz;
 import com.bethecoder.ascii_table.ASCIITable;
 import com.entorno.TablaSimbolos;
@@ -557,8 +558,8 @@ public class Ventana extends javax.swing.JFrame {
         try {
             parser.parse();
             raizGlobal = parser.getRaiz();
-            tsGlobal = new TablaSimbolos();
             if (raizGlobal != null) {
+                tsGlobal = new TablaSimbolos();
                 try {
                     Resultado r = raizGlobal.Ejecutar(tsGlobal);
                     verificarErrores();
@@ -600,13 +601,20 @@ public class Ventana extends javax.swing.JFrame {
         try {
             parser.INICIO(new LinkedList<>());
             raizGlobal = parser.getRoot();
-            tsGlobal = new TablaSimbolos();
-            raizGlobal.Ejecutar(tsGlobal);
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (raizGlobal != null) {
+                tsGlobal = new TablaSimbolos();
+                try {
+                    Resultado r = raizGlobal.Ejecutar(tsGlobal);
+                    verificarErrores();
+                } catch (Exception ex) {
+                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                verificarErrores();
+            }
+        } catch (TokenMgrError | ParseException tme) {
+            verificarErrores();
         }
-        verificarErrores();
-
     }
 
     /**
