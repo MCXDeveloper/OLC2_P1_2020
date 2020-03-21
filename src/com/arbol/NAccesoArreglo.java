@@ -66,7 +66,7 @@ public class NAccesoArreglo extends Nodo implements Instruccion {
         Optional<Dimension> hasAnotherThanSimple = listaDims.stream().filter(d -> d.getTipoDim() != ETipoDimension.SIMPLE).findAny();
 
         if (hasAnotherThanSimple.isPresent()) {
-            msj = "Error. No se puede actualizar el valor en un arreglo utilizando la forma de acceso proporcionada.";
+            msj = "Error. No se puede acceder a el valor de un arreglo utilizando la forma de acceso proporcionada.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_ARREGLO]", msj, getLinea(), getColumna());
             return null;
         }

@@ -47,14 +47,23 @@ public class Nodo {
         if (xtrim != null) {
             for (Item it : valores) {
                 double x = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
-                if (x > (double)xtrim.getValor()) {
+                if (x >= (double)xtrim.getValor()) {
                     ret.add(x);
                 }
             }
-        } else {
-            for (Item it : valores) {
-                ret.add((it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor());
+            if (ret.size() == 0) {
+                ret = addAllValues(valores);
             }
+        } else {
+            ret = addAllValues(valores);
+        }
+        return ret;
+    }
+
+    private LinkedList<Double> addAllValues(LinkedList<Item> valores) {
+        LinkedList<Double> ret = new LinkedList<>();
+        for (Item it : valores) {
+            ret.add((it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor());
         }
         return ret;
     }

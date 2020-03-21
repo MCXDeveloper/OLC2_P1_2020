@@ -46,7 +46,7 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
                         ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_MATRIZ]", msj, getLinea(), getColumna());
                         return error;
                     }
-                    Item it = matrix.getElementByPosition(posDim);
+                    Item it = matrix.getElementByPosition(posDim - 1);
                     return new Resultado(it.getTipo(), EFlujo.NORMAL, it.getValor());
                 }
             }

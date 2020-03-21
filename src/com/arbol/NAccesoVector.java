@@ -82,7 +82,7 @@ public class NAccesoVector extends Nodo implements Instruccion {
 
         int finalPos = actualPos - 1;
 
-        if (finalPos > vec.getVectorSize()) {
+        if (finalPos > vec.getVectorSize() - 1) {
             msj = "Error. No se puede acceder a una posición inexistente de un vector [Valor = "+ actualPos +"].";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_VECTOR]", msj, getLinea(), getColumna());
             return error;

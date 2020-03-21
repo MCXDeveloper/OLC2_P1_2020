@@ -187,7 +187,7 @@ public class NMultiplicacion extends Nodo implements Instruccion {
                 ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL };
 
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación MULTIPLICACION para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
+                    msj = "Error. No hay implementación para la operación MULTIPLICACIÓN para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MULTIPLICACION]", msj, getLinea(), getColumna());
                 } else {
                     NPrim op1;
@@ -210,7 +210,7 @@ public class NMultiplicacion extends Nodo implements Instruccion {
                 ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL };
 
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación MULTIPLICACION para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
+                    msj = "Error. No hay implementación para la operación MULTIPLICACIÓN para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MULTIPLICACION]", msj, getLinea(), getColumna());
                 } else {
                     NPrim op2;
@@ -219,6 +219,48 @@ public class NMultiplicacion extends Nodo implements Instruccion {
                     NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v1.getValor(), v1.getTipoDato());
                     for (Item i : mat.getElementos()) {
                         op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NMultiplicacion(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if (v1.getTipoDato() == ETipoDato.VECTOR && v2.getTipoDato() == ETipoDato.MATRIX) {
+
+                Vector v = (Vector)v1.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la multiplicación de un vector de más de 1 elemento con una matriz.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MULTIPLICACION]", msj, getLinea(), getColumna());
+                } else {
+                    Matriz mat = (Matriz)v2.getValor();
+                    NPrim op2;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NMultiplicacion(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.VECTOR) {
+
+                Vector v = (Vector)v2.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la multiplicación de una matriz y un vector de más de 1 elemento.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_MULTIPLICACION]", msj, getLinea(), getColumna());
+                } else {
+                    Matriz mat = (Matriz)v1.getValor();
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
                         r = new NMultiplicacion(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
                         li.add(new Item(r.getTipoDato(), r.getValor()));
                     }

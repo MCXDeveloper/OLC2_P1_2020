@@ -226,6 +226,48 @@ public class NPotencia extends Nodo implements Instruccion {
                     valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
                 }
 
+            } else if (v1.getTipoDato() == ETipoDato.VECTOR && v2.getTipoDato() == ETipoDato.MATRIX) {
+
+                Vector v = (Vector)v1.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la potencia de un vector de más de 1 elemento con una matriz.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
+                } else {
+                    Matriz mat = (Matriz)v2.getValor();
+                    NPrim op2;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NPotencia(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.VECTOR) {
+
+                Vector v = (Vector)v2.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la potencia de una matriz y un vector de más de 1 elemento.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_POTENCIA]", msj, getLinea(), getColumna());
+                } else {
+                    Matriz mat = (Matriz)v1.getValor();
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NPotencia(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
             } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.MATRIX) {
 
                 Matriz mat1 = (Matriz)v1.getValor();

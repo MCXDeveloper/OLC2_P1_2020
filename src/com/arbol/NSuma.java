@@ -396,239 +396,105 @@ public class NSuma extends Nodo implements Instruccion {
 
             */
 
-            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.INT) {
+            } else if ((v1.getTipoDato() == ETipoDato.INT || v1.getTipoDato() == ETipoDato.DECIMAL || v1.getTipoDato() == ETipoDato.BOOLEAN || v1.getTipoDato() == ETipoDato.STRING) && v2.getTipoDato() == ETipoDato.MATRIX) {
 
-                Matriz mat = (Matriz)v1.getValor();
+                ETipoDato[] tiposPermitidos;
+                Matriz mat = (Matriz)v2.getValor();
                 ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
 
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
+                if (v1.getTipoDato() == ETipoDato.INT || v1.getTipoDato() == ETipoDato.DECIMAL) {
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
+                } else if (v1.getTipoDato() == ETipoDato.BOOLEAN) {
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
                 } else {
-                    LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.INT, ((int)i.getValor()) + ((int)v2.getValor())));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((double)i.getValor()) + ((int)v2.getValor())));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (i.getValor().toString()) + ((int)v2.getValor())));
-                            }
-                        }
-                    }
-                    tdr = ETipoDato.MATRIX;
-                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
                 }
 
-            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.DECIMAL) {
-
-                Matriz mat = (Matriz)v1.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
-
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
+                    msj = "Error. No hay implementación para la operación SUMA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
                 } else {
+                    NPrim op2;
+                    Resultado r;
                     LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((int)i.getValor()) + ((double)v2.getValor())));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((double)i.getValor()) + ((double)v2.getValor())));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (i.getValor().toString()) + ((double)v2.getValor())));
-                            }
-                        }
-                    }
-                    tdr = ETipoDato.MATRIX;
-                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
-                }
-
-            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.BOOLEAN) {
-
-                Matriz mat = (Matriz)v1.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
-
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
-                } else {
-                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v1.getValor(), v1.getTipoDato());
                     for (Item i : mat.getElementos()) {
-                        li.add(new Item(ETipoDato.STRING, (i.getValor().toString() + ((boolean)v2.getValor()))));
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
                     }
                     tdr = ETipoDato.MATRIX;
                     valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
                 }
 
-            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.STRING) {
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && (v2.getTipoDato() == ETipoDato.INT || v2.getTipoDato() == ETipoDato.DECIMAL || v2.getTipoDato() == ETipoDato.BOOLEAN || v2.getTipoDato() == ETipoDato.STRING)) {
 
+                ETipoDato[] tiposPermitidos;
                 Matriz mat = (Matriz)v1.getValor();
                 ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
+
+                if (v2.getTipoDato() == ETipoDato.INT || v2.getTipoDato() == ETipoDato.DECIMAL) {
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
+                } else if (v2.getTipoDato() == ETipoDato.BOOLEAN) {
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
+                } else {
+                    tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
+                }
 
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
                     msj = "Error. No hay implementación para la operación SUMA para los tipos <MATRIX["+ tipoInternoMatriz +"]> y <"+ v2.getTipoDato() +">.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
                 } else {
+                    NPrim op1;
+                    Resultado r;
                     LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, ((int) i.getValor()) + v2.getValor().toString()));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, ((double) i.getValor()) + v2.getValor().toString()));
-                            }
-                        }   break;
-                        case BOOLEAN: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, ((boolean) i.getValor()) + v2.getValor().toString()));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (i.getValor().toString()) + v2.getValor().toString()));
-                            }
-                        }   break;
-                    }
-                    tdr = ETipoDato.MATRIX;
-                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
-                }
-
-            } else if (v1.getTipoDato() == ETipoDato.INT && v2.getTipoDato() == ETipoDato.MATRIX) {
-
-                Matriz mat = (Matriz)v2.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
-
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
-                } else {
-                    LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.INT, ((int)v1.getValor() + (int)i.getValor())));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((int)v1.getValor() + (double)i.getValor())));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, ((int)v1.getValor() + i.getValor().toString())));
-                            }
-                        }   break;
-                    }
-                    tdr = ETipoDato.MATRIX;
-                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
-                }
-
-            } else if (v1.getTipoDato() == ETipoDato.DECIMAL && v2.getTipoDato() == ETipoDato.MATRIX) {
-
-                Matriz mat = (Matriz)v2.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.STRING };
-
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
-                } else {
-                    LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((double)v1.getValor() + (int)i.getValor())));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.DECIMAL, ((double)v1.getValor() + (double)i.getValor())));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, ((double)v1.getValor() + i.getValor().toString())));
-                            }
-                        }   break;
-                    }
-                    tdr = ETipoDato.MATRIX;
-                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
-                }
-
-            } else if (v1.getTipoDato() == ETipoDato.BOOLEAN && v2.getTipoDato() == ETipoDato.MATRIX) {
-
-                Matriz mat = (Matriz)v2.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
-
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
-                } else {
-                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), v2.getValor(), v2.getTipoDato());
                     for (Item i : mat.getElementos()) {
-                        li.add(new Item(ETipoDato.STRING, ((boolean)v1.getValor() + i.getValor().toString())));
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
                     }
                     tdr = ETipoDato.MATRIX;
                     valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
                 }
 
-            } else if (v1.getTipoDato() == ETipoDato.STRING && v2.getTipoDato() == ETipoDato.MATRIX) {
+            } else if (v1.getTipoDato() == ETipoDato.VECTOR && v2.getTipoDato() == ETipoDato.MATRIX) {
 
-                Matriz mat = (Matriz)v2.getValor();
-                ETipoDato tipoInternoMatriz = mat.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
-
-                if (!Arrays.asList(tiposPermitidos).contains(tipoInternoMatriz)) {
-                    msj = "Error. No hay implementación para la operación SUMA para los tipos <"+ v1.getTipoDato() +"> y <MATRIX["+ tipoInternoMatriz +"]>.";
+                Vector v = (Vector)v1.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la suma de un vector de más de 1 elemento con una matriz.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
                 } else {
+                    Matriz mat = (Matriz)v2.getValor();
+                    NPrim op2;
+                    Resultado r;
                     LinkedList<Item> li = new LinkedList<>();
-                    switch (tipoInternoMatriz) {
-                        case INT: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (v1.getValor().toString() + (int)i.getValor())));
-                            }
-                        }   break;
-                        case DECIMAL: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (v1.getValor().toString() + (double) i.getValor())));
-                            }
-                        }   break;
-                        case BOOLEAN: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (v1.getValor().toString() + (boolean) i.getValor())));
-                            }
-                        }   break;
-                        case STRING: {
-                            for (Item i : mat.getElementos()) {
-                                li.add(new Item(ETipoDato.STRING, (v1.getValor().toString() + i.getValor().toString())));
-                            }
-                        }   break;
+                    NPrim op1 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op2 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
+                    }
+                    tdr = ETipoDato.MATRIX;
+                    valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
+                }
+
+            } else if (v1.getTipoDato() == ETipoDato.MATRIX && v2.getTipoDato() == ETipoDato.VECTOR) {
+
+                Vector v = (Vector)v2.getValor();
+                if (v.getVectorSize() > 1) {
+                    msj = "Error. No se puede realizar la suma de una matriz y un vector de más de 1 elemento.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SUMA]", msj, getLinea(), getColumna());
+                } else {
+                    Matriz mat = (Matriz)v1.getValor();
+                    NPrim op1;
+                    Resultado r;
+                    LinkedList<Item> li = new LinkedList<>();
+                    NPrim op2 = new NPrim(getLinea(), getColumna(), getArchivo(), v.getElementByPosition(0).getValor(), v.getInnerType());
+                    for (Item i : mat.getElementos()) {
+                        op1 = new NPrim(getLinea(), getColumna(), getArchivo(), i.getValor(), i.getTipo());
+                        r = new NSuma(getLinea(), getColumna(), getArchivo(), op1, op2).Ejecutar(ts);
+                        li.add(new Item(r.getTipoDato(), r.getValor()));
                     }
                     tdr = ETipoDato.MATRIX;
                     valor = new Matriz(mat.getFilas(), mat.getColumnas(), li);
