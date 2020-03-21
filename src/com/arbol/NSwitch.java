@@ -74,7 +74,7 @@ public class NSwitch extends Nodo implements Instruccion {
                     rcasexp.setValor(v.getElementByPosition(0).getValor());
                 }   break;
                 default: {
-                    msj = "Error. La expresión de tipo <"+ rexp.getTipoDato() +"> recibida en el switch no es permitida.";
+                    msj = "Error. La expresión de tipo <"+ rexp.getTipoDato() +"> recibida en el case no es permitida.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_SWITCH]", msj, getLinea(), getColumna());
                     return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
                 }
