@@ -4,17 +4,17 @@ import com.abstracto.Fail;
 import com.arbol.NNulo;
 
 public enum ETipoDato {
-    INT(0, "INTEGER", false),
-    ANY(null, "ANY", false),
-    LIST(null, "LIST", true),
-    ERROR(new Fail(), "ERROR", false),
-    ARRAY(null, "ARRAY", true),
-    VECTOR(null, "VECTOR", true),
-    MATRIX(null, "MATRIX", true),
-    DECIMAL(0.0, "NUMERIC", false),
-    BOOLEAN(false, "BOOLEAN", false),
-    NT(new NNulo(0,0,"[NO_FILE]"), "NULL", false),
-    STRING(new NNulo(0,0,"[NO_FILE]"), "STRING", false);
+    INT(0, "integer", false),
+    ANY(null, "any", false),
+    LIST(null, "list", true),
+    ERROR(new Fail(), "error", false),
+    ARRAY(null, "array", true),
+    VECTOR(null, "vector", true),
+    MATRIX(null, "matrix", true),
+    DECIMAL(0.0, "numeric", false),
+    BOOLEAN(false, "boolean", false),
+    NT(new NNulo(0,0,"[NO_FILE]"), "null", false),
+    STRING(new NNulo(0,0,"[NO_FILE]"), "string", false);
 
     private final Object defecto;
     private final String typeOf;
