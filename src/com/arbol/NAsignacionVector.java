@@ -5,6 +5,7 @@ import com.constantes.EFlujo;
 import com.constantes.ETipoDato;
 import com.constantes.ETipoDimension;
 import com.constantes.ETipoNodo;
+import com.entorno.Simbolo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
@@ -15,12 +16,14 @@ public class NAsignacionVector extends Nodo implements Instruccion {
 
     private Nodo valor;
     private Vector vec;
+    private Simbolo simVec;
     private LinkedList<Dimension> listaDims;
 
-    public NAsignacionVector(int linea, int columna, String archivo, LinkedList<Dimension> listaDims, Vector vec, Nodo valor) {
+    public NAsignacionVector(int linea, int columna, String archivo, Simbolo simVec, LinkedList<Dimension> listaDims, Vector vec, Nodo valor) {
         super(linea, columna, archivo, ETipoNodo.STMT_ASIGNACION_VECTOR);
         this.vec = vec;
         this.valor = valor;
+        this.simVec = simVec;
         this.listaDims = listaDims;
     }
 
@@ -103,12 +106,31 @@ public class NAsignacionVector extends Nodo implements Instruccion {
             }
 
             if (!flag) {
+
                 Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
+
                 if (validarExpresionParaVector(rexp)) {
-                    vec.updateVectorValue(firstPos, rexp.getTipoDato(), rexp.getValor());
+
+                    if (rexp.getTipoDato() == ETipoDato.LIST) {
+
+                        /* Convierto el vector en lista y procedo a actualizar el valor en la posición indicada. */
+                        Lista l = vec.transformVectorToList();
+                        l.updateListValue(firstPos, rexp.getTipoDato(), rexp.getValor());
+                        l.rehashing();
+
+                        /* Actualizo el valor del simbolo porque ahora es una lista */
+                        simVec.setTipo(ETipoDato.LIST);
+                        simVec.setValor(l);
+
+                    } else {
+                        vec.updateVectorValue(firstPos, rexp.getTipoDato(), rexp.getValor());
+                    }
+
                     tdr = ETipoDato.NT;
                     rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
+
                 }
+
             }
 
         }
@@ -172,6 +194,15 @@ public class NAsignacionVector extends Nodo implements Instruccion {
             case DECIMAL:
             case BOOLEAN:
                 break;
+            case LIST: {
+                Lista l = (Lista)rexp.getValor();
+                if (l.getListSize() > 1) {
+                    msj = "Error. No se puede asignar una lista de más de 1 valor a una posición de un vector.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_VECTOR]", msj, getLinea(), getColumna());
+                    return false;
+                }
+            }   break;
+
             case VECTOR: {
                 Vector v = (Vector)rexp.getValor();
                 if (v.getVectorSize() > 1) {

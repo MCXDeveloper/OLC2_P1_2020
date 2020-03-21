@@ -131,6 +131,14 @@ public class Vector implements Estructura {
         return elementos.get(0).getTipo();
     }
 
+    public Lista transformVectorToList() {
+        LinkedList<Item> li = new LinkedList<>();
+        for (Item it : elementos) {
+            li.add(new Item(it.getTipo(), it.getValor()));
+        }
+        return new Lista(li);
+    }
+
     private void mergeVectors() {
         Item pivot;
         for (int i = 0; i < elementos.size(); i++) {
