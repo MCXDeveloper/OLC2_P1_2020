@@ -183,10 +183,11 @@ LinkedList<Nodo> BLOQUE() :
 }
 {
     try {
-        <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>  { return nodos; }
+        <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>
     } catch (ParseException e) {
         error_skipto(3,puco);
     }
+    { return nodos; }
 }
 
 Nodo DECASI_FUNCION() :
@@ -212,6 +213,7 @@ Nodo DECASI_FUNCION() :
         )
     } catch (ParseException e) {
         error_skipto(4,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -221,10 +223,11 @@ LinkedList<NParam> PARAMETROS_FUNCION() :
 }
 {
     try {
-        <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>  { return params; }
+        <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>
     } catch (ParseException e) {
         error_skipto(5,puco);
     }
+    { return params; }
 }
 
 LinkedList<NParam> LISTA_PARAM_FUNCION() :
@@ -234,10 +237,11 @@ LinkedList<NParam> LISTA_PARAM_FUNCION() :
 }
 {
     try {
-        n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*     { return params; }
+        n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*
     } catch (ParseException e) {
         error_skipto(6,puco);
     }
+    { return params; }
 }
 
 NParam PARAMETRO() :
@@ -284,6 +288,7 @@ Nodo SENTENCIA_IF() :
         ni=SIF() (listaElses=SELSE())?  { if (listaElses != null) { ni.setSecIf(listaElses); }    return ni; }
     } catch (ParseException e) {
         error_skipto(9,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -330,6 +335,7 @@ LinkedList<NIf> SELSE() :
                                                                                             }
     } catch (ParseException e) {
         error_skipto(12,puco);
+        return listaIfs;
     }
 }
 
@@ -349,6 +355,7 @@ Nodo SENTENCIA_SWITCH() :
         )
     } catch (ParseException e) {
         error_skipto(13,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -375,6 +382,7 @@ Nodo SENTENCIA_WHILE() :
         <r_while> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()    { return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block); }
     } catch (ParseException e) {
         error_skipto(15,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -388,6 +396,7 @@ Nodo SENTENCIA_DOWHILE() :
         <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c> (<puco>)?    { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
     } catch (ParseException e) {
         error_skipto(16,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -402,6 +411,7 @@ Nodo SENTENCIA_FOR() :
         <r_for> <par_a> tid=<identificador> <r_in> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
     } catch (ParseException e) {
         error_skipto(17,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -412,6 +422,7 @@ Nodo SENTENCIA_BREAK() :
         <r_break> (<puco>)?  { return new NBreak(token.beginLine, token.beginColumn, archivo); }
     } catch (ParseException e) {
         error_skipto(18,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -422,6 +433,7 @@ Nodo SENTENCIA_CONTINUE() :
         <r_continue> (<puco>)?  { return new NContinue(token.beginLine, token.beginColumn, archivo); }
     } catch (ParseException e) {
         error_skipto(19,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -434,6 +446,7 @@ Nodo SENTENCIA_RETURN() :
         <r_return> (<par_a> n=EXPRESION() <par_c>)? (<puco>)?   { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
     } catch (ParseException e) {
         error_skipto(20,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -487,6 +500,7 @@ LinkedList<Nodo> LISTA_EXPRESIONES() :
         )*   { return listaexps; }
     } catch (ParseException e) {
         error_skipto(23,puco);
+        return listaexps;
     }
 }
 
@@ -503,6 +517,7 @@ Nodo EXPRESION() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(24,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -519,6 +534,7 @@ Nodo CONDICION_OR() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(25,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -531,6 +547,7 @@ Nodo CONDICION_AND() :
         a=EXP_COMPARACION() (<and> b=EXP_COMPARACION() { a = new NAnd(token.beginLine, token.beginColumn, archivo, a, b); })*   { return a; }
     } catch (ParseException e) {
         error_skipto(26,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -548,6 +565,7 @@ Nodo EXP_COMPARACION() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(27,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -567,6 +585,7 @@ Nodo EXP_RELACIONAL() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(28,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -584,6 +603,7 @@ Nodo EXP_ADITIVA() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(29,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -602,6 +622,7 @@ Nodo EXP_MULTIPLICATIVA() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(30,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -616,6 +637,7 @@ Nodo EXP_POTENCIA() :
         { return a; }
     } catch (ParseException e) {
         error_skipto(31,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -630,6 +652,7 @@ Nodo EXP_UNARIA() :
         |   a=PRIMITIVO()           { return a; }
     } catch (ParseException e) {
         error_skipto(32,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }
 
@@ -660,5 +683,6 @@ Nodo PRIMITIVO() :
         | <par_a> n=EXPRESION() <par_c>                                     { return n; }
     } catch (ParseException e) {
         error_skipto(33,puco);
+        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     }
 }

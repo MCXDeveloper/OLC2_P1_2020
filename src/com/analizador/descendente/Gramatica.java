@@ -187,10 +187,10 @@ public class Gramatica implements GramaticaConstants {
         ;
       }
       jj_consume_token(llave_c);
-                                                                         {if (true) return nodos;}
     } catch (ParseException e) {
         error_skipto(3,puco);
     }
+      {if (true) return nodos;}
     throw new Error("Missing return statement in function");
   }
 
@@ -261,6 +261,7 @@ public class Gramatica implements GramaticaConstants {
       }
     } catch (ParseException e) {
         error_skipto(4,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -278,10 +279,10 @@ public class Gramatica implements GramaticaConstants {
         ;
       }
       jj_consume_token(par_c);
-                                                           {if (true) return params;}
     } catch (ParseException e) {
         error_skipto(5,puco);
     }
+      {if (true) return params;}
     throw new Error("Missing return statement in function");
   }
 
@@ -305,10 +306,10 @@ public class Gramatica implements GramaticaConstants {
         n = PARAMETRO();
                                                                  params.add(n);
       }
-                                                                                          {if (true) return params;}
     } catch (ParseException e) {
         error_skipto(6,puco);
     }
+      {if (true) return params;}
     throw new Error("Missing return statement in function");
   }
 
@@ -400,6 +401,7 @@ public class Gramatica implements GramaticaConstants {
                                           if (listaElses != null) { ni.setSecIf(listaElses); }    {if (true) return ni;}
     } catch (ParseException e) {
         error_skipto(9,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -481,6 +483,7 @@ public class Gramatica implements GramaticaConstants {
       }
     } catch (ParseException e) {
         error_skipto(12,puco);
+        {if (true) return listaIfs;}
     }
     throw new Error("Missing return statement in function");
   }
@@ -548,6 +551,7 @@ public class Gramatica implements GramaticaConstants {
       }
     } catch (ParseException e) {
         error_skipto(13,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -599,6 +603,7 @@ public class Gramatica implements GramaticaConstants {
                                                                       {if (true) return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block);}
     } catch (ParseException e) {
         error_skipto(15,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -624,6 +629,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                        {if (true) return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp);}
     } catch (ParseException e) {
         error_skipto(16,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -643,6 +649,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                               {if (true) return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block);}
     } catch (ParseException e) {
         error_skipto(17,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -661,6 +668,7 @@ public class Gramatica implements GramaticaConstants {
                                {if (true) return new NBreak(token.beginLine, token.beginColumn, archivo);}
     } catch (ParseException e) {
         error_skipto(18,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -679,6 +687,7 @@ public class Gramatica implements GramaticaConstants {
                                   {if (true) return new NContinue(token.beginLine, token.beginColumn, archivo);}
     } catch (ParseException e) {
         error_skipto(19,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -708,6 +717,7 @@ public class Gramatica implements GramaticaConstants {
                                                                   {if (true) return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n);}
     } catch (ParseException e) {
         error_skipto(20,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -839,6 +849,7 @@ public class Gramatica implements GramaticaConstants {
                {if (true) return listaexps;}
     } catch (ParseException e) {
         error_skipto(23,puco);
+        {if (true) return listaexps;}
     }
     throw new Error("Missing return statement in function");
   }
@@ -866,6 +877,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(24,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -891,6 +903,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(25,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -916,6 +929,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                                                                   {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(26,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -955,6 +969,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(27,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1006,6 +1021,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(28,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1045,6 +1061,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(29,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1090,6 +1107,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(30,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1115,6 +1133,7 @@ public class Gramatica implements GramaticaConstants {
           {if (true) return a;}
     } catch (ParseException e) {
         error_skipto(31,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1151,6 +1170,7 @@ public class Gramatica implements GramaticaConstants {
       }
     } catch (ParseException e) {
         error_skipto(32,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1235,6 +1255,7 @@ public class Gramatica implements GramaticaConstants {
       }
     } catch (ParseException e) {
         error_skipto(33,puco);
+        {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
     }
     throw new Error("Missing return statement in function");
   }
@@ -1330,194 +1351,20 @@ public class Gramatica implements GramaticaConstants {
     finally { jj_save(12, xla); }
   }
 
-  private boolean jj_3R_28() {
-    if (jj_scan_token(igual)) return true;
+  private boolean jj_3R_60() {
+    if (jj_scan_token(not)) return true;
+    if (jj_3R_54()) return true;
     return false;
   }
 
-  private boolean jj_3R_68() {
-    if (jj_scan_token(cadena)) return true;
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_3R_21()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_67() {
-    if (jj_scan_token(r_nulo)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_66() {
-    if (jj_scan_token(r_false)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21() {
-    if (jj_scan_token(identificador)) return true;
-    if (jj_scan_token(par_a)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_70()) jj_scanpos = xsp;
-    if (jj_scan_token(par_c)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_73() {
-    if (jj_scan_token(cor_a)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_65() {
-    if (jj_scan_token(r_true)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_63() {
-    if (jj_scan_token(numero)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_38() {
-    if (jj_3R_40()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_41()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_21()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_72() {
-    if (jj_scan_token(coma)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_64() {
-    if (jj_scan_token(decimal)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_43() {
-    if (jj_scan_token(diferente_que)) return true;
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_42() {
-    if (jj_scan_token(igualdad)) return true;
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
-  private boolean jj_3_10() {
-    if (jj_3R_22()) return true;
-    if (jj_scan_token(coma)) return true;
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_39() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_42()) {
-    jj_scanpos = xsp;
-    if (jj_3R_43()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_3R_22()) return true;
-    if (jj_scan_token(coma)) return true;
-    if (jj_scan_token(cor_c)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    if (jj_scan_token(and)) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3_8() {
-    if (jj_3R_22()) return true;
-    if (jj_scan_token(cor_c)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_62() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_63()) {
-    jj_scanpos = xsp;
-    if (jj_3R_64()) {
-    jj_scanpos = xsp;
-    if (jj_3R_65()) {
-    jj_scanpos = xsp;
-    if (jj_3R_66()) {
-    jj_scanpos = xsp;
-    if (jj_3R_67()) {
-    jj_scanpos = xsp;
-    if (jj_3_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_68()) {
-    jj_scanpos = xsp;
-    if (jj_3_13()) {
-    jj_scanpos = xsp;
-    if (jj_3R_69()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_scan_token(identificador)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_28()) {
-    jj_scanpos = xsp;
-    if (jj_3R_29()) return true;
-    }
+  private boolean jj_3R_59() {
+    if (jj_scan_token(menos)) return true;
+    if (jj_3R_54()) return true;
     return false;
   }
 
   private boolean jj_3_11() {
     if (jj_scan_token(puco)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_61() {
-    if (jj_3R_62()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_60() {
-    if (jj_scan_token(not)) return true;
-    if (jj_3R_54()) return true;
     return false;
   }
 
@@ -1531,9 +1378,32 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_59() {
-    if (jj_scan_token(menos)) return true;
-    if (jj_3R_54()) return true;
+  private boolean jj_3_3() {
+    if (jj_3R_21()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) {
+    jj_scanpos = xsp;
+    if (jj_3R_61()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_scan_token(identificador)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_28()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) return true;
+    }
     return false;
   }
 
@@ -1557,16 +1427,19 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_54() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_59()) {
-    jj_scanpos = xsp;
-    if (jj_3R_60()) {
-    jj_scanpos = xsp;
-    if (jj_3R_61()) return true;
-    }
-    }
+  private boolean jj_3_2() {
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_55() {
+    if (jj_scan_token(pot)) return true;
+    if (jj_3R_54()) return true;
     return false;
   }
 
@@ -1580,26 +1453,9 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_55() {
-    if (jj_scan_token(pot)) return true;
-    if (jj_3R_54()) return true;
-    return false;
-  }
-
   private boolean jj_3R_35() {
     if (jj_scan_token(or)) return true;
     if (jj_3R_34()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_scan_token(r_else)) return true;
-    if (jj_3R_24()) return true;
     return false;
   }
 
@@ -1644,6 +1500,16 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
+  private boolean jj_3R_25() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
   private boolean jj_3R_30() {
     if (jj_3R_34()) return true;
     Token xsp;
@@ -1654,42 +1520,15 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3_5() {
-    if (jj_scan_token(identificador)) return true;
-    if (jj_scan_token(igual)) return true;
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_22()) return true;
-    if (jj_scan_token(par_c)) return true;
+  private boolean jj_3_7() {
+    if (jj_scan_token(r_else)) return true;
+    if (jj_3R_24()) return true;
     return false;
   }
 
   private boolean jj_3R_31() {
     if (jj_scan_token(interrogacion)) return true;
     if (jj_3R_30()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_70() {
-    if (jj_3R_71()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_27() {
-    if (jj_scan_token(par_a)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_26() {
-    if (jj_scan_token(r_function)) return true;
     return false;
   }
 
@@ -1709,9 +1548,8 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_23() {
-    if (jj_scan_token(r_else)) return true;
-    if (jj_scan_token(r_if)) return true;
+  private boolean jj_3R_70() {
+    if (jj_3R_71()) return true;
     return false;
   }
 
@@ -1741,15 +1579,32 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_19() {
+  private boolean jj_3_5() {
     if (jj_scan_token(identificador)) return true;
     if (jj_scan_token(igual)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_26()) {
-    jj_scanpos = xsp;
-    if (jj_3R_27()) return true;
-    }
+    if (jj_3R_22()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(par_c)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    if (jj_scan_token(r_else)) return true;
+    if (jj_scan_token(r_if)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    if (jj_scan_token(par_a)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_scan_token(r_function)) return true;
     return false;
   }
 
@@ -1769,6 +1624,13 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
+  private boolean jj_3R_69() {
+    if (jj_scan_token(par_a)) return true;
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(par_c)) return true;
+    return false;
+  }
+
   private boolean jj_3R_48() {
     if (jj_scan_token(mayor_igual)) return true;
     if (jj_3R_40()) return true;
@@ -1781,8 +1643,13 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_71() {
-    if (jj_3R_22()) return true;
+  private boolean jj_3_13() {
+    if (jj_scan_token(identificador)) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_25()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -1808,20 +1675,144 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_69() {
-    if (jj_scan_token(par_a)) return true;
+  private boolean jj_3R_71() {
     if (jj_3R_22()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_68() {
+    if (jj_scan_token(cadena)) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_3R_21()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_67() {
+    if (jj_scan_token(r_nulo)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_66() {
+    if (jj_scan_token(r_false)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
+    if (jj_scan_token(r_true)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_63() {
+    if (jj_scan_token(numero)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    if (jj_scan_token(identificador)) return true;
+    if (jj_scan_token(igual)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_26()) {
+    jj_scanpos = xsp;
+    if (jj_3R_27()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_64() {
+    if (jj_scan_token(decimal)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38() {
+    if (jj_3R_40()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_41()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_scan_token(diferente_que)) return true;
+    if (jj_3R_38()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_42() {
+    if (jj_scan_token(igualdad)) return true;
+    if (jj_3R_38()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_39() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_42()) {
+    jj_scanpos = xsp;
+    if (jj_3R_43()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_62() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_63()) {
+    jj_scanpos = xsp;
+    if (jj_3R_64()) {
+    jj_scanpos = xsp;
+    if (jj_3R_65()) {
+    jj_scanpos = xsp;
+    if (jj_3R_66()) {
+    jj_scanpos = xsp;
+    if (jj_3R_67()) {
+    jj_scanpos = xsp;
+    if (jj_3_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_68()) {
+    jj_scanpos = xsp;
+    if (jj_3_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_69()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_scan_token(identificador)) return true;
+    if (jj_scan_token(par_a)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_70()) jj_scanpos = xsp;
     if (jj_scan_token(par_c)) return true;
     return false;
   }
 
-  private boolean jj_3_13() {
-    if (jj_scan_token(identificador)) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_25()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_73() {
+    if (jj_scan_token(cor_a)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_37() {
+    if (jj_scan_token(and)) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_72() {
+    if (jj_scan_token(coma)) return true;
     return false;
   }
 
@@ -1830,8 +1821,10 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_scan_token(llave_a)) return true;
+  private boolean jj_3_10() {
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(coma)) return true;
+    if (jj_3R_22()) return true;
     return false;
   }
 
@@ -1842,6 +1835,34 @@ public class Gramatica implements GramaticaConstants {
       xsp = jj_scanpos;
       if (jj_3R_33()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3_9() {
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(coma)) return true;
+    if (jj_scan_token(cor_c)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    if (jj_scan_token(igual)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(cor_c)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_3R_62()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_scan_token(llave_a)) return true;
     return false;
   }
 
