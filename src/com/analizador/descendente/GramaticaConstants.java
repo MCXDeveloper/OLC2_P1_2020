@@ -50,66 +50,66 @@ public interface GramaticaConstants {
   /** RegularExpression Id. */
   int identificador = 25;
   /** RegularExpression Id. */
-  int mas = 26;
+  int cadena = 26;
   /** RegularExpression Id. */
-  int menos = 27;
+  int dentro_de_cadena = 27;
   /** RegularExpression Id. */
-  int por = 28;
+  int mas = 28;
   /** RegularExpression Id. */
-  int div = 29;
+  int menos = 29;
   /** RegularExpression Id. */
-  int pot = 30;
+  int por = 30;
   /** RegularExpression Id. */
-  int mod = 31;
+  int div = 31;
   /** RegularExpression Id. */
-  int par_a = 32;
+  int pot = 32;
   /** RegularExpression Id. */
-  int par_c = 33;
+  int mod = 33;
   /** RegularExpression Id. */
-  int cor_a = 34;
+  int par_a = 34;
   /** RegularExpression Id. */
-  int cor_c = 35;
+  int par_c = 35;
   /** RegularExpression Id. */
-  int coma = 36;
+  int cor_a = 36;
   /** RegularExpression Id. */
-  int puco = 37;
+  int cor_c = 37;
   /** RegularExpression Id. */
-  int dospu = 38;
+  int coma = 38;
   /** RegularExpression Id. */
-  int interrogacion = 39;
+  int puco = 39;
   /** RegularExpression Id. */
-  int flecha = 40;
+  int dospu = 40;
   /** RegularExpression Id. */
-  int menor = 41;
+  int interrogacion = 41;
   /** RegularExpression Id. */
-  int mayor = 42;
+  int flecha = 42;
   /** RegularExpression Id. */
-  int menor_igual = 43;
+  int menor = 43;
   /** RegularExpression Id. */
-  int mayor_igual = 44;
+  int mayor = 44;
   /** RegularExpression Id. */
-  int diferente_que = 45;
+  int menor_igual = 45;
   /** RegularExpression Id. */
-  int igualdad = 46;
+  int mayor_igual = 46;
   /** RegularExpression Id. */
-  int igual = 47;
+  int diferente_que = 47;
   /** RegularExpression Id. */
-  int llave_a = 48;
+  int igualdad = 48;
   /** RegularExpression Id. */
-  int llave_c = 49;
+  int igual = 49;
   /** RegularExpression Id. */
-  int or = 50;
+  int llave_a = 50;
   /** RegularExpression Id. */
-  int and = 51;
+  int llave_c = 51;
   /** RegularExpression Id. */
-  int not = 52;
+  int or = 52;
   /** RegularExpression Id. */
-  int cadena = 55;
+  int and = 53;
+  /** RegularExpression Id. */
+  int not = 54;
 
   /** Lexical state. */
   int DEFAULT = 0;
-  /** Lexical state. */
-  int STRING_STATE = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -139,6 +139,8 @@ public interface GramaticaConstants {
     "\"true\"",
     "\"false\"",
     "<identificador>",
+    "<cadena>",
+    "<dentro_de_cadena>",
     "\"+\"",
     "\"-\"",
     "\"*\"",
@@ -166,9 +168,6 @@ public interface GramaticaConstants {
     "\"|\"",
     "\"&\"",
     "\"!\"",
-    "\"\\\"\"",
-    "<token of kind 54>",
-    "\"\\\"\"",
   };
 
 }

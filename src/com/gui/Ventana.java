@@ -558,11 +558,15 @@ public class Ventana extends javax.swing.JFrame {
             parser.parse();
             raizGlobal = parser.getRaiz();
             tsGlobal = new TablaSimbolos();
-            try {
-                Resultado r = raizGlobal.Ejecutar(tsGlobal);
+            if (raizGlobal != null) {
+                try {
+                    Resultado r = raizGlobal.Ejecutar(tsGlobal);
+                    verificarErrores();
+                } catch (Exception ex) {
+                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
                 verificarErrores();
-            } catch (Exception ex) {
-                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (Exception e) {
             appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
