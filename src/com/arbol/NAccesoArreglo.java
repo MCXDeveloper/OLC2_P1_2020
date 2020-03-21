@@ -96,12 +96,6 @@ public class NAccesoArreglo extends Nodo implements Instruccion {
                         return null;
                     }
 
-                    if (v.getVectorSize() != 1) {
-                        msj = "Error. No se puede recibir como valor de posicion en la dimensión #"+ cnt +" un <VECTOR[INT]> de más de 1 elemento.";
-                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_ARREGLO]", msj, getLinea(), getColumna());
-                        return null;
-                    }
-
                     Item it = v.getElementByPosition(0);
                     listaValsDims.add((int)it.getValor());
 

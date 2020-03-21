@@ -149,12 +149,6 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
                     return -1;
                 }
 
-                if (v.getVectorSize() != 1) {
-                    msj = "Error. No se puede recibir como valor de posicion en la dimensión #1 un <VECTOR[INT]> de más de 1 elemento.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_MATRIZ]", msj, getLinea(), getColumna());
-                    return -1;
-                }
-
                 posDim = (int)v.getElementByPosition(0).getValor();
 
             }   break;
