@@ -35,11 +35,13 @@ public class Gramatica implements GramaticaConstants {
         if (to.kind == GramaticaConstants.err) {
             System.err.println("El error l\u00e9xico ocurri\u00f3 en la funci\u00f3n #" + location);
             ErrorHandler.AddError("L\u00e9xico", getArchivo(), "[JAVACC_LEXER]", realMessage, token.beginLine, token.beginColumn);
+            System.err.println(realMessage);
         } else if(to.kind == 0) {
             break;
         } else {
             System.err.println("El error sint\u00e1ctico ocurri\u00f3 en la funci\u00f3n #" + location);
             ErrorHandler.AddError("Sint\u00e1ctico", getArchivo(), "[JAVACC_PARSER]", realMessage, token.beginLine, token.beginColumn);
+            System.err.println(realMessage);
         }
         to = getNextToken();
     } while(to.kind != kind);
@@ -91,7 +93,15 @@ public class Gramatica implements GramaticaConstants {
                                                                      {if (true) return a;}
       } else if (jj_2_2(2)) {
         a = DECASI_VARIABLE();
-                                                           {if (true) return a;}
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case puco:
+          jj_consume_token(puco);
+          break;
+        default:
+          jj_la1[1] = jj_gen;
+          ;
+        }
+                                                                     {if (true) return a;}
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case r_if:
@@ -108,7 +118,15 @@ public class Gramatica implements GramaticaConstants {
           break;
         case r_do:
           a = SENTENCIA_DOWHILE();
-                                                           {if (true) return a;}
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case puco:
+            jj_consume_token(puco);
+            break;
+          default:
+            jj_la1[2] = jj_gen;
+            ;
+          }
+                                                                     {if (true) return a;}
           break;
         case r_for:
           a = SENTENCIA_FOR();
@@ -116,21 +134,53 @@ public class Gramatica implements GramaticaConstants {
           break;
         case r_break:
           a = SENTENCIA_BREAK();
-                                                            {if (true) return a;}
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case puco:
+            jj_consume_token(puco);
+            break;
+          default:
+            jj_la1[3] = jj_gen;
+            ;
+          }
+                                                                     {if (true) return a;}
           break;
         case r_continue:
           a = SENTENCIA_CONTINUE();
-                                                            {if (true) return a;}
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case puco:
+            jj_consume_token(puco);
+            break;
+          default:
+            jj_la1[4] = jj_gen;
+            ;
+          }
+                                                                     {if (true) return a;}
           break;
         case r_return:
           a = SENTENCIA_RETURN();
-                                                            {if (true) return a;}
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case puco:
+            jj_consume_token(puco);
+            break;
+          default:
+            jj_la1[5] = jj_gen;
+            ;
+          }
+                                                                     {if (true) return a;}
           break;
         default:
-          jj_la1[1] = jj_gen;
+          jj_la1[7] = jj_gen;
           if (jj_2_3(2)) {
             a = SENTENCIA_LLAMADA();
-                                                           {if (true) return a;}
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case puco:
+              jj_consume_token(puco);
+              break;
+            default:
+              jj_la1[6] = jj_gen;
+              ;
+            }
+                                                                     {if (true) return a;}
           } else {
             jj_consume_token(-1);
             throw new ParseException();
@@ -176,13 +226,13 @@ public class Gramatica implements GramaticaConstants {
             ;
             break;
           default:
-            jj_la1[2] = jj_gen;
+            jj_la1[8] = jj_gen;
             break label_2;
           }
         }
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[9] = jj_gen;
         ;
       }
       jj_consume_token(llave_c);
@@ -219,7 +269,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                                                       {if (true) return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block);}
           break;
         default:
-          jj_la1[4] = jj_gen;
+          jj_la1[10] = jj_gen;
           if (jj_2_4(2)) {
             exp = EXPRESION();
             jj_consume_token(par_c);
@@ -246,7 +296,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                                                       params.addFirst(parametro); {if (true) return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block);}
               break;
             default:
-              jj_la1[5] = jj_gen;
+              jj_la1[11] = jj_gen;
               jj_consume_token(-1);
               throw new ParseException();
             }
@@ -254,7 +304,7 @@ public class Gramatica implements GramaticaConstants {
         }
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[12] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -274,7 +324,7 @@ public class Gramatica implements GramaticaConstants {
         params = LISTA_PARAM_FUNCION();
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[13] = jj_gen;
         ;
       }
       jj_consume_token(par_c);
@@ -298,7 +348,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[8] = jj_gen;
+          jj_la1[14] = jj_gen;
           break label_3;
         }
         jj_consume_token(coma);
@@ -323,7 +373,7 @@ public class Gramatica implements GramaticaConstants {
         exp = EXPRESION();
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[15] = jj_gen;
         ;
       }
                                                           {if (true) return (exp == null) ? new NParam(token.beginLine, token.beginColumn, archivo, tid.image) : new NParam(token.beginLine, token.beginColumn, archivo, tid.image, exp);}
@@ -356,7 +406,7 @@ public class Gramatica implements GramaticaConstants {
             ;
             break;
           default:
-            jj_la1[10] = jj_gen;
+            jj_la1[16] = jj_gen;
             break label_4;
           }
         }
@@ -365,17 +415,9 @@ public class Gramatica implements GramaticaConstants {
                                                                           {if (true) return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp);}
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[17] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case puco:
-        jj_consume_token(puco);
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        ;
       }
     } catch (ParseException e) {
         error_skipto(8,puco);
@@ -394,7 +436,7 @@ public class Gramatica implements GramaticaConstants {
         listaElses = SELSE();
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[18] = jj_gen;
         ;
       }
                                           if (listaElses != null) { ni.setSecIf(listaElses); }    {if (true) return ni;}
@@ -466,7 +508,7 @@ public class Gramatica implements GramaticaConstants {
             block = BLOQUE();
             break;
           default:
-            jj_la1[14] = jj_gen;
+            jj_la1[19] = jj_gen;
             ;
           }
                                                                                                 if (block != null) {
@@ -475,7 +517,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                                 {if (true) return listaIfs;}
           break;
         default:
-          jj_la1[15] = jj_gen;
+          jj_la1[20] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -507,7 +549,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[16] = jj_gen;
+          jj_la1[21] = jj_gen;
           break label_6;
         }
       }
@@ -534,7 +576,7 @@ public class Gramatica implements GramaticaConstants {
             ;
             break;
           default:
-            jj_la1[17] = jj_gen;
+            jj_la1[22] = jj_gen;
             break label_7;
           }
           n = INSTRUCCION();
@@ -544,7 +586,7 @@ public class Gramatica implements GramaticaConstants {
                                                                                                   {if (true) return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases, listaInsDefault);}
         break;
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[23] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -577,7 +619,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[24] = jj_gen;
           break label_8;
         }
         n = INSTRUCCION();
@@ -617,15 +659,7 @@ public class Gramatica implements GramaticaConstants {
       jj_consume_token(par_a);
       exp = EXPRESION();
       jj_consume_token(par_c);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case puco:
-        jj_consume_token(puco);
-        break;
-      default:
-        jj_la1[20] = jj_gen;
-        ;
-      }
-                                                                                       {if (true) return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp);}
+                                                                             {if (true) return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp);}
     } catch (ParseException e) {
         error_skipto(16,puco);
         {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
@@ -656,15 +690,7 @@ public class Gramatica implements GramaticaConstants {
   final public Nodo SENTENCIA_BREAK() throws ParseException {
     try {
       jj_consume_token(r_break);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case puco:
-        jj_consume_token(puco);
-        break;
-      default:
-        jj_la1[21] = jj_gen;
-        ;
-      }
-                               {if (true) return new NBreak(token.beginLine, token.beginColumn, archivo);}
+                     {if (true) return new NBreak(token.beginLine, token.beginColumn, archivo);}
     } catch (ParseException e) {
         error_skipto(18,puco);
         {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
@@ -675,15 +701,7 @@ public class Gramatica implements GramaticaConstants {
   final public Nodo SENTENCIA_CONTINUE() throws ParseException {
     try {
       jj_consume_token(r_continue);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case puco:
-        jj_consume_token(puco);
-        break;
-      default:
-        jj_la1[22] = jj_gen;
-        ;
-      }
-                                  {if (true) return new NContinue(token.beginLine, token.beginColumn, archivo);}
+                        {if (true) return new NContinue(token.beginLine, token.beginColumn, archivo);}
     } catch (ParseException e) {
         error_skipto(19,puco);
         {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
@@ -702,18 +720,10 @@ public class Gramatica implements GramaticaConstants {
         jj_consume_token(par_c);
         break;
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[25] = jj_gen;
         ;
       }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case puco:
-        jj_consume_token(puco);
-        break;
-      default:
-        jj_la1[24] = jj_gen;
-        ;
-      }
-                                                                  {if (true) return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n);}
+                                                        {if (true) return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n);}
     } catch (ParseException e) {
         error_skipto(20,puco);
         {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
@@ -756,7 +766,7 @@ public class Gramatica implements GramaticaConstants {
                                                                               {if (true) return new Dimension(ETipoDimension.INNER, a);}
           break;
         default:
-          jj_la1[25] = jj_gen;
+          jj_la1[26] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -787,16 +797,11 @@ public class Gramatica implements GramaticaConstants {
         parametros = LISTA_EXPRESIONES();
         break;
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[27] = jj_gen;
         ;
       }
       jj_consume_token(par_c);
-      if (jj_2_11(2)) {
-        jj_consume_token(puco);
-      } else {
-        ;
-      }
-                                                                                                               {if (true) return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros);}
+                                                                                        {if (true) return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros);}
     } catch (ParseException e) {
         error_skipto(22,puco);
         {if (true) return new Nodo(0, 0, archivo, ETipoNodo.ERROR);}
@@ -817,7 +822,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[27] = jj_gen;
+          jj_la1[28] = jj_gen;
           break label_9;
         }
         jj_consume_token(coma);
@@ -840,7 +845,7 @@ public class Gramatica implements GramaticaConstants {
                                       listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo));
           break;
         default:
-          jj_la1[28] = jj_gen;
+          jj_la1[29] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -864,7 +869,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[29] = jj_gen;
+          jj_la1[30] = jj_gen;
           break label_10;
         }
         jj_consume_token(interrogacion);
@@ -892,7 +897,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[30] = jj_gen;
+          jj_la1[31] = jj_gen;
           break label_11;
         }
         jj_consume_token(or);
@@ -918,7 +923,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[31] = jj_gen;
+          jj_la1[32] = jj_gen;
           break label_12;
         }
         jj_consume_token(and);
@@ -945,7 +950,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[32] = jj_gen;
+          jj_la1[33] = jj_gen;
           break label_13;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -960,7 +965,7 @@ public class Gramatica implements GramaticaConstants {
                                                       a = new NDiferente(token.beginLine, token.beginColumn, archivo, a, b);
           break;
         default:
-          jj_la1[33] = jj_gen;
+          jj_la1[34] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -987,7 +992,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[34] = jj_gen;
+          jj_la1[35] = jj_gen;
           break label_14;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1012,7 +1017,7 @@ public class Gramatica implements GramaticaConstants {
                                                   a = new NMenorIgual(token.beginLine, token.beginColumn, archivo, a, b);
           break;
         default:
-          jj_la1[35] = jj_gen;
+          jj_la1[36] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1037,7 +1042,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[36] = jj_gen;
+          jj_la1[37] = jj_gen;
           break label_15;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1052,7 +1057,7 @@ public class Gramatica implements GramaticaConstants {
                                                        a = new NResta(token.beginLine, token.beginColumn, archivo, a, b);
           break;
         default:
-          jj_la1[37] = jj_gen;
+          jj_la1[38] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1078,7 +1083,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[38] = jj_gen;
+          jj_la1[39] = jj_gen;
           break label_16;
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1098,7 +1103,7 @@ public class Gramatica implements GramaticaConstants {
                                           a = new NModulo(token.beginLine, token.beginColumn, archivo, a, b);
           break;
         default:
-          jj_la1[39] = jj_gen;
+          jj_la1[40] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1122,7 +1127,7 @@ public class Gramatica implements GramaticaConstants {
           ;
           break;
         default:
-          jj_la1[40] = jj_gen;
+          jj_la1[41] = jj_gen;
           break label_17;
         }
         jj_consume_token(pot);
@@ -1163,7 +1168,7 @@ public class Gramatica implements GramaticaConstants {
                                       {if (true) return a;}
         break;
       default:
-        jj_la1[41] = jj_gen;
+        jj_la1[42] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1203,8 +1208,8 @@ public class Gramatica implements GramaticaConstants {
                                                                               {if (true) return new NNulo(token.beginLine, token.beginColumn, archivo);}
         break;
       default:
-        jj_la1[43] = jj_gen;
-        if (jj_2_12(2)) {
+        jj_la1[44] = jj_gen;
+        if (jj_2_11(2)) {
           n = SENTENCIA_LLAMADA();
                                                                               {if (true) return n;}
         } else {
@@ -1220,8 +1225,8 @@ public class Gramatica implements GramaticaConstants {
                                                                                 {if (true) return new NPrim(token.beginLine, token.beginColumn, archivo, cad, ETipoDato.STRING);}
             break;
           default:
-            jj_la1[44] = jj_gen;
-            if (jj_2_13(2)) {
+            jj_la1[45] = jj_gen;
+            if (jj_2_12(2)) {
               t = jj_consume_token(identificador);
               label_18:
               while (true) {
@@ -1230,7 +1235,7 @@ public class Gramatica implements GramaticaConstants {
                   ;
                   break;
                 default:
-                  jj_la1[42] = jj_gen;
+                  jj_la1[43] = jj_gen;
                   break label_18;
                 }
                 d = ACCESO();
@@ -1246,7 +1251,7 @@ public class Gramatica implements GramaticaConstants {
                                                                               {if (true) return n;}
                 break;
               default:
-                jj_la1[45] = jj_gen;
+                jj_la1[46] = jj_gen;
                 jj_consume_token(-1);
                 throw new ParseException();
               }
@@ -1345,29 +1350,6 @@ public class Gramatica implements GramaticaConstants {
     finally { jj_save(11, xla); }
   }
 
-  private boolean jj_2_13(int xla) {
-    jj_la = xla; jj_lastpos = jj_scanpos = token;
-    try { return !jj_3_13(); }
-    catch(LookaheadSuccess ls) { return true; }
-    finally { jj_save(12, xla); }
-  }
-
-  private boolean jj_3R_73() {
-    if (jj_scan_token(cor_a)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    if (jj_scan_token(and)) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_72() {
-    if (jj_scan_token(coma)) return true;
-    return false;
-  }
-
   private boolean jj_3R_33() {
     if (jj_3R_32()) return true;
     return false;
@@ -1377,13 +1359,6 @@ public class Gramatica implements GramaticaConstants {
     if (jj_3R_22()) return true;
     if (jj_scan_token(coma)) return true;
     if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3_9() {
-    if (jj_3R_22()) return true;
-    if (jj_scan_token(coma)) return true;
-    if (jj_scan_token(cor_c)) return true;
     return false;
   }
 
@@ -1397,14 +1372,21 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3_8() {
+  private boolean jj_3_9() {
     if (jj_3R_22()) return true;
+    if (jj_scan_token(coma)) return true;
     if (jj_scan_token(cor_c)) return true;
     return false;
   }
 
   private boolean jj_3R_28() {
     if (jj_scan_token(igual)) return true;
+    return false;
+  }
+
+  private boolean jj_3_8() {
+    if (jj_3R_22()) return true;
+    if (jj_scan_token(cor_c)) return true;
     return false;
   }
 
@@ -1432,11 +1414,6 @@ public class Gramatica implements GramaticaConstants {
 
   private boolean jj_3_3() {
     if (jj_3R_21()) return true;
-    return false;
-  }
-
-  private boolean jj_3_11() {
-    if (jj_scan_token(puco)) return true;
     return false;
   }
 
@@ -1698,7 +1675,7 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3_13() {
+  private boolean jj_3_12() {
     if (jj_scan_token(identificador)) return true;
     Token xsp;
     while (true) {
@@ -1752,7 +1729,7 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
-  private boolean jj_3_12() {
+  private boolean jj_3_11() {
     if (jj_3R_21()) return true;
     return false;
   }
@@ -1839,11 +1816,11 @@ public class Gramatica implements GramaticaConstants {
     jj_scanpos = xsp;
     if (jj_3R_67()) {
     jj_scanpos = xsp;
-    if (jj_3_12()) {
+    if (jj_3_11()) {
     jj_scanpos = xsp;
     if (jj_3R_68()) {
     jj_scanpos = xsp;
-    if (jj_3_13()) {
+    if (jj_3_12()) {
     jj_scanpos = xsp;
     if (jj_3R_69()) return true;
     }
@@ -1867,6 +1844,22 @@ public class Gramatica implements GramaticaConstants {
     return false;
   }
 
+  private boolean jj_3R_73() {
+    if (jj_scan_token(cor_a)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_37() {
+    if (jj_scan_token(and)) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_72() {
+    if (jj_scan_token(coma)) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public GramaticaTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -1881,7 +1874,7 @@ public class Gramatica implements GramaticaConstants {
   private boolean jj_lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[46];
+  final private int[] jj_la1 = new int[47];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -1889,12 +1882,12 @@ public class Gramatica implements GramaticaConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x21f9400,0x1f9400,0x21f9400,0x21f9400,0x0,0x2000000,0x400000,0x2000000,0x0,0x0,0x0,0x0,0x0,0x800,0x800,0x800,0x2000,0x21f9400,0x4000,0x21f9400,0x0,0x0,0x0,0x0,0x0,0x0,0x27800380,0x0,0x27804380,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x30000000,0x30000000,0xc0000000,0xc0000000,0x0,0x27800380,0x0,0x1800380,0x4000000,0x0,};
+      jj_la1_0 = new int[] {0x21f9400,0x0,0x0,0x0,0x0,0x0,0x0,0x1f9400,0x21f9400,0x21f9400,0x0,0x2000000,0x400000,0x2000000,0x0,0x0,0x0,0x0,0x800,0x800,0x800,0x2000,0x21f9400,0x4000,0x21f9400,0x0,0x0,0x27800380,0x0,0x27804380,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x30000000,0x30000000,0xc0000000,0xc0000000,0x0,0x27800380,0x0,0x1800380,0x4000000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x8,0x0,0x4,0x0,0x40,0x20000,0x10,0x20010,0x80,0x0,0x0,0x0,0x0,0x0,0x80000,0x0,0x80,0x80,0x80,0x4,0x80,0x50,0x400004,0x40,0x400004,0x200,0x100000,0x200000,0x18000,0x18000,0x7800,0x7800,0x0,0x0,0x2,0x2,0x1,0x400004,0x10,0x0,0x0,0x4,};
+      jj_la1_1 = new int[] {0x0,0x80,0x80,0x80,0x80,0x80,0x80,0x0,0x0,0x0,0x8,0x0,0x4,0x0,0x40,0x20000,0x10,0x20010,0x0,0x0,0x0,0x0,0x0,0x80000,0x0,0x4,0x50,0x400004,0x40,0x400004,0x200,0x100000,0x200000,0x18000,0x18000,0x7800,0x7800,0x0,0x0,0x2,0x2,0x1,0x400004,0x10,0x0,0x0,0x4,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[13];
+  final private JJCalls[] jj_2_rtns = new JJCalls[12];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -1909,7 +1902,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1924,7 +1917,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1935,7 +1928,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1946,7 +1939,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1956,7 +1949,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1966,7 +1959,7 @@ public class Gramatica implements GramaticaConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 46; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 47; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2086,7 +2079,7 @@ public class Gramatica implements GramaticaConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 47; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -2125,7 +2118,7 @@ public class Gramatica implements GramaticaConstants {
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 12; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -2144,7 +2137,6 @@ public class Gramatica implements GramaticaConstants {
             case 9: jj_3_10(); break;
             case 10: jj_3_11(); break;
             case 11: jj_3_12(); break;
-            case 12: jj_3_13(); break;
           }
         }
         p = p.next;

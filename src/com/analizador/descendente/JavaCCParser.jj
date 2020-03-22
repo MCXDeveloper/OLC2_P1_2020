@@ -67,7 +67,7 @@ TOKEN : {
     | <r_false:         "false">
     | <identificador:   ((((["."])+["A"-"Z","a"-"z","_"])|["A"-"Z","a"-"z"])(["A"-"Z","a"-"z","_","0"-"9"]|".")*|(["."])+)>
     | <cadena:          ("\"") (<dentro_de_cadena>)* ("\"") >
-    | < #dentro_de_cadena: ((~["\"","\\","\n","\r"])
+    | < #dentro_de_cadena: ((~["\"","\\","\n","\r","(",")"])
               | ("\\"
                   ( ["n","t","b","r","f","\\","'","\""]
                   | ["0"-"7"] ( ["0"-"7"] )?
@@ -115,11 +115,13 @@ void error_skipto(int location, int kind) {
         if (to.kind == GramaticaConstants.err) {
             System.err.println("El error léxico ocurrió en la función #" + location);
             ErrorHandler.AddError("Léxico", getArchivo(), "[JAVACC_LEXER]", realMessage, token.beginLine, token.beginColumn);
+            System.err.println(realMessage);
         } else if(to.kind == 0) {
             break;
         } else {
             System.err.println("El error sintáctico ocurrió en la función #" + location);
             ErrorHandler.AddError("Sintáctico", getArchivo(), "[JAVACC_PARSER]", realMessage, token.beginLine, token.beginColumn);
+            System.err.println(realMessage);
         }
         to = getNextToken();
     } while(to.kind != kind);
@@ -151,16 +153,16 @@ Nodo INSTRUCCION() :
 {
     try {
             LOOKAHEAD(3) a = DECASI_FUNCION()                      { return a; }
-        |   LOOKAHEAD(2) a = DECASI_VARIABLE()           { return a; }
+        |   LOOKAHEAD(2) a = DECASI_VARIABLE() (<puco>)?           { return a; }
         |   a = SENTENCIA_IF()                                     { return a; }
         |   a = SENTENCIA_SWITCH()                                 { return a; }
         |   a = SENTENCIA_WHILE()                                  { return a; }
-        |   a = SENTENCIA_DOWHILE()                      { return a; }
+        |   a = SENTENCIA_DOWHILE() (<puco>)?                      { return a; }
         |   a = SENTENCIA_FOR()                                    { return a; }
-        |   a = SENTENCIA_BREAK()                         { return a; }
-        |   a = SENTENCIA_CONTINUE()                      { return a; }
-        |   a = SENTENCIA_RETURN()                        { return a; }
-        |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA()         { return a; }
+        |   a = SENTENCIA_BREAK() (<puco>)?                        { return a; }
+        |   a = SENTENCIA_CONTINUE() (<puco>)?                     { return a; }
+        |   a = SENTENCIA_RETURN() (<puco>)?                       { return a; }
+        |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA() (<puco>)?         { return a; }
     } catch (ParseException e) {
         error_skipto(2,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -263,7 +265,7 @@ Nodo DECASI_VARIABLE() :
                 <igual> exp=EXPRESION()                                 { return new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
             |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
         )
-        (<puco>)?
+
     } catch (ParseException e) {
         error_skipto(8,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -385,7 +387,7 @@ Nodo SENTENCIA_DOWHILE() :
 }
 {
     try {
-        <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c> (<puco>)?    { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
+        <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c>    { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
     } catch (ParseException e) {
         error_skipto(16,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -411,7 +413,7 @@ Nodo SENTENCIA_BREAK() :
 {}
 {
     try {
-        <r_break> (<puco>)?  { return new NBreak(token.beginLine, token.beginColumn, archivo); }
+        <r_break>  { return new NBreak(token.beginLine, token.beginColumn, archivo); }
     } catch (ParseException e) {
         error_skipto(18,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -422,7 +424,7 @@ Nodo SENTENCIA_CONTINUE() :
 {}
 {
     try {
-        <r_continue> (<puco>)?  { return new NContinue(token.beginLine, token.beginColumn, archivo); }
+        <r_continue>  { return new NContinue(token.beginLine, token.beginColumn, archivo); }
     } catch (ParseException e) {
         error_skipto(19,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -435,7 +437,7 @@ Nodo SENTENCIA_RETURN() :
 }
 {
     try {
-        <r_return> (<par_a> n=EXPRESION() <par_c>)? (<puco>)?   { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
+        <r_return> (<par_a> n=EXPRESION() <par_c>)?   { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
     } catch (ParseException e) {
         error_skipto(20,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -468,7 +470,7 @@ Nodo SENTENCIA_LLAMADA() :
 }
 {
     try {
-        param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c> (LOOKAHEAD(2) <puco>)?    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
+        param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c>    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
     } catch (ParseException e) {
         error_skipto(22,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
