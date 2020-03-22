@@ -184,9 +184,9 @@ StringLiteral                           = ([\"]({AnyCharacterButDoubleQuoteOrBac
 UnclosedStringLiteral                   = ([\"]([\\].|[^\\\"])*[^\"]?)
 ErrorStringLiteral                      = ({UnclosedStringLiteral}[\"])
 
-MLCBegin                                = "/*"
-MLCEnd                                  = "*/"
-LineCommentBegin                        = "//"
+MLCBegin                                = "#*"
+MLCEnd                                  = "*#"
+LineCommentBegin                        = "#"
 
 IntegerLiteral                          = ({Digit}+)
 ErrorNumberFormat                       = (({IntegerLiteral}){NonSeparator}+)
