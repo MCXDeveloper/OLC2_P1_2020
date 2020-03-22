@@ -102,48 +102,28 @@ TOKEN : {
     | <or:              "|">
     | <and:             "&">
     | <not:             "!">
+    | <err:             (~[])>
 }
 
 /* Fin Lexico */
 JAVACODE
 void error_skipto(int location, int kind) {
-    
-    ParseException e = generateParseException();  // generate the exception object
-    
-    System.err.println("El error ocurrió en la función #" + location);
-
+    Token to = getToken(0);
+    ParseException e = generateParseException();
     String realMessage = e.getMessage().split("Was")[0].replace("\n", "").replace("\r", "");
-    ErrorHandler.AddError("Sintáctico", getArchivo(), "[JAVACC_PARSER]", realMessage, token.beginLine, token.beginColumn);
-    
-    Token t;
-    // consume tokens all the way up to a token of "kind" - use a do-while loop
-    // rather than a while because the current token is the one immediately before
-    // the erroneous token (in our case the token immediately before what should
-    // have been "if"/"while".
-    do {
-        t = getNextToken();
-    }
-    while (t.kind != kind);
+    do{
+        if (to.kind == GramaticaConstants.err) {
+            System.err.println("El error léxico ocurrió en la función #" + location);
+            ErrorHandler.AddError("Léxico", getArchivo(), "[JAVACC_LEXER]", realMessage, token.beginLine, token.beginColumn);
+        } else if(to.kind == 0) {
+            break;
+        } else {
+            System.err.println("El error sintáctico ocurrió en la función #" + location);
+            ErrorHandler.AddError("Sintáctico", getArchivo(), "[JAVACC_PARSER]", realMessage, token.beginLine, token.beginColumn);
+        }
+        to = getNextToken();
+    } while(to.kind != kind);
 }
-
-JAVACODE
-void lexicalerror_skipto(TokenMgrError tme, int location, int kind) {
-
-    System.err.println("El error léxico ocurrió en la función #" + location);
-    String realMessage = tme.getMessage().split("after")[0].replace("\n", "").replace("\r", "");
-    ErrorHandler.AddError("Léxico", getArchivo(), "[JAVACC_LEXER]", realMessage, token.beginLine, token.beginColumn);
-
-    Token t;
-    // consume tokens all the way up to a token of "kind" - use a do-while loop
-    // rather than a while because the current token is the one immediately before
-    // the erroneous token (in our case the token immediately before what should
-    // have been "if"/"while".
-    do {
-        t = getNextToken();
-    }
-    while (t.kind != kind);
-}
-
 
 void INICIO(LinkedList<Nodo> nodos) :
 {
@@ -153,14 +133,6 @@ void INICIO(LinkedList<Nodo> nodos) :
 {
     try {
         (n=INSTRUCCION() { nodos.add(n); })+ <EOF>      { root = new NRaiz(token.beginLine, token.beginColumn, archivo, nodos); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 1, puco);
-        t = getNextToken();
-        if (t.kind == EOF) {
-            root = new NRaiz(token.beginLine, token.beginColumn, archivo, nodos);
-        } else {
-            INICIO(nodos);
-        }
     } catch (ParseException e) {
         error_skipto(1,puco);
         t = getNextToken();
@@ -189,9 +161,6 @@ Nodo INSTRUCCION() :
         |   a = SENTENCIA_CONTINUE()                      { return a; }
         |   a = SENTENCIA_RETURN()                        { return a; }
         |   LOOKAHEAD(2) a = SENTENCIA_LLAMADA()         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 2, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(2,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -207,8 +176,6 @@ LinkedList<Nodo> BLOQUE() :
 {
     try {
         <llave_a> ((n = INSTRUCCION() { nodos.add(n); })+)? <llave_c>
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 3, puco);
     } catch (ParseException e) {
         error_skipto(3,puco);
     }
@@ -236,9 +203,6 @@ Nodo DECASI_FUNCION() :
                 |   parametro=PARAMETRO() <coma> params=LISTA_PARAM_FUNCION() <par_c> <flecha> block=BLOQUE()       { params.addFirst(parametro); return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
             )
         )
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 4, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(4,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -252,8 +216,6 @@ LinkedList<NParam> PARAMETROS_FUNCION() :
 {
     try {
         <par_a> (params=LISTA_PARAM_FUNCION())? <par_c>
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 5, puco);
     } catch (ParseException e) {
         error_skipto(5,puco);
     }
@@ -268,8 +230,6 @@ LinkedList<NParam> LISTA_PARAM_FUNCION() :
 {
     try {
         n=PARAMETRO() { params.add(n); } (<coma> n=PARAMETRO() { params.add(n); })*
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 6, puco);
     } catch (ParseException e) {
         error_skipto(6,puco);
     }
@@ -284,8 +244,6 @@ NParam PARAMETRO() :
 {
     try {
         tid=<identificador> (<igual> exp=EXPRESION())?  { return (exp == null) ? new NParam(token.beginLine, token.beginColumn, archivo, tid.image) : new NParam(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 7, puco);
     } catch (ParseException e) {
         error_skipto(7,puco);
     }
@@ -306,9 +264,6 @@ Nodo DECASI_VARIABLE() :
             |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
         )
         (<puco>)?
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 8, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(8,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -323,9 +278,6 @@ Nodo SENTENCIA_IF() :
 {
     try {
         ni=SIF() (listaElses=SELSE())?  { if (listaElses != null) { ni.setSecIf(listaElses); }    return ni; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 9, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(9,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -340,8 +292,6 @@ NIf SIF() :
 {
     try {
         <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_IF); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 10, puco);
     } catch (ParseException e) {
         error_skipto(10,puco);
     }
@@ -355,8 +305,6 @@ NIf ELSE_IF() :
 {
     try {
         <r_else> <r_if> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NIf(token.beginLine, token.beginColumn, archivo, exp, block, ETipoNodo.STMT_ELSE_IF); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 11, puco);
     } catch (ParseException e) {
         error_skipto(11,puco);
     }
@@ -377,9 +325,6 @@ LinkedList<NIf> SELSE() :
                                                                                                 }
                                                                                                 return listaIfs;
                                                                                             }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 12, puco);
-        return listaIfs;
     } catch (ParseException e) {
         error_skipto(12,puco);
         return listaIfs;
@@ -400,9 +345,6 @@ Nodo SENTENCIA_SWITCH() :
                 <llave_c>                                                                       { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases); }
             |   <r_default> <dospu> (n = INSTRUCCION() { listaInsDefault.add(n); })* <llave_c>  { return new NSwitch(token.beginLine, token.beginColumn, archivo, exp, listaCases, listaInsDefault); }
         )
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 13, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(13,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -417,8 +359,6 @@ NCase CASO() :
 {
     try {
         <r_case> exp=EXPRESION() <dospu> (n = INSTRUCCION() { listaIns.add(n); })*  { return new NCase(token.beginLine, token.beginColumn, archivo, exp, listaIns); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 14, puco);
     } catch (ParseException e) {
         error_skipto(14,puco);
     }
@@ -432,9 +372,6 @@ Nodo SENTENCIA_WHILE() :
 {
     try {
         <r_while> <par_a> exp=EXPRESION() <par_c> block=BLOQUE()    { return new NWhile(token.beginLine, token.beginColumn, archivo, exp, block); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 15, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(15,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -449,9 +386,6 @@ Nodo SENTENCIA_DOWHILE() :
 {
     try {
         <r_do> block=BLOQUE() <r_while> <par_a> exp=EXPRESION() <par_c> (<puco>)?    { return new NDoWhile(token.beginLine, token.beginColumn, archivo, block, exp); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 16, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(16,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -467,9 +401,6 @@ Nodo SENTENCIA_FOR() :
 {
     try {
         <r_for> <par_a> tid=<identificador> <r_in> exp=EXPRESION() <par_c> block=BLOQUE()   { return new NFor(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 17, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(17,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -481,9 +412,6 @@ Nodo SENTENCIA_BREAK() :
 {
     try {
         <r_break> (<puco>)?  { return new NBreak(token.beginLine, token.beginColumn, archivo); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 18, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(18,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -495,9 +423,6 @@ Nodo SENTENCIA_CONTINUE() :
 {
     try {
         <r_continue> (<puco>)?  { return new NContinue(token.beginLine, token.beginColumn, archivo); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 19, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(19,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -511,9 +436,6 @@ Nodo SENTENCIA_RETURN() :
 {
     try {
         <r_return> (<par_a> n=EXPRESION() <par_c>)? (<puco>)?   { return (n == null) ? new NReturn(token.beginLine, token.beginColumn, archivo) : new NReturn(token.beginLine, token.beginColumn, archivo, n); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 20, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(20,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -534,8 +456,6 @@ Dimension ACCESO() :
             |   <coma> a=EXPRESION() <cor_c>                                { return new Dimension(ETipoDimension.COLUMN, a); }
             |   <cor_a> a=EXPRESION() <cor_c> <cor_c>                       { return new Dimension(ETipoDimension.INNER, a); }
         )    
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 21, puco);
     } catch (ParseException e) {
         error_skipto(21,puco);
     }
@@ -549,9 +469,6 @@ Nodo SENTENCIA_LLAMADA() :
 {
     try {
         param_id=<identificador> <par_a> (parametros=LISTA_EXPRESIONES())? <par_c> (LOOKAHEAD(2) <puco>)?    { return new NCall(token.beginLine, token.beginColumn, archivo, param_id.image, parametros); }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 22, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(22,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -573,9 +490,6 @@ LinkedList<Nodo> LISTA_EXPRESIONES() :
                 |   <r_default>     { listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo)); }
             )
         )*   { return listaexps; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 23, puco);
-        return listaexps;
     } catch (ParseException e) {
         error_skipto(23,puco);
         return listaexps;
@@ -593,9 +507,6 @@ Nodo EXPRESION() :
             <interrogacion> b=CONDICION_OR() <dospu> c=CONDICION_OR() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 24, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(24,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -613,9 +524,6 @@ Nodo CONDICION_OR() :
             <or> b=CONDICION_AND() { a = new NOr(token.beginLine, token.beginColumn, archivo, a, b); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 25, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(25,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -629,9 +537,6 @@ Nodo CONDICION_AND() :
 {
     try {
         a=EXP_COMPARACION() (<and> b=EXP_COMPARACION() { a = new NAnd(token.beginLine, token.beginColumn, archivo, a, b); })*   { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 26, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(26,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -650,9 +555,6 @@ Nodo EXP_COMPARACION() :
             |   <diferente_que> b=EXP_RELACIONAL()  { a = new NDiferente(token.beginLine, token.beginColumn, archivo, a, b); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 27, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(27,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -673,9 +575,6 @@ Nodo EXP_RELACIONAL() :
             |   <menor_igual> b=EXP_ADITIVA()   { a = new NMenorIgual(token.beginLine, token.beginColumn, archivo, a, b); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 28, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(28,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -694,9 +593,6 @@ Nodo EXP_ADITIVA() :
             |   <menos> b=EXP_MULTIPLICATIVA()       { a = new NResta(token.beginLine, token.beginColumn, archivo, a, b); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 29, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(29,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -716,9 +612,6 @@ Nodo EXP_MULTIPLICATIVA() :
             |   <mod> b=EXP_POTENCIA()  { a = new NModulo(token.beginLine, token.beginColumn, archivo, a, b); }
         )*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 30, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(30,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -734,9 +627,6 @@ Nodo EXP_POTENCIA() :
         a=EXP_UNARIA()
         (<pot> b=EXP_UNARIA()  { a = new NPotencia(token.beginLine, token.beginColumn, archivo, a, b); })*
         { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 31, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(31,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -752,9 +642,6 @@ Nodo EXP_UNARIA() :
             <menos> a=EXP_UNARIA()  { return new NNegativo(token.beginLine, token.beginColumn, archivo, a); }
         |   <not> a=EXP_UNARIA()    { return new NNot(token.beginLine, token.beginColumn, archivo, a); }
         |   a=PRIMITIVO()           { return a; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 32, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(32,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -788,9 +675,6 @@ Nodo PRIMITIVO() :
                                                                             }
         | LOOKAHEAD(2) t=<identificador> (d=ACCESO() { ldim.add(d); })*     { return (ldim.size() > 0) ? new NAcceso(token.beginLine, token.beginColumn, archivo, t.image, ldim) : new NId(token.beginLine, token.beginColumn, archivo, t.image); }
         | <par_a> n=EXPRESION() <par_c>                                     { return n; }
-    } catch (TokenMgrError tme) {
-        lexicalerror_skipto(tme, 33, puco);
-        return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
     } catch (ParseException e) {
         error_skipto(33,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);

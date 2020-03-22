@@ -604,7 +604,7 @@ public class Ventana extends javax.swing.JFrame {
             if (raizGlobal != null) {
                 tsGlobal = new TablaSimbolos();
                 try {
-                    Resultado r = raizGlobal.Ejecutar(tsGlobal);
+                    raizGlobal.Ejecutar(tsGlobal);
                     verificarErrores();
                 } catch (Exception ex) {
                     Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);

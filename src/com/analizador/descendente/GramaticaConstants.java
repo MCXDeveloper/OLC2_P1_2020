@@ -107,6 +107,8 @@ public interface GramaticaConstants {
   int and = 53;
   /** RegularExpression Id. */
   int not = 54;
+  /** RegularExpression Id. */
+  int err = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -168,6 +170,7 @@ public interface GramaticaConstants {
     "\"|\"",
     "\"&\"",
     "\"!\"",
+    "<err>",
   };
 
 }

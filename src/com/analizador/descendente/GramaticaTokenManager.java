@@ -767,14 +767,14 @@ public static final String[] jjstrLiteralImages = {
 null, null, null, null, null, null, null, null, null, null, null, null, null, null, 
 null, "\53", "\55", "\52", "\57", "\136", "\45\45", "\50", "\51", "\133", "\135", 
 "\54", "\73", "\72", "\77", "\75\76", "\74", "\76", "\74\75", "\76\75", "\41\75", 
-"\75\75", "\75", "\173", "\175", "\174", "\46", "\41", };
+"\75\75", "\75", "\173", "\175", "\174", "\46", "\41", null, };
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
    "DEFAULT", 
 };
 static final long[] jjtoToken = {
-   0x7ffffff7ffff81L, 
+   0xfffffff7ffff81L, 
 };
 static final long[] jjtoSkip = {
    0x7eL, 
@@ -889,6 +889,10 @@ public Token getNextToken()
    jjmatchedKind = 0x7fffffff;
    jjmatchedPos = 0;
    curPos = jjMoveStringLiteralDfa0_0();
+   if (jjmatchedPos == 0 && jjmatchedKind > 55)
+   {
+      jjmatchedKind = 55;
+   }
    if (jjmatchedKind != 0x7fffffff)
    {
       if (jjmatchedPos + 1 < curPos)
