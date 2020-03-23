@@ -13,7 +13,7 @@ public enum ETipoDato {
     MATRIX(null, "matrix", true),
     DECIMAL(0.0, "numeric", false),
     BOOLEAN(false, "boolean", false),
-    NT(new NNulo(0,0,"[NO_FILE]"), "null", false),
+    NT(new NNulo(0,0,"[NO_FILE]"), "string", false),
     STRING(new NNulo(0,0,"[NO_FILE]"), "string", false);
 
     private final Object defecto;

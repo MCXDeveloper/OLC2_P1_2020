@@ -27,12 +27,15 @@ public class NTypeOf extends Nodo implements Instruccion {
         switch (rvalor.getTipoDato()) {
             case INT:
             case LIST:
-            case ARRAY:
             case STRING:
             case DECIMAL:
             case BOOLEAN: {
                 tdr = ETipoDato.STRING;
                 rval = rvalor.getTipoDato().getTypeOf();
+            }   break;
+            case ARRAY: {
+                tdr = ETipoDato.STRING;
+                rval = ((Arreglo)rvalor.getValor()).getInnerType().getTypeOf();
             }   break;
             case VECTOR: {
                 tdr = ETipoDato.STRING;

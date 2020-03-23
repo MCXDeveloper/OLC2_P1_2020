@@ -47,6 +47,10 @@ public class Arreglo implements Estructura {
         return listaTamanoDims.size();
     }
 
+    public ETipoDato getInnerType() {
+        return elementos.get(0).getTipo();
+    }
+
     public void actualizarValorPorPosiciones(LinkedList<Integer> posiciones, ETipoDato tipo, Object valor) {
         int pos = colAccess(posiciones);
         elementos.set(pos, new Item(tipo, valor));
