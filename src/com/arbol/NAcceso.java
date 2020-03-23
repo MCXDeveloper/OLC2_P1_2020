@@ -44,29 +44,34 @@ public class NAcceso extends Nodo implements Instruccion {
                 case DECIMAL:
                 case BOOLEAN: {
                     Vector v = new Vector(s.getTipo(), s.getValor());
+                    v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
                     NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, listaDims);
                     return nav.Ejecutar(ts);
                 }
 
                 case VECTOR: {
                     Vector v = (Vector)s.getValor();
+                    v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
                     NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, listaDims);
                     return nav.Ejecutar(ts);
                 }
                 case LIST: {
                     Lista l = (Lista)s.getValor();
+                    l = !ts.enCicloFor() ? (Lista)l.getClone() : l;
                     NAccesoLista nal = new NAccesoLista(getLinea(), getColumna(), getArchivo(), l, listaDims);
                     return nal.Ejecutar(ts);
                 }
 
                 case MATRIX: {
                     Matriz mat = (Matriz)s.getValor();
+                    mat = !ts.enCicloFor() ? (Matriz)mat.getClone() : mat;
                     NAccesoMatriz nam = new NAccesoMatriz(getLinea(), getColumna(), getArchivo(), mat, listaDims);
                     return nam.Ejecutar(ts);
                 }
 
                 case ARRAY: {
                     Arreglo array = (Arreglo)s.getValor();
+                    array = !ts.enCicloFor() ? (Arreglo)array.getClone() : array;
                     NAccesoArreglo naa = new NAccesoArreglo(getLinea(), getColumna(), getArchivo(), array, listaDims);
                     return naa.Ejecutar(ts);
                 }
