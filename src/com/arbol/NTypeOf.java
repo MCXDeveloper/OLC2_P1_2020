@@ -25,6 +25,7 @@ public class NTypeOf extends Nodo implements Instruccion {
         Resultado rvalor = ((Instruccion)valor).Ejecutar(ts);
 
         switch (rvalor.getTipoDato()) {
+            case NT:
             case INT:
             case LIST:
             case STRING:
