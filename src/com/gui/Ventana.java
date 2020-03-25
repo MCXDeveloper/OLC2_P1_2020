@@ -24,6 +24,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -33,6 +35,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -55,6 +59,7 @@ public class Ventana extends javax.swing.JFrame {
 
     private NRaiz raizGlobal;
     private TablaSimbolos tsGlobal;
+    private Color errorColor = new Color(255, 113, 140);
 
     public Ventana() {
         initComponents();
@@ -147,7 +152,7 @@ public class Ventana extends javax.swing.JFrame {
 
         panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Salidas"));
 
-        consolaSalida.setBackground(new java.awt.Color(0, 0, 0));
+        consolaSalida.setBackground(new java.awt.Color(46,46,46));
         jspConsola.setViewportView(consolaSalida);
 
         javax.swing.GroupLayout innerPanelConsolaLayout = new javax.swing.GroupLayout(innerPanelConsola);
@@ -169,7 +174,7 @@ public class Ventana extends javax.swing.JFrame {
 
         salidasContainer.addTab("Consola", innerPanelConsola);
 
-        consolaErrores.setBackground(new java.awt.Color(0, 0, 0));
+        consolaErrores.setBackground(new java.awt.Color(46,46,46));
         jScrollPane1.setViewportView(consolaErrores);
 
         javax.swing.GroupLayout innerPanelErroresLayout = new javax.swing.GroupLayout(innerPanelErrores);
@@ -191,7 +196,7 @@ public class Ventana extends javax.swing.JFrame {
 
         salidasContainer.addTab("Errores", innerPanelErrores);
 
-        consolaSimbolos.setBackground(new java.awt.Color(0, 0, 0));
+        consolaSimbolos.setBackground(new java.awt.Color(46,46,46));
         //consolaSimbolos.setFont(new java.awt.Font("Inconsolata", Font.BOLD, 12)); // NOI18N
         jScrollPane2.setViewportView(consolaSimbolos);
 
@@ -374,7 +379,9 @@ public class Ventana extends javax.swing.JFrame {
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {
         RSyntaxTextArea textArea = getColoredArea();
         Tab pestana = new Tab(textArea, "NuevoTab_" + Helper.getRandomName(), "arit");
-        tabContainer.addTab(pestana.ObtenerNombreCompletoArchivo(), pestana);
+        String titulo = pestana.ObtenerNombreCompletoArchivo();
+        tabContainer.addTab(titulo, pestana);
+        addCloseButton(titulo);
     }
 
     private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {
@@ -394,6 +401,7 @@ public class Ventana extends javax.swing.JFrame {
                     textArea.setText(contenido);
                     Tab pestana = new Tab(textArea, _path_);
                     tabContainer.addTab(pestana.ObtenerNombreCompletoArchivo(), pestana);
+                    addCloseButton(pestana.ObtenerNombreCompletoArchivo());
                     tabContainer.setSelectedComponent(pestana);
                 }else{
                     showMessage("Ocurrió un error al obtener el contenido del archivo.  Intente de nuevo.");
@@ -564,13 +572,14 @@ public class Ventana extends javax.swing.JFrame {
                     Resultado r = raizGlobal.Ejecutar(tsGlobal);
                     verificarErrores();
                 } catch (Exception ex) {
-                    Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+                    appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", errorColor);
+                    ex.printStackTrace();
                 }
             } else {
                 verificarErrores();
             }
         } catch (Exception e) {
-            appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", Color.red);
+            appendSalida("FATAL ERROR! - Ocurrió un error al parsear las instrucciones!", errorColor);
             e.printStackTrace();
         }
 
@@ -737,7 +746,7 @@ public class Ventana extends javax.swing.JFrame {
 
     private void appendErrores(String cadena) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.PINK);
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, errorColor);
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
         aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
@@ -749,7 +758,7 @@ public class Ventana extends javax.swing.JFrame {
 
     private void appendSimbolos(String cadena) {
         StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, Color.YELLOW);
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, new Color(255, 123, 212));
         aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
         aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
@@ -765,6 +774,36 @@ public class Ventana extends javax.swing.JFrame {
             return true;
         }
         return false;
+    }
+
+    private void addCloseButton(String titulo) {
+        int index = tabContainer.indexOfTab(titulo);
+        JPanel pnlTab = new JPanel(new GridBagLayout());
+        pnlTab.setOpaque(false);
+        JLabel lblTitle = new JLabel(titulo);
+        JButton btnClose = new JButton("X");
+        btnClose.setBackground(new Color(200, 221, 242));
+        btnClose.setForeground(Color.RED);
+        btnClose.setFocusPainted(false);
+        btnClose.setFont(new Font("Tahoma", Font.BOLD, 12));
+        btnClose.setBorder(new EmptyBorder(1, 10, 0, 0));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        pnlTab.add(lblTitle, gbc);
+        gbc.gridx++;
+        gbc.weightx = 0;
+        pnlTab.add(btnClose, gbc);
+        tabContainer.setTabComponentAt(index, pnlTab);
+        btnClose.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent evt) {
+                int index = tabContainer.indexOfTab(titulo);
+                if (index >= 0) {
+                    tabContainer.removeTabAt(index);
+                }
+            }
+        });
     }
 
     public void showMessage(String message) {
