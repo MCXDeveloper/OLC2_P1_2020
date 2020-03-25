@@ -60,20 +60,17 @@ public class Vector implements Estructura {
 
     }
 
-    public boolean updateVectorValue(int pos, ETipoDato type, Object value) {
+    public void updateVectorValue(int pos, ETipoDato type, Object value) {
 
         /* Se le resta 1 a la posición ya que las posiciones son manejadas de 0 en adelante. */
         int finalPos = pos - 1;
 
-        if (finalPos <= getVectorSize()) {
-            elementos.set(finalPos, new Item(type, value));
-        } else {
-
+        if (pos > getVectorSize()) {
             /*
              * Si la posición proporcionada es mayor que el tamaño actual del vector
              * entonces se procede a llenar los espacios entre el espacio actual y el
              * deseado con los valores por defecto del tipo del que sea el vector.
-            */
+             */
 
             /* Obtengo el tipo interno del vector. */
             ETipoDato tipoInterno = elementos.get(0).getTipo();
@@ -85,12 +82,18 @@ public class Vector implements Estructura {
                     elementos.add(new Item(tipoInterno, tipoInterno.getDefecto()));
                 }
             }
-
+        } else {
+            elementos.set(finalPos, new Item(type, value));
         }
 
         /* Por ultimo, hago un rehash del vector para que se actualicen los tipos. */
-        return rehashing();
+        rehashing();
 
+    }
+
+    public Item getValueAccess(int pos) {
+        int finalPos = pos - 1;
+        return elementos.get(finalPos);
     }
 
     public Item getValueParaAsignacion(int pos) {

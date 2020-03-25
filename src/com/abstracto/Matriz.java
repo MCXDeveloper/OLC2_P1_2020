@@ -184,9 +184,9 @@ public class Matriz implements Estructura {
     }
 
     private String[] getColsHeader() {
-        String[] arr = new String[columnas];
-        for (int i = 0; i < columnas; i++) {
-            arr[i] = "Columna " + (i + 1);
+        String[] arr = new String[columnas+1];
+        for (int i = 0; i < columnas+1; i++) {
+            arr[i] = (i == 0 ? "" : "Columna " + i);
         }
         return arr;
     }
@@ -194,17 +194,18 @@ public class Matriz implements Estructura {
     private List<String[]> getStringArrayElements() {
 
         int cnt = 0;
-        String[] arr = new String[columnas];
+        int colSize = columnas + 1;
+        String[] arr = new String[colSize];
         List<String[]> list = new ArrayList<>();
 
         for (int i = 1; i <= filas; i++) {
-            for (int j = 1; j <= columnas; j++) {
-                arr[cnt] = elementos.get(colAccess(i, j) - 1).getStringItem();
+            for (int j = 0; j <= columnas; j++) {
+                arr[cnt] = (j == 0 ? "Fila " + i : elementos.get(colAccess(i, j) - 1).getStringItem());
                 cnt++;
             }
             cnt = 0;
             list.add(arr);
-            arr = new String[columnas];
+            arr = new String[colSize];
         }
 
         return list;

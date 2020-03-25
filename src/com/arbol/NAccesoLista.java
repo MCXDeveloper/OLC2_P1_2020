@@ -66,7 +66,12 @@ public class NAccesoLista extends Nodo implements Instruccion {
                         return error;
                     }
                     Vector v = ((Vector)pivote);
-                    pivote = v.getValueParaAsignacion(posicion);
+                    if (posicion > v.getVectorSize()) {
+                        msj = "Error. No se puede acceder a una posición inexistente de un vector [Valor = "+ posicion +"].";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_LISTA]", msj, getLinea(), getColumna());
+                        return error;
+                    }
+                    pivote = v.getValueAccess(posicion);
                 }
                 cnt++;
             } else {

@@ -21,6 +21,7 @@ public class NPrint extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
+        Color c = new Color(47, 255, 172);
         Resultado r = ((Instruccion)elemento).Ejecutar(ts);
 
         switch (r.getTipoDato()) {
@@ -31,16 +32,22 @@ public class NPrint extends Nodo implements Instruccion {
                 if (((Vector)r.getValor()).getInnerType() == ETipoDato.ERROR) {
                     return new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
                 }
-                Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
+                Main.getGUI().appendSalida(r.getValor().toString(), c);
+            }   break;
+            case MATRIX: {
+                String[] elements = r.getValor().toString().split("\n");
+                for (String s : elements) {
+                    Main.getGUI().appendSalida(s, c);
+                }
             }   break;
             case ARRAY: {
                 LinkedList<String> lista = ((Arreglo)r.getValor()).imprimirArreglo();
                 for (String s : lista) {
-                    Main.getGUI().appendSalida(s, Color.CYAN);
+                    Main.getGUI().appendSalida(s, c);
                 }
             }   break;
             default: {
-                Main.getGUI().appendSalida(r.getValor().toString(), Color.CYAN);
+                Main.getGUI().appendSalida(r.getValor().toString(), c);
             }   break;
         }
 

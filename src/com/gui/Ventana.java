@@ -781,6 +781,7 @@ public class Ventana extends javax.swing.JFrame {
         JPanel pnlTab = new JPanel(new GridBagLayout());
         pnlTab.setOpaque(false);
         JLabel lblTitle = new JLabel(titulo);
+        lblTitle.setBorder(new EmptyBorder(2, 0, 0, 0));
         JButton btnClose = new JButton("X");
         btnClose.setBackground(new Color(200, 221, 242));
         btnClose.setForeground(Color.RED);
