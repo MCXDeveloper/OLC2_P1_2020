@@ -373,6 +373,10 @@ public class Ventana extends javax.swing.JFrame {
 
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 
+        ImageIcon ii = new ImageIcon("/home/mcalderon/IdeaProjects/OLC2_P1_2020/src/com/image/aritlogo.png");
+        this.setIconImage(ii.getImage());
+        this.setTitle("ARIT SOFTWARE - 201213177");
+
         pack();
     }// </editor-fold>
 
