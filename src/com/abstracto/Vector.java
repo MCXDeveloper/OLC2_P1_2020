@@ -104,7 +104,7 @@ public class Vector implements Estructura {
          * Si la posicion proporcionada para obtener un elemento no existe, se
          * deben de llenar espacios con NULL y luego devolver un valor existente.
          */
-        if (finalPos > getVectorSize()) {
+        if (pos > getVectorSize()) {
             /* Obtengo el valor por defecto en base al primer elemento del vector. */
             ETipoDato tipoInterno = elementos.get(0).getTipo();
             for (int i = getVectorSize(); i <= finalPos; i++) {

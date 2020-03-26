@@ -139,7 +139,7 @@ public class Lista implements Estructura {
          * Si la posicion proporcionada para obtener un acceso de tipo 1 no existe, se
          * deben de llenar espacios con NULL y luego devolver un valor existente.
          */
-        if (finalPos > getListSize()) {
+        if (pos > getListSize()) {
             for (int i = getListSize(); i <= finalPos; i++) {
                 elementos.add(new Item(ETipoDato.VECTOR, new Vector(ETipoDato.STRING, new NNulo(0,0,"[NO_FILE]"))));
             }
@@ -166,7 +166,7 @@ public class Lista implements Estructura {
          * Si la posicion proporcionada para obtener un acceso de tipo 2 no existe, se
          * deben de llenar espacios con NULL y luego devolver un valor existente.
          */
-        if (finalPos > getListSize()) {
+        if (pos > getListSize()) {
             for (int i = getListSize(); i <= finalPos; i++) {
                 elementos.add(new Item(ETipoDato.VECTOR, new Vector(ETipoDato.STRING, new NNulo(0,0,"[NO_FILE]"))));
             }

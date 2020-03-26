@@ -33,8 +33,13 @@ public class NCall extends Nodo implements Instruccion {
         switch (id.toUpperCase()) {
 
             case "C": {
-                NFC call = new NFC(getLinea(), getColumna(), getArchivo(), params);
-                return call.Ejecutar(ts);
+                if (params.size() >= 1) {
+                    NFC call = new NFC(getLinea(), getColumna(), getArchivo(), params);
+                    return call.Ejecutar(ts);
+                } else {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                }
             }
 
             case "PIE": {
@@ -48,8 +53,13 @@ public class NCall extends Nodo implements Instruccion {
             }   break;
 
             case "LIST": {
-                NList call = new NList(getLinea(), getColumna(), getArchivo(), params);
-                return call.Ejecutar(ts);
+                if (params.size() >= 1) {
+                    NList call = new NList(getLinea(), getColumna(), getArchivo(), params);
+                    return call.Ejecutar(ts);
+                } else {
+                    msj = "Error.  La cantidad de parámetros definida en la función <"+ id +"> no concuerdan con las establecidas en la declaración.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
+                }
             }
 
             case "NCOL": {
