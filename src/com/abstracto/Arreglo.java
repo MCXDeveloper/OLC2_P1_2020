@@ -19,10 +19,6 @@ public class Arreglo implements Estructura {
         this.listaTamanoDims = listaTamanoDims;
     }
 
-    public int getTamano() {
-        return tamano;
-    }
-
     public int getArregloSize() {
         return elementos.size();
     }
@@ -37,10 +33,6 @@ public class Arreglo implements Estructura {
 
     public LinkedList<Item> getElementos() {
         return elementos;
-    }
-
-    public LinkedList<Integer> getListaTamanoDims() {
-        return listaTamanoDims;
     }
 
     public int getCantidadDimensiones() {
@@ -63,19 +55,24 @@ public class Arreglo implements Estructura {
         if (hasLists.isPresent()) {
             convertToList();
         } else {
-            Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
-            if (priori1.isPresent()) {
-                convertToString();
+            Optional<Item> hasVecs = elementos.stream().filter(i -> i.getTipo() == ETipoDato.VECTOR).findAny();
+            if (hasVecs.isPresent()) {
+                convertToVector();
             } else {
-                Optional<Item> priori2 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.DECIMAL).findAny();
-                if (priori2.isPresent()) {
-                    convertToDecimal();
+                Optional<Item> priori1 = elementos.stream().filter(i -> (i.getTipo() == ETipoDato.STRING || i.getTipo() == ETipoDato.NT)).findAny();
+                if (priori1.isPresent()) {
+                    convertToString();
                 } else {
-                    Optional<Item> priori3 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.INT).findAny();
-                    if (priori3.isPresent()) {
-                        convertToInteger();
+                    Optional<Item> priori2 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.DECIMAL).findAny();
+                    if (priori2.isPresent()) {
+                        convertToDecimal();
                     } else {
-                        return elementos.stream().allMatch(i -> i.getTipo() == ETipoDato.BOOLEAN);
+                        Optional<Item> priori3 = elementos.stream().filter(i -> i.getTipo() == ETipoDato.INT).findAny();
+                        if (priori3.isPresent()) {
+                            convertToInteger();
+                        } else {
+                            return elementos.stream().allMatch(i -> i.getTipo() == ETipoDato.BOOLEAN);
+                        }
                     }
                 }
             }
@@ -87,10 +84,10 @@ public class Arreglo implements Estructura {
     public boolean validarIndices(LinkedList<Integer> posiciones) {
         for (int i = 0; i < listaTamanoDims.size(); i++) {
             if (posiciones.get(i) > listaTamanoDims.get(i)) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private int colAccess(LinkedList<Integer> posiciones) {
@@ -136,6 +133,19 @@ public class Arreglo implements Estructura {
                 l = new Lista(pivot.getTipo(), pivot.getValor());
                 l.rehashing(false);
                 elementos.set(i, new Item(ETipoDato.LIST, l));
+            }
+        }
+    }
+
+    private void convertToVector() {
+        Vector v;
+        Item pivot;
+        for (int i = 0; i < elementos.size(); i++) {
+            pivot = elementos.get(i);
+            if (pivot.getTipo() != ETipoDato.VECTOR) {
+                v = new Vector(pivot.getTipo(), pivot.getValor());
+                v.rehashing();
+                elementos.set(i, new Item(ETipoDato.VECTOR, v));
             }
         }
     }

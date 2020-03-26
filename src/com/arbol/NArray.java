@@ -7,6 +7,7 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Optional;
 
@@ -68,7 +69,6 @@ public class NArray extends Nodo implements Instruccion {
                     int arrSize = getArraySize(lints);
 
                     Item it;
-                    Object target;
                     LinkedList<Item> li = new LinkedList<>();
                     ETipoDato tipoTarget = rvals.getTipoDato();
                     for (int i = 0; i < arrSize; i++) {
@@ -76,8 +76,8 @@ public class NArray extends Nodo implements Instruccion {
                         it = itemVals.get(cnt);
 
                         if (tipoTarget == ETipoDato.LIST) {
-                            target = new Lista(it.getTipo(), it.getValor());
-                            li.add(new Item(ETipoDato.LIST, target));
+                            Lista lx = new Lista(new LinkedList<>(Collections.singletonList(new Item(it.getTipo(), it.getValor()))));
+                            li.add(new Item(ETipoDato.LIST, lx.getClone()));
                         } else {
                             li.add(new Item(it.getTipo(), it.getValor()));
                         }

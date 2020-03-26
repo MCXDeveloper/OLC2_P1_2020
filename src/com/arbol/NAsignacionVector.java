@@ -16,15 +16,15 @@ public class NAsignacionVector extends Nodo implements Instruccion {
 
     private Nodo valor;
     private Vector vec;
-    private Simbolo simVec;
+    private Object vecSimOrItem;
     private LinkedList<Dimension> listaDims;
 
-    public NAsignacionVector(int linea, int columna, String archivo, Simbolo simVec, LinkedList<Dimension> listaDims, Vector vec, Nodo valor) {
+    public NAsignacionVector(int linea, int columna, String archivo, Object vecSimOrItem, LinkedList<Dimension> listaDims, Vector vec, Nodo valor) {
         super(linea, columna, archivo, ETipoNodo.STMT_ASIGNACION_VECTOR);
         this.vec = vec;
         this.valor = valor;
-        this.simVec = simVec;
         this.listaDims = listaDims;
+        this.vecSimOrItem = vecSimOrItem;
     }
 
     @Override
@@ -119,8 +119,13 @@ public class NAsignacionVector extends Nodo implements Instruccion {
                         l.rehashing(true);
 
                         /* Actualizo el valor del simbolo porque ahora es una lista */
-                        simVec.setTipo(ETipoDato.LIST);
-                        simVec.setValor(l);
+                        if (vecSimOrItem instanceof Simbolo) {
+                            ((Simbolo)vecSimOrItem).setTipo(ETipoDato.LIST);
+                            ((Simbolo)vecSimOrItem).setValor(l);
+                        } else {
+                            ((Item)vecSimOrItem).setTipo(ETipoDato.LIST);
+                            ((Item)vecSimOrItem).setValor(l);
+                        }
 
                     } else {
                         vec.updateVectorValue(firstPos, rexp.getTipoDato(), rexp.getValor());

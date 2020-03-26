@@ -118,7 +118,7 @@ public class NAccesoArreglo extends Nodo implements Instruccion {
         }
 
         /* CUARTA VALIDACIÓN */
-        if (!array.validarIndices(listaValsDims)) {
+        if (array.validarIndices(listaValsDims)) {
             msj = "Error. Los indices especificados sobrepasan los límites del arreglo.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_ARREGLO]", msj, getLinea(), getColumna());
             return null;
