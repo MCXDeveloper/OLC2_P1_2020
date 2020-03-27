@@ -8,7 +8,10 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NAccesoMatriz extends Nodo implements Instruccion {
 
@@ -27,11 +30,58 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
         String msj;
         Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
-        if (listaDims.size() > 1) {
-            msj = "Error. No se puede realizar la modificación de una matriz utilizando accesos combinados.";
+        if (listaDims.size() == 1) {
+            return getValorDentroDeMatriz(ts);
+        } else if (listaDims.size() > 1) {
+
+            LinkedList<Dimension> dimsInternas = Optional.of(listaDims)
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .skip(1)
+                    .collect(Collectors.toCollection(LinkedList::new));
+
+            Resultado retMat = getValorDentroDeMatriz(ts);
+
+            switch (retMat.getTipoDato()) {
+                case INT:
+                case STRING:
+                case DECIMAL:
+                case BOOLEAN: {
+                    Vector v = new Vector(retMat.getTipoDato(), retMat.getValor());
+                    v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
+                    NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, dimsInternas);
+                    return nav.Ejecutar(ts);
+                }
+                case VECTOR: {
+                    Vector v = (Vector)retMat.getValor();
+                    v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
+                    NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, dimsInternas);
+                    return nav.Ejecutar(ts);
+                }
+                default: {
+                    msj = "Error. No se puede acceder con dimensiones a una variable que no sea de tipo estructura.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO]", msj, getLinea(), getColumna());
+                    return error;
+                }
+            }
+
+        } else {
+            msj = "Error. No se puede realizar el acceso a una matriz sin una lista de dimensiones.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_MATRIZ]", msj, getLinea(), getColumna());
             return error;
         }
+
+    }
+
+    @Override
+    public String GenerarDOT(TablaSimbolos ts) {
+        return null;
+    }
+
+    private Resultado getValorDentroDeMatriz(TablaSimbolos ts) {
+
+        String msj;
+        Resultado error = new Resultado(ETipoDato.ERROR, EFlujo.NORMAL, new Fail());
 
         ETipoDimension tipoDim = listaDims.get(0).getTipoDim();
 
@@ -109,7 +159,7 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
                     }
                     return new Resultado(ETipoDato.VECTOR, EFlujo.NORMAL, new Vector(li));
                 } else {
-                     return error;
+                    return error;
                 }
             }
 
@@ -121,11 +171,6 @@ public class NAccesoMatriz extends Nodo implements Instruccion {
 
         }
 
-    }
-
-    @Override
-    public String GenerarDOT(TablaSimbolos ts) {
-        return null;
     }
 
     private int validarPosicionDeDimension(Resultado rdim) {

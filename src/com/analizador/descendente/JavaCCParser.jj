@@ -66,15 +66,6 @@ TOKEN : {
     | <r_true:          "true">
     | <r_false:         "false">
     | <identificador:   ((((["."])+["A"-"Z","a"-"z","_"])|["A"-"Z","a"-"z"])(["A"-"Z","a"-"z","_","0"-"9"]|".")*|(["."])+)>
-    | <cadena:          ("\"") (<dentro_de_cadena>)* ("\"") >
-    | < #dentro_de_cadena: ((~["\"","\\","\n","\r","(",")"])
-              | ("\\"
-                  ( ["n","t","b","r","f","\\","'","\""]
-                  | ["0"-"7"] ( ["0"-"7"] )?
-                  | ["0"-"3"] ["0"-"7"] ["0"-"7"]
-                  )
-                )
-            ) >
     | <mas:             "+">
     | <menos:           "-">
     | <por:             "*">
@@ -102,7 +93,24 @@ TOKEN : {
     | <or:              "|">
     | <and:             "&">
     | <not:             "!">
-    | <err:             (~[])>
+    | <err:             (~["\""])>
+}
+
+MORE:
+{
+    "\"" : DENTRO_DE_CADENA
+}
+<DENTRO_DE_CADENA> MORE: {
+        "\\\\"
+    |   "\\n"
+    |   "\\r"
+    |   "\\'"
+    |   "\\\""
+    |   <~["\\","\n","\r","'","\""]>
+}
+<DENTRO_DE_CADENA> TOKEN:
+{
+    <cadena:"\""> : DEFAULT
 }
 
 /* Fin Lexico */
@@ -668,7 +676,7 @@ Nodo PRIMITIVO() :
         | LOOKAHEAD(2) n=SENTENCIA_LLAMADA()                                { return n; }
         | t=<cadena>                                                        {
                                                                                 cad = t.image.substring(1,t.image.length()-1);
-                                                                                cad = cad.replace("\\","\\");
+                                                                                cad = cad.replace("\\\\","\\");
                                                                                 cad = cad.replace("\\\"","\"");
                                                                                 cad = cad.replace("\\n","\n");
                                                                                 cad = cad.replace("\\r","\r");
