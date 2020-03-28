@@ -131,7 +131,7 @@ public class NAsignacionVector extends Nodo implements Instruccion {
                         vec.updateVectorValue(firstPos, rexp.getTipoDato(), rexp.getValor());
                     }
 
-                    tdr = ETipoDato.NT;
+                    tdr = ETipoDato.STRING;
                     rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
 
                 }

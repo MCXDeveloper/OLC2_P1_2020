@@ -88,7 +88,7 @@ public class NAsignacionMatriz extends Nodo implements Instruccion {
                         Resultado rexp = ((Instruccion) valor).Ejecutar(ts);
                         Resultado finalExp = validarExpresionParaFilasYColumnas("fila", matrix.getColumnas(), rexp);
                         if (finalExp != null) {
-                            tdr = ETipoDato.NT;
+                            tdr = ETipoDato.STRING;
                             rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                             matrix.updateRowValue(posDim, finalExp.getTipoDato(), finalExp.getValor());
                         }
@@ -109,7 +109,7 @@ public class NAsignacionMatriz extends Nodo implements Instruccion {
                         Resultado rexp = ((Instruccion) valor).Ejecutar(ts);
                         Resultado finalExp = validarExpresionParaFilasYColumnas("columna", matrix.getFilas(), rexp);
                         if (finalExp != null) {
-                            tdr = ETipoDato.NT;
+                            tdr = ETipoDato.STRING;
                             rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                             matrix.updateColumnValue(posDim, finalExp.getTipoDato(), finalExp.getValor());
                         }
@@ -130,7 +130,7 @@ public class NAsignacionMatriz extends Nodo implements Instruccion {
                         Resultado rexp = ((Instruccion) valor).Ejecutar(ts);
                         Resultado finalExp = validarExpresion(rexp);
                         if (finalExp != null) {
-                            tdr = ETipoDato.NT;
+                            tdr = ETipoDato.STRING;
                             rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                             matrix.updateValueByPosition(posDim, finalExp.getTipoDato(), finalExp.getValor());
                         }
@@ -153,7 +153,7 @@ public class NAsignacionMatriz extends Nodo implements Instruccion {
                         Resultado rexp = ((Instruccion) valor).Ejecutar(ts);
                         Resultado finalExp = validarExpresion(rexp);
                         if (finalExp != null) {
-                            tdr = ETipoDato.NT;
+                            tdr = ETipoDato.STRING;
                             rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                             matrix.updateValueByRowAndCol(posX, posY, rexp.getTipoDato(), rexp.getValor());
                         }

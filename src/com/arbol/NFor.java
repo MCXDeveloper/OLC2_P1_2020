@@ -148,7 +148,7 @@ public class NFor extends Nodo implements Instruccion {
         if(rst != null && rst.getFlujo() == EFlujo.RETURN){
             return rst;
         }else{
-            return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+            return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
         }
 
     }

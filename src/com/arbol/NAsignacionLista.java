@@ -102,14 +102,14 @@ public class NAsignacionLista extends Nodo implements Instruccion {
                     if (validarExpresionParaLista(rexp)) {
                         ((Lista)pivote).updateListValue(posicion, rexp.getTipoDato(), rexp.getValor());
                         listax.rehashing(false);
-                        tdr = ETipoDato.NT;
+                        tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
                 } else if (pivote instanceof Vector) {
                     if (validarExpresionParaVector(rexp)) {
                         ((Vector)pivote).updateVectorValue(posicion, rexp.getTipoDato(), rexp.getValor());
                         listax.rehashing(false);
-                        tdr = ETipoDato.NT;
+                        tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
                 } else if (pivote instanceof Item) {
@@ -125,7 +125,7 @@ public class NAsignacionLista extends Nodo implements Instruccion {
                             i.setValor(rexp.getValor());
                         }
                         listax.rehashing(false);
-                        tdr = ETipoDato.NT;
+                        tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
 

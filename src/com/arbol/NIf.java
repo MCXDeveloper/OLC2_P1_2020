@@ -72,7 +72,7 @@ public class NIf extends Nodo implements Instruccion {
             if(secIfs != null){
                 rexp = ejecutarElse(ts);
             } else {
-                return new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
+                return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
             }
         }
 
@@ -164,7 +164,7 @@ public class NIf extends Nodo implements Instruccion {
 
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 
@@ -186,7 +186,7 @@ public class NIf extends Nodo implements Instruccion {
 
         ts.destruirAmbito();
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 

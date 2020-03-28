@@ -28,7 +28,7 @@ public class NDecAsi extends Nodo implements Instruccion {
 
         if (valor != null) {
 
-            tdr = ETipoDato.NT;
+            tdr = ETipoDato.STRING;
             rval = new NNulo(getLinea(), getColumna(), getArchivo());
 
             Simbolo s = ts.getSimbolo(id);

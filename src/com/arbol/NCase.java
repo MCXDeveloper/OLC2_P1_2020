@@ -41,7 +41,7 @@ public class NCase extends Nodo implements Instruccion {
 
         ts.destruirAmbito();
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 

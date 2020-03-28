@@ -107,7 +107,7 @@ public class NSwitch extends Nodo implements Instruccion {
             return EjecutarDefault(ts);
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
         
     }
 
@@ -177,7 +177,7 @@ public class NSwitch extends Nodo implements Instruccion {
 
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 

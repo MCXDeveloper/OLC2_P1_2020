@@ -83,19 +83,19 @@ public class NAccesoArreglo extends Nodo implements Instruccion {
                     case BOOLEAN: {
                         Vector v = new Vector(it.getTipo(), it.getValor());
                         v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
-                        NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, listaDims);
+                        NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, dimsInternas);
                         return nav.Ejecutar(ts);
                     }
                     case VECTOR: {
                         Vector v = (Vector)it.getValor();
                         v = !ts.enCicloFor() ? (Vector)v.getClone() : v;
-                        NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, listaDims);
+                        NAccesoVector nav = new NAccesoVector(getLinea(), getColumna(), getArchivo(), v, dimsInternas);
                         return nav.Ejecutar(ts);
                     }
                     case LIST: {
                         Lista l = (Lista)it.getValor();
                         l = !ts.enCicloFor() ? (Lista)l.getClone() : l;
-                        NAccesoLista nal = new NAccesoLista(getLinea(), getColumna(), getArchivo(), l, listaDims);
+                        NAccesoLista nal = new NAccesoLista(getLinea(), getColumna(), getArchivo(), l, dimsInternas);
                         return nal.Ejecutar(ts);
                     }
                     default: {

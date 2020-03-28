@@ -58,7 +58,7 @@ public class NWhile extends Nodo implements Instruccion {
             if(rst != null && rst.getFlujo() == EFlujo.RETURN){
                 return rst;
             }else{
-                rst = new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+                rst = new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
             }
 
             return rst;

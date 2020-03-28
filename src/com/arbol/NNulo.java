@@ -16,7 +16,7 @@ public class NNulo extends Nodo implements Instruccion {
 
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
     }
 
     @Override

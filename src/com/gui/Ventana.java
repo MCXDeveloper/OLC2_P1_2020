@@ -37,6 +37,8 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -372,6 +374,18 @@ public class Ventana extends javax.swing.JFrame {
         );
 
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+
+        consolaSalida.addFocusListener(new FocusListener() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                consolaSalida.setEditable(true);
+
+            }
+            @Override
+            public void focusGained(FocusEvent e) {
+                consolaSalida.setEditable(false);
+            }
+        });
 
         ImageIcon ii = new ImageIcon("/home/mcalderon/IdeaProjects/OLC2_P1_2020/src/com/image/aritlogo.png");
         this.setIconImage(ii.getImage());

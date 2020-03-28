@@ -51,7 +51,7 @@ public class NPrint extends Nodo implements Instruccion {
             }   break;
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
     }
 
     @Override

@@ -61,7 +61,7 @@ public class NPlot extends Nodo implements Instruccion {
             return error;
         }
 
-        return new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
+        return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
 
     }
 

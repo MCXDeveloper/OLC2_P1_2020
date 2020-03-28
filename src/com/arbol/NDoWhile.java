@@ -69,7 +69,7 @@ public class NDoWhile extends Nodo implements Instruccion {
         if(ev != null && ev.getFlujo() == EFlujo.RETURN){
             return ev;
         }else{
-            return new Resultado(ETipoDato.NT, EFlujo.NORMAL);
+            return new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
         }
 
     }

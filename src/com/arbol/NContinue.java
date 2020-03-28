@@ -1,5 +1,6 @@
 package com.arbol;
 
+import com.abstracto.Fail;
 import com.abstracto.Instruccion;
 import com.abstracto.Nodo;
 import com.abstracto.Resultado;
@@ -18,16 +19,21 @@ public class NContinue extends Nodo implements Instruccion {
     @Override
     public Resultado Ejecutar(TablaSimbolos ts) {
 
-        ETipoDato rtd = ETipoDato.ERROR;
+        String msj;
+        Object rvalor;
+        ETipoDato rtd;
 
         if(!ts.enCiclo()){
-            String msj = "Error. No se puede utilizar CONTINUE fuera de un ciclo.";
+            msj = "Error. No se puede utilizar CONTINUE fuera de un ciclo.";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CONTINUE]", msj, getLinea(), getColumna());
+            rtd = ETipoDato.ERROR;
+            rvalor = new Fail();
         } else {
-            rtd = ETipoDato.NT;
+            rtd = ETipoDato.STRING;
+            rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
         }
 
-        return new Resultado(rtd, EFlujo.CONTINUE);
+        return new Resultado(rtd, EFlujo.CONTINUE, rvalor);
 
     }
 

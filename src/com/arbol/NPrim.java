@@ -32,7 +32,7 @@ public class NPrim extends Nodo implements Instruccion {
                 r = new Resultado(tipoDato, EFlujo.NORMAL, valor);
             }   break;
             default: {
-                r = new Resultado(ETipoDato.NT, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
+                r = new Resultado(ETipoDato.STRING, EFlujo.NORMAL, new NNulo(getLinea(), getColumna(), getArchivo()));
             }   break;
 
         }

@@ -267,7 +267,7 @@ public class NCall extends Nodo implements Instruccion {
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_CALL]", msj, getLinea(), getColumna());
                 } else {
                     Ambito amb = new Ambito(EAmbito.FUNCION);
-                    Simbolo s = new Simbolo(ETipoDato.NT, "return", new NNulo(getLinea(), getColumna(), getArchivo()));
+                    Simbolo s = new Simbolo(ETipoDato.STRING, "return", new NNulo(getLinea(), getColumna(), getArchivo()));
                     amb.addSimbolo(s);
                     if (!registrarParametros(amb, funcion.getParametros(), ts)) {
                         msj = "Error.  No se pudieron registrar los parametros para la función <"+ id +">.";

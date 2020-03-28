@@ -1,5 +1,6 @@
 package com.abstracto;
 
+import com.arbol.NNulo;
 import com.constantes.ETipoDato;
 
 import java.lang.reflect.Array;
@@ -152,10 +153,12 @@ public class Arreglo implements Estructura {
 
     private void convertToString() {
         Item pivot;
+        Object obj;
         for (int i = 0; i < elementos.size(); i++) {
             pivot = elementos.get(i);
             if (pivot.getTipo() != ETipoDato.STRING) {
-                elementos.set(i, new Item(ETipoDato.STRING, ((pivot.getTipo() != ETipoDato.NT) ? pivot.getValor().toString() : pivot.getValor())));
+                obj = (pivot.getValor() instanceof NNulo) ? pivot.getValor().toString() : pivot.getValor();
+                elementos.set(i, new Item(ETipoDato.STRING, obj));
             }
         }
     }
