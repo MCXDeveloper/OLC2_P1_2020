@@ -157,7 +157,7 @@ public class Arreglo implements Estructura {
         for (int i = 0; i < elementos.size(); i++) {
             pivot = elementos.get(i);
             if (pivot.getTipo() != ETipoDato.STRING) {
-                obj = (pivot.getValor() instanceof NNulo) ? pivot.getValor().toString() : pivot.getValor();
+                obj = (pivot.getValor() instanceof NNulo) ? pivot.getValor() : pivot.getValor().toString();
                 elementos.set(i, new Item(ETipoDato.STRING, obj));
             }
         }

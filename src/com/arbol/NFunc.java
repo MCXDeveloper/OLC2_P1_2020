@@ -7,7 +7,9 @@ import com.constantes.ETipoNodo;
 import com.entorno.Simbolo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
+import com.main.Main;
 
+import java.awt.*;
 import java.util.LinkedList;
 
 public class NFunc extends Nodo implements Instruccion {
@@ -51,7 +53,10 @@ public class NFunc extends Nodo implements Instruccion {
                 r = ((Instruccion)nd).Ejecutar(ts);
                 if (r.getFlujo() == EFlujo.RETURN)
                     break;
-            } catch (Exception ignored) { }
+            } catch (Exception e) {
+                Main.getGUI().appendSalida("FUNCTION ERROR! Ocurrió un error al ejecutar una sentencia dentro de una función.", new Color(255, 113, 140));
+                e.printStackTrace();
+            }
         }
 
         return new Resultado(ret.getTipo(), EFlujo.NORMAL, ret.getValor());
