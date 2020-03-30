@@ -54,7 +54,7 @@ public class NFunc extends Nodo implements Instruccion {
                 if (r.getFlujo() == EFlujo.RETURN)
                     break;
             } catch (Exception e) {
-                Main.getGUI().appendSalida("FUNCTION ERROR! Ocurrió un error al ejecutar una sentencia dentro de una función.", new Color(255, 113, 140));
+                Main.getGUI().appendSalida("FATAL FUNCTION ERROR! Ocurrió un error al ejecutar una sentencia dentro de una función.");
                 e.printStackTrace();
             }
         }

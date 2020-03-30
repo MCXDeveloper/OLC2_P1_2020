@@ -25,15 +25,10 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,13 +76,7 @@ public class Ventana extends javax.swing.JFrame {
         lblRowCol = new javax.swing.JLabel();
         panelConsola = new javax.swing.JPanel();
         jspConsola = new javax.swing.JScrollPane();
-        consolaSalida = new javax.swing.JTextPane() {
-            @Override
-            public boolean getScrollableTracksViewportWidth() {
-                return getUI().getPreferredSize(this).width
-                        <= getParent().getSize().width;
-            }
-        };
+        consolaSalida = new javax.swing.JTextArea();
         btnAnalizarAscendente = new javax.swing.JButton();
         btnAnalizarDescendente = new javax.swing.JButton();
         panelGraficos = new javax.swing.JPanel();
@@ -105,23 +94,11 @@ public class Ventana extends javax.swing.JFrame {
         salidasContainer = new javax.swing.JTabbedPane();
         innerPanelConsola = new javax.swing.JPanel();
         innerPanelErrores = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        consolaErrores = new javax.swing.JTextPane() {
-            @Override
-            public boolean getScrollableTracksViewportWidth() {
-                return getUI().getPreferredSize(this).width
-                        <= getParent().getSize().width;
-            }
-        };
+        jspErrores = new javax.swing.JScrollPane();
+        consolaErrores = new javax.swing.JTextArea();
         innerPanelSimbolos = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        consolaSimbolos = new javax.swing.JTextPane() {
-            @Override
-            public boolean getScrollableTracksViewportWidth() {
-                return getUI().getPreferredSize(this).width
-                        <= getParent().getSize().width;
-            }
-        };
+        jspSimbolos = new javax.swing.JScrollPane();
+        consolaSimbolos = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -154,7 +131,11 @@ public class Ventana extends javax.swing.JFrame {
 
         panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Salidas"));
 
+        consolaSalida.setLineWrap(true);
+        consolaSalida.setWrapStyleWord(true);
         consolaSalida.setBackground(new java.awt.Color(46,46,46));
+        consolaSalida.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        consolaSalida.setForeground(new Color(47, 255, 172));
         jspConsola.setViewportView(consolaSalida);
 
         javax.swing.GroupLayout innerPanelConsolaLayout = new javax.swing.GroupLayout(innerPanelConsola);
@@ -177,7 +158,9 @@ public class Ventana extends javax.swing.JFrame {
         salidasContainer.addTab("Consola", innerPanelConsola);
 
         consolaErrores.setBackground(new java.awt.Color(46,46,46));
-        jScrollPane1.setViewportView(consolaErrores);
+        consolaErrores.setFont(new Font("Droid Sans Mono", Font.PLAIN, 14));
+        consolaErrores.setForeground(errorColor);
+        jspErrores.setViewportView(consolaErrores);
 
         javax.swing.GroupLayout innerPanelErroresLayout = new javax.swing.GroupLayout(innerPanelErrores);
         innerPanelErrores.setLayout(innerPanelErroresLayout);
@@ -185,22 +168,23 @@ public class Ventana extends javax.swing.JFrame {
                 innerPanelErroresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(innerPanelErroresLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
+                                .addComponent(jspErrores, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
                                 .addContainerGap())
         );
         innerPanelErroresLayout.setVerticalGroup(
                 innerPanelErroresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(innerPanelErroresLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addComponent(jspErrores, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                                 .addContainerGap())
         );
 
         salidasContainer.addTab("Errores", innerPanelErrores);
 
         consolaSimbolos.setBackground(new java.awt.Color(46,46,46));
-        //consolaSimbolos.setFont(new java.awt.Font("Inconsolata", Font.BOLD, 12)); // NOI18N
-        jScrollPane2.setViewportView(consolaSimbolos);
+        consolaSimbolos.setFont(new Font("Droid Sans Mono", Font.PLAIN, 14));
+        consolaSimbolos.setForeground(new Color(255, 123, 212));
+        jspSimbolos.setViewportView(consolaSimbolos);
 
         javax.swing.GroupLayout innerPanelSimbolosLayout = new javax.swing.GroupLayout(innerPanelSimbolos);
         innerPanelSimbolos.setLayout(innerPanelSimbolosLayout);
@@ -208,14 +192,14 @@ public class Ventana extends javax.swing.JFrame {
                 innerPanelSimbolosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(innerPanelSimbolosLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
+                                .addComponent(jspSimbolos, javax.swing.GroupLayout.DEFAULT_SIZE, 1113, Short.MAX_VALUE)
                                 .addContainerGap())
         );
         innerPanelSimbolosLayout.setVerticalGroup(
                 innerPanelSimbolosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(innerPanelSimbolosLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                                .addComponent(jspSimbolos, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                                 .addContainerGap())
         );
 
@@ -590,14 +574,14 @@ public class Ventana extends javax.swing.JFrame {
                     Resultado r = raizGlobal.Ejecutar(tsGlobal);
                     verificarErrores();
                 } catch (Exception ex) {
-                    appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!", errorColor);
+                    appendSalida("FATAL ERROR! - Ocurrió un error al ejecutar las instrucciones!");
                     ex.printStackTrace();
                 }
             } else {
                 verificarErrores();
             }
         } catch (Exception e) {
-            appendSalida("FATAL ERROR! - Ocurrió un error al parsear las instrucciones!", errorColor);
+            appendSalida("FATAL ERROR! - Ocurrió un error al parsear las instrucciones!");
             e.printStackTrace();
         }
 
@@ -750,48 +734,22 @@ public class Ventana extends javax.swing.JFrame {
         }
     }
 
-    public void appendSalida(String cadena, Color color) {
-        StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, color);
-        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
-        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
-        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
-        int len = consolaSalida.getDocument().getLength();
-        consolaSalida.setCaretPosition(len);
-        consolaSalida.setCharacterAttributes(aset, false);
-        consolaSalida.replaceSelection("> " + cadena + System.lineSeparator());
+    public void appendSalida(String cadena) {
+        consolaSalida.append("> " + cadena + System.lineSeparator());
     }
 
     private void appendErrores(String cadena) {
-        StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, errorColor);
-        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
-        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
-        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
-        int len = consolaErrores.getDocument().getLength();
-        consolaErrores.setCaretPosition(len);
-        consolaErrores.setCharacterAttributes(aset, false);
-        consolaErrores.replaceSelection(cadena);
+        consolaErrores.append(cadena);
     }
 
     private void appendSimbolos(String cadena) {
-        StyleContext sc = StyleContext.getDefaultStyleContext();
-        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants. Foreground, new Color(255, 123, 212));
-        aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Droid Sans Mono");
-        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
-        aset = sc.addAttribute(aset, StyleConstants.FontSize, 14);
-        int len = consolaSimbolos.getDocument().getLength();
-        consolaSimbolos.setCaretPosition(len);
-        consolaSimbolos.setCharacterAttributes(aset, false);
-        consolaSimbolos.replaceSelection(cadena);
+        consolaSimbolos.append(cadena);
     }
 
-    private boolean verificarErrores() {
+    private void verificarErrores() {
         if (ErrorHandler.ListaErrores.size() > 0) {
             showMessage("Ocurrieron errores al ejecutar el archivo.  Revisar pestaña de errores.");
-            return true;
         }
-        return false;
     }
 
     private void addCloseButton(String titulo) {
@@ -848,7 +806,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnReporteAST;
     private javax.swing.JMenuItem btnReporteErrores;
     private javax.swing.JMenuItem btnReporteTS;
-    private javax.swing.JTextPane consolaSalida;
+    private javax.swing.JTextArea consolaSalida;
     private javax.swing.JTabbedPane graphContainer;
     private javax.swing.JScrollPane jspConsola;
     private javax.swing.JLabel lblRowCol;
@@ -858,13 +816,13 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JPanel panelConsola;
     private javax.swing.JPanel panelGraficos;
     private javax.swing.JTabbedPane tabContainer;
-    private javax.swing.JTextPane consolaErrores;
-    private javax.swing.JTextPane consolaSimbolos;
+    private javax.swing.JTextArea consolaErrores;
+    private javax.swing.JTextArea consolaSimbolos;
     private javax.swing.JPanel innerPanelConsola;
     private javax.swing.JPanel innerPanelErrores;
     private javax.swing.JPanel innerPanelSimbolos;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jspErrores;
+    private javax.swing.JScrollPane jspSimbolos;
     private javax.swing.JTabbedPane salidasContainer;
     // End of variables declaration
 }
