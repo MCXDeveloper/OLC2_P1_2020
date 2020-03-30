@@ -76,7 +76,7 @@ public class Ventana extends javax.swing.JFrame {
         lblRowCol = new javax.swing.JLabel();
         panelConsola = new javax.swing.JPanel();
         jspConsola = new javax.swing.JScrollPane();
-        consolaSalida = new javax.swing.JTextArea();
+        consolaSalida = new RSyntaxTextArea(10, 10);
         btnAnalizarAscendente = new javax.swing.JButton();
         btnAnalizarDescendente = new javax.swing.JButton();
         panelGraficos = new javax.swing.JPanel();
@@ -95,10 +95,10 @@ public class Ventana extends javax.swing.JFrame {
         innerPanelConsola = new javax.swing.JPanel();
         innerPanelErrores = new javax.swing.JPanel();
         jspErrores = new javax.swing.JScrollPane();
-        consolaErrores = new javax.swing.JTextArea();
+        consolaErrores = new RSyntaxTextArea(10, 10);
         innerPanelSimbolos = new javax.swing.JPanel();
         jspSimbolos = new javax.swing.JScrollPane();
-        consolaSimbolos = new javax.swing.JTextArea();
+        consolaSimbolos = new RSyntaxTextArea(10, 10);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,11 +131,10 @@ public class Ventana extends javax.swing.JFrame {
 
         panelConsola.setBorder(javax.swing.BorderFactory.createTitledBorder("Salidas"));
 
-        consolaSalida.setLineWrap(true);
-        consolaSalida.setWrapStyleWord(true);
         consolaSalida.setBackground(new java.awt.Color(46,46,46));
         consolaSalida.setFont(new Font("Monospaced", Font.PLAIN, 14));
         consolaSalida.setForeground(new Color(47, 255, 172));
+        consolaSalida.setCurrentLineHighlightColor(new java.awt.Color(46,46,46));
         jspConsola.setViewportView(consolaSalida);
 
         javax.swing.GroupLayout innerPanelConsolaLayout = new javax.swing.GroupLayout(innerPanelConsola);
@@ -160,6 +159,7 @@ public class Ventana extends javax.swing.JFrame {
         consolaErrores.setBackground(new java.awt.Color(46,46,46));
         consolaErrores.setFont(new Font("Droid Sans Mono", Font.PLAIN, 14));
         consolaErrores.setForeground(errorColor);
+        consolaErrores.setCurrentLineHighlightColor(new java.awt.Color(46,46,46));
         jspErrores.setViewportView(consolaErrores);
 
         javax.swing.GroupLayout innerPanelErroresLayout = new javax.swing.GroupLayout(innerPanelErrores);
@@ -184,6 +184,7 @@ public class Ventana extends javax.swing.JFrame {
         consolaSimbolos.setBackground(new java.awt.Color(46,46,46));
         consolaSimbolos.setFont(new Font("Droid Sans Mono", Font.PLAIN, 14));
         consolaSimbolos.setForeground(new Color(255, 123, 212));
+        consolaSimbolos.setCurrentLineHighlightColor(new java.awt.Color(46,46,46));
         jspSimbolos.setViewportView(consolaSimbolos);
 
         javax.swing.GroupLayout innerPanelSimbolosLayout = new javax.swing.GroupLayout(innerPanelSimbolos);
@@ -359,17 +360,9 @@ public class Ventana extends javax.swing.JFrame {
 
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 
-        consolaSalida.addFocusListener(new FocusListener() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                consolaSalida.setEditable(true);
-
-            }
-            @Override
-            public void focusGained(FocusEvent e) {
-                consolaSalida.setEditable(false);
-            }
-        });
+        consolaSalida.setEditable(false);
+        consolaErrores.setEditable(false);
+        consolaSimbolos.setEditable(false);
 
         ImageIcon ii = new ImageIcon("/home/mcalderon/IdeaProjects/OLC2_P1_2020/src/com/image/aritlogo.png");
         this.setIconImage(ii.getImage());
@@ -806,7 +799,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnReporteAST;
     private javax.swing.JMenuItem btnReporteErrores;
     private javax.swing.JMenuItem btnReporteTS;
-    private javax.swing.JTextArea consolaSalida;
+    private RSyntaxTextArea consolaSalida;
     private javax.swing.JTabbedPane graphContainer;
     private javax.swing.JScrollPane jspConsola;
     private javax.swing.JLabel lblRowCol;
@@ -816,8 +809,8 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JPanel panelConsola;
     private javax.swing.JPanel panelGraficos;
     private javax.swing.JTabbedPane tabContainer;
-    private javax.swing.JTextArea consolaErrores;
-    private javax.swing.JTextArea consolaSimbolos;
+    private RSyntaxTextArea consolaErrores;
+    private RSyntaxTextArea consolaSimbolos;
     private javax.swing.JPanel innerPanelConsola;
     private javax.swing.JPanel innerPanelErrores;
     private javax.swing.JPanel innerPanelSimbolos;
