@@ -46,15 +46,9 @@ import java_cup.runtime.*;
 Identificador 	= ( ((["."]+[A-Za-z_])|[A-Za-z])([A-Za-z_0-9]|".")* | ["."]+ )
 Numero 		    = [0-9]+
 Decimal         = [0-9]+\.[0-9]+
-LineTerminator 	= \r|\n|\r\n
-InputCharacter 	= [^\r\n]
 
 /* COMENTARIOS */
-Comentario           = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
-TraditionalComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
-EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
-DocumentationComment = "#**" {CommentContent} "*"+ "#"
-CommentContent       = ( [^*] | \*+ [^/*] )*
+Comentario           = (#\*([^*]|[\r\n]|(\*+([^*#]|[\r\n])))*\*+#)|(#.*)
 
 %%
 

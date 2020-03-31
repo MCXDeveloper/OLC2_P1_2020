@@ -99,14 +99,16 @@ non terminal LinkedList<NParam> PARAMETROS_FUNCION;
 non terminal LinkedList<NParam> LISTA_PARAM_FUNCION;
 
 /* PRECEDENCIA DE OPERADORES */
-precedence right interrogacion;
+precedence right interrogacion, dospu;
 precedence left or;
 precedence left and;
 precedence left diferente_que, igualdad;
-precedence nonassoc menor, mayor, menor_igual, mayor_igual;
+precedence left menor, mayor, menor_igual, mayor_igual;
 precedence left mas, menos;
-precedence left por, div, mod, pot;
-precedence right uminus, not;
+precedence left por, div, mod;
+precedence nonassoc pot;
+precedence nonassoc not;
+precedence right uminus;
 
 start with INICIO;
 

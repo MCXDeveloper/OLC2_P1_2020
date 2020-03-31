@@ -184,9 +184,9 @@ StringLiteral                           = ([\"]({AnyCharacterButDoubleQuoteOrBac
 UnclosedStringLiteral                   = ([\"]([\\].|[^\\\"])*[^\"]?)
 ErrorStringLiteral                      = ({UnclosedStringLiteral}[\"])
 
-MLCBegin                                = "#*"
-MLCEnd                                  = "*#"
-LineCommentBegin                        = "#"
+MLCBegin					            = ("#*")
+MLCEnd						            = ("*#")
+LineCommentBegin			            = ("#")
 
 IntegerLiteral                          = ({Digit}+)
 ErrorNumberFormat                       = (({IntegerLiteral}){NonSeparator}+)
@@ -197,6 +197,7 @@ Separator2                              = ([\;,.])
 Identifier                              = ({IdentifierStart}{IdentifierPart}*)
 
 %state MLC
+%state EOL_COMMENT
 
 %%
 
@@ -234,8 +235,9 @@ Identifier                              = ({IdentifierStart}{IdentifierPart}*)
    {ErrorStringLiteral}             { addToken(Token.ERROR_STRING_DOUBLE); }
 
    /* Comment literals. */
-   {MLCBegin}                       { start = zzMarkedPos-2; yybegin(MLC); }
-   {LineCommentBegin}.*             { addToken(Token.COMMENT_EOL); addNullToken(); return firstToken; }
+    "#**#"						    { addToken(Token.COMMENT_MULTILINE); }
+   	{MLCBegin}					    { start = zzMarkedPos-2; yybegin(MLC); }
+   	{LineCommentBegin}			    { start = zzMarkedPos-2; yybegin(EOL_COMMENT); }
 
    /* Separators. */
    {Separator}                      { addToken(Token.SEPARATOR); }
@@ -285,9 +287,21 @@ Identifier                              = ({IdentifierStart}{IdentifierPart}*)
 }
 
 <MLC> {
-   [^\n*]+            {}
-   {MLCEnd}         { yybegin(YYINITIAL); addToken(start,zzStartRead+2-1, Token.COMMENT_MULTILINE); }
-   "*"               {}
-   \n |
-   <<EOF>>            { addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken; }
+
+	[^hwf\n\*]+				{}
+	[hwf]					{}
+	\n						{ addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken; }
+	{MLCEnd}				{ yybegin(YYINITIAL); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE); }
+	\*						{}
+	<<EOF>>					{ addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken; }
+
+}
+
+
+<EOL_COMMENT> {
+	[^hwf\n]+				{}
+	[hwf]					{}
+	\n						{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
+	<<EOF>>					{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
+
 }
