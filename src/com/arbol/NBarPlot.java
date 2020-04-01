@@ -147,7 +147,7 @@ public class NBarPlot extends Nodo implements Instruccion {
 
         switch (rcadena.getTipoDato()) {
             case STRING: {
-                return (String)rcadena.getValor();
+                return rcadena.getValor().toString();
             }
             case VECTOR: {
                 Vector v = (Vector)rcadena.getValor();

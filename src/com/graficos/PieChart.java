@@ -19,7 +19,7 @@ public class PieChart {
 
     public PieChart(String titulo, LinkedList<String> labels, LinkedList<Double> valores) {
         PieDataset dataset = createDataset(labels, valores);
-        chart = ChartFactory.createPieChart(titulo, dataset, true, true, false);
+        chart = ChartFactory.createPieChart3D(titulo, dataset, true, true, false);
         PieSectionLabelGenerator labelGenerator = new StandardPieSectionLabelGenerator("{1}");
         ((PiePlot) chart.getPlot()).setLabelGenerator(labelGenerator);
     }
@@ -38,7 +38,7 @@ public class PieChart {
     private PieDataset createDataset(LinkedList<String> labels, LinkedList<Double> valores) {
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (int i = 0; i < labels.size(); i++) {
-            dataset.setValue(labels.get(i), valores.get(i));
+            dataset.setValue(labels.get(i) + ": " + valores.get(i), valores.get(i));
         }
         return dataset;
     }

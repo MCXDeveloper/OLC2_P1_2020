@@ -73,7 +73,7 @@ public class NPie extends Nodo implements Instruccion {
 
         switch (rtitulo.getTipoDato()) {
             case STRING: {
-                return (String)rtitulo.getValor();
+                return rtitulo.getValor().toString();
             }
             case VECTOR: {
                 Vector v = (Vector)rtitulo.getValor();

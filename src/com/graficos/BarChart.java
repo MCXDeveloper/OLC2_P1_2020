@@ -16,7 +16,7 @@ public class BarChart {
     private JFreeChart chart;
 
     public BarChart(String titulo, String xlab, String ylab, LinkedList<String> labels, LinkedList<Double> valores) {
-        chart = ChartFactory.createBarChart(titulo, xlab, ylab, createDataset(labels, valores), PlotOrientation.VERTICAL, true, true, false);
+        chart = ChartFactory.createBarChart3D(titulo, xlab, ylab, createDataset(labels, valores), PlotOrientation.VERTICAL, true, true, false);
     }
 
     public JPanel getBarPlotChart() {

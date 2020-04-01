@@ -10,6 +10,7 @@ import com.graficos.LineChart;
 import com.main.Main;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NPlot extends Nodo implements Instruccion {
@@ -75,6 +76,14 @@ public class NPlot extends Nodo implements Instruccion {
         String msj;
 
         switch (rvals.getTipoDato()) {
+
+            case INT: {
+                return new LinkedList<>(Collections.singleton((double)(int)rvals.getValor()));
+            }
+
+            case DECIMAL: {
+                return new LinkedList<>(Collections.singleton((double)rvals.getValor()));
+            }
 
             case VECTOR: {
 
@@ -144,7 +153,7 @@ public class NPlot extends Nodo implements Instruccion {
 
         switch (rcadena.getTipoDato()) {
             case STRING: {
-                return (String)rcadena.getValor();
+                return rcadena.getValor().toString();
             }
             case VECTOR: {
                 Vector v = (Vector)rcadena.getValor();

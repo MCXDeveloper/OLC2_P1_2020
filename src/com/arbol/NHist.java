@@ -10,6 +10,7 @@ import com.graficos.HistogramChart;
 import com.main.Main;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NHist extends Nodo implements Instruccion {
@@ -60,35 +61,39 @@ public class NHist extends Nodo implements Instruccion {
 
         String msj;
 
-        if (rvals.getTipoDato() == ETipoDato.VECTOR) {
-
-            Vector v = (Vector) rvals.getValor();
-
-            if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
-                msj = "Error. El valor del parámetro 'v' no puede ser de tipo <VECTOR[" + v.getInnerType() + "]>. Se espera un vector de valores numéricos.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
-                return null;
+        switch (rvals.getTipoDato()) {
+            case INT: {
+                return new LinkedList<>(Collections.singleton((double)(int)rvals.getValor()));
             }
-
-            double d;
-            LinkedList<Double> ret = new LinkedList<>();
-            for (int i = 0; i < v.getVectorSize(); i++) {
-                d = v.getInnerType() == ETipoDato.INT ? (double) (int) v.getElementByPosition(i).getValor() : (double) v.getElementByPosition(i).getValor();
-                if (d < 0) {
-                    msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+            case DECIMAL: {
+                return new LinkedList<>(Collections.singleton((double)rvals.getValor()));
+            }
+            case VECTOR: {
+                Vector v = (Vector) rvals.getValor();
+                if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
+                    msj = "Error. El valor del parámetro 'v' no puede ser de tipo <VECTOR[" + v.getInnerType() + "]>. Se espera un vector de valores numéricos.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
                     return null;
                 }
-                ret.add(d);
+                double d;
+                LinkedList<Double> ret = new LinkedList<>();
+                for (int i = 0; i < v.getVectorSize(); i++) {
+                    d = v.getInnerType() == ETipoDato.INT ? (double) (int) v.getElementByPosition(i).getValor() : (double) v.getElementByPosition(i).getValor();
+                    if (d < 0) {
+                        msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
+                        return null;
+                    }
+                    ret.add(d);
+                }
+                return ret;
             }
-
-            return ret;
-
+            default: {
+                msj = "Error. El valor del parámetro 'v' no puede ser una expresión de tipo <" + rvals.getTipoDato() + ">.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
+                return null;
+            }
         }
-
-        msj = "Error. El valor del parámetro 'v' no puede ser una expresión de tipo <" + rvals.getTipoDato() + ">.";
-        ErrorHandler.AddError(getTipoError(), getArchivo(), location, msj, getLinea(), getColumna());
-        return null;
 
     }
 
@@ -98,7 +103,7 @@ public class NHist extends Nodo implements Instruccion {
 
         switch (rcadena.getTipoDato()) {
             case STRING: {
-                return (String)rcadena.getValor();
+                return rcadena.getValor().toString();
             }
             case VECTOR: {
                 Vector v = (Vector)rcadena.getValor();
