@@ -235,9 +235,9 @@ Identifier                              = ({IdentifierStart}{IdentifierPart}*)
    {ErrorStringLiteral}             { addToken(Token.ERROR_STRING_DOUBLE); }
 
    /* Comment literals. */
-    "#**#"						    { addToken(Token.COMMENT_MULTILINE); }
-   	{MLCBegin}					    { start = zzMarkedPos-2; yybegin(MLC); }
-   	{LineCommentBegin}			    { start = zzMarkedPos-2; yybegin(EOL_COMMENT); }
+   "#**#"						    { addToken(Token.COMMENT_MULTILINE); }
+   {MLCBegin}					    { start = zzMarkedPos-2; yybegin(MLC); }
+   {LineCommentBegin}			    { start = zzMarkedPos-1; yybegin(EOL_COMMENT); }
 
    /* Separators. */
    {Separator}                      { addToken(Token.SEPARATOR); }
@@ -287,21 +287,17 @@ Identifier                              = ({IdentifierStart}{IdentifierPart}*)
 }
 
 <MLC> {
-
 	[^hwf\n\*]+				{}
 	[hwf]					{}
 	\n						{ addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken; }
 	{MLCEnd}				{ yybegin(YYINITIAL); addToken(start,zzStartRead+1, Token.COMMENT_MULTILINE); }
 	\*						{}
 	<<EOF>>					{ addToken(start,zzStartRead-1, Token.COMMENT_MULTILINE); return firstToken; }
-
 }
-
 
 <EOL_COMMENT> {
 	[^hwf\n]+				{}
 	[hwf]					{}
 	\n						{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
 	<<EOF>>					{ addToken(start,zzStartRead-1, Token.COMMENT_EOL); addNullToken(); return firstToken; }
-
 }

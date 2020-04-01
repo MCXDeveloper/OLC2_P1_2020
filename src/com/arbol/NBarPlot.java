@@ -10,6 +10,7 @@ import com.graficos.BarChart;
 import com.main.Main;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class NBarPlot extends Nodo implements Instruccion {
@@ -75,33 +76,37 @@ public class NBarPlot extends Nodo implements Instruccion {
 
         String msj;
 
-        if (rvals.getTipoDato() == ETipoDato.VECTOR) {
-
-            Vector v = (Vector)rvals.getValor();
-
-            if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
-                msj = "Error. El valor del parámetro 'H' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
-                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
-                return null;
+        switch (rvals.getTipoDato()) {
+            case INT: {
+                return new LinkedList<>(Collections.singleton((double)(int)rvals.getValor()));
             }
-
-            LinkedList<Double> ret = new LinkedList<>();
-            for (Item it : v.getElementos()) {
-                double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
-                if (d < 0) {
-                    msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+            case DECIMAL: {
+                return new LinkedList<>(Collections.singleton((double)rvals.getValor()));
+            }
+            case VECTOR: {
+                Vector v = (Vector)rvals.getValor();
+                if (v.getInnerType() != ETipoDato.INT && v.getInnerType() != ETipoDato.DECIMAL) {
+                    msj = "Error. El valor del parámetro 'H' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un vector de valores numéricos.";
                     ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
                     return null;
                 }
-                ret.add(d);
+                LinkedList<Double> ret = new LinkedList<>();
+                for (Item it : v.getElementos()) {
+                    double d = (it.getTipo() == ETipoDato.INT) ? (double)(int)it.getValor() : (double)it.getValor();
+                    if (d < 0) {
+                        msj = "Error. Los valores a graficar deben de ser mayores a 0.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                        return null;
+                    }
+                    ret.add(d);
+                }
+                return ret;
             }
-
-            return ret;
-
-        } else {
-            msj = "Error. El valor del parámetro 'H' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
-            return null;
+            default: {
+                msj = "Error. El valor del parámetro 'H' no puede ser una expresión de tipo <"+ rvals.getTipoDato() +">.";
+                ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                return null;
+            }
         }
 
     }
@@ -110,27 +115,28 @@ public class NBarPlot extends Nodo implements Instruccion {
 
         String msj;
 
-        if (rlabels.getTipoDato() == ETipoDato.VECTOR) {
-
-            Vector v = (Vector)rlabels.getValor();
-
-            if (v.getInnerType() != ETipoDato.STRING) {
-                msj = "Error. El valor del parámetro 'names.arg' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un VECTOR[STRING].";
+        switch (rlabels.getTipoDato()) {
+            case STRING: {
+                return new LinkedList<>(Collections.singleton(rlabels.getValor().toString()));
+            }
+            case VECTOR: {
+                Vector v = (Vector)rlabels.getValor();
+                if (v.getInnerType() != ETipoDato.STRING) {
+                    msj = "Error. El valor del parámetro 'names.arg' no puede ser de tipo <VECTOR["+ v.getInnerType() +"]>. Se espera un VECTOR[STRING].";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
+                    return null;
+                }
+                LinkedList<String> ret = new LinkedList<>();
+                for (Item it : v.getElementos()) {
+                    ret.add((String)it.getValor());
+                }
+                return ret;
+            }
+            default: {
+                msj = "Error. El valor del parámetro 'names.arg' no puede ser una expresión de tipo <"+ rlabels.getTipoDato() +">.";
                 ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
                 return null;
             }
-
-            LinkedList<String> ret = new LinkedList<>();
-            for (Item it : v.getElementos()) {
-                ret.add((String)it.getValor());
-            }
-
-            return ret;
-
-        } else {
-            msj = "Error. El valor del parámetro 'names.arg' no puede ser una expresión de tipo <"+ rlabels.getTipoDato() +">.";
-            ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_BAR_PLOT]", msj, getLinea(), getColumna());
-            return null;
         }
 
     }

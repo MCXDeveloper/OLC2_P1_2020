@@ -43,8 +43,24 @@ public class NIgualdad extends Nodo implements Instruccion {
                 valor = ((double)v1.getValor()) == ((int)v2.getValor());
             } else if (v1.getTipoDato() == ETipoDato.DECIMAL && v2.getTipoDato() == ETipoDato.DECIMAL) {
                 valor = ((double) v1.getValor()) == ((double) v2.getValor());
-            } else if (v1.getTipoDato() == ETipoDato.STRING && v2.getTipoDato() == ETipoDato.STRING) {
-                valor = v1.getValor().toString().compareTo(v2.getValor().toString()) == 0;
+            } else if (v1.getTipoDato() == ETipoDato.STRING && v2.getTipoDato().isPrimitive()) {
+                if (v1.getValor() instanceof NNulo) {
+                    valor = (v2.getValor() instanceof NNulo);
+                } else if (v2.getTipoDato() == ETipoDato.STRING) {
+                    valor = v1.getValor().toString().compareTo(v2.getValor().toString()) == 0;
+                } else {
+                    msj = "Error. No hay implementación para la operación IGUALDAD para los tipos <STRING> y <"+ v2.getTipoDato() +">.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_IGUALDAD]", msj, getLinea(), getColumna());
+                }
+            } else if (v1.getTipoDato().isPrimitive() && v2.getTipoDato() == ETipoDato.STRING) {
+                if (v2.getValor() instanceof NNulo) {
+                    valor = (v1.getValor() instanceof NNulo);
+                } else if (v1.getTipoDato() == ETipoDato.STRING) {
+                    valor = v1.getValor().toString().compareTo(v2.getValor().toString()) == 0;
+                } else {
+                    msj = "Error. No hay implementación para la operación IGUALDAD para los tipos <"+ v1.getTipoDato() +"> y <STRING>.";
+                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_IGUALDAD]", msj, getLinea(), getColumna());
+                }
             } else if (v1.getTipoDato() == ETipoDato.BOOLEAN && v2.getTipoDato() == ETipoDato.BOOLEAN) {
                 valor = ((boolean) v1.getValor()) == ((boolean) v2.getValor());
 
@@ -129,7 +145,7 @@ public class NIgualdad extends Nodo implements Instruccion {
 
                 Vector v = (Vector)v2.getValor();
                 ETipoDato tipoInternoVector = v.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
+                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
 
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoVector)) {
                     msj = "Error. No hay implementación para la operación IGUALDAD para los tipos <"+ v1.getTipoDato() +"> y <VECTOR["+ tipoInternoVector +"]>.";
@@ -175,7 +191,7 @@ public class NIgualdad extends Nodo implements Instruccion {
 
                 Vector v = (Vector)v1.getValor();
                 ETipoDato tipoInternoVector = v.getInnerType();
-                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.STRING };
+                ETipoDato[] tiposPermitidos = new ETipoDato[] { ETipoDato.INT, ETipoDato.DECIMAL, ETipoDato.BOOLEAN, ETipoDato.STRING };
 
                 if (!Arrays.asList(tiposPermitidos).contains(tipoInternoVector)) {
                     msj = "Error. No hay implementación para la operación IGUALDAD para los tipos <VECTOR["+ tipoInternoVector +"]> y <"+ v2.getTipoDato() +">.";

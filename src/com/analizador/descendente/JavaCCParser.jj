@@ -93,7 +93,7 @@ TOKEN : {
     | <or:              "|">
     | <and:             "&">
     | <not:             "!">
-    | <err:             (~["\""])>
+    | <err:             (~["\"","\'","\t"])>
 }
 
 MORE:
@@ -105,8 +105,10 @@ MORE:
     |   "\\n"
     |   "\\r"
     |   "\\'"
+    |   "\\t"
     |   "\\\""
-    |   <~["\\","\n","\r","'","\""]>
+    |   "\t"
+    |   <~["\\","\n","\r","\t","\'","\""]>
 }
 <DENTRO_DE_CADENA> TOKEN:
 {
@@ -118,6 +120,7 @@ JAVACODE
 void error_skipto(int location, int kind) {
     Token to = getToken(0);
     ParseException e = generateParseException();
+    System.err.println(e.getMessage());
     String realMessage = e.getMessage().split("Was")[0].replace("\n", "").replace("\r", "");
     do{
         if (to.kind == GramaticaConstants.err) {
@@ -160,13 +163,12 @@ Nodo INSTRUCCION() :
 }
 {
     try {
-            LOOKAHEAD(3) a = DECASI_FUNCION()                      { return a; }
-        |   LOOKAHEAD(2) a = DECASI_VARIABLE() (<puco>)?           { return a; }
-        |   a = SENTENCIA_IF()                                     { return a; }
-        |   a = SENTENCIA_SWITCH()                                 { return a; }
-        |   a = SENTENCIA_WHILE()                                  { return a; }
+            LOOKAHEAD(2) a = DECASI()                           { return a; }
+        |   a = SENTENCIA_IF()                                  { return a; }
+        |   a = SENTENCIA_SWITCH()                              { return a; }
+        |   a = SENTENCIA_WHILE()                               { return a; }
         |   a = SENTENCIA_DOWHILE() (<puco>)?                      { return a; }
-        |   a = SENTENCIA_FOR()                                    { return a; }
+        |   a = SENTENCIA_FOR()                                 { return a; }
         |   a = SENTENCIA_BREAK() (<puco>)?                        { return a; }
         |   a = SENTENCIA_CONTINUE() (<puco>)?                     { return a; }
         |   a = SENTENCIA_RETURN() (<puco>)?                       { return a; }
@@ -192,27 +194,34 @@ LinkedList<Nodo> BLOQUE() :
     { return nodos; }
 }
 
-Nodo DECASI_FUNCION() :
+Nodo DECASI_FUNCION(Token tid) :
 {
-    Nodo exp;
-    NParam parametro;
-    Token tid, tparam;
+    Token tparam;
+    Nodo exp = null;
     LinkedList<Nodo> block;
-    LinkedList<NParam> params;
+    LinkedList<NParam> params = null;
 }
 {
     try {
-        tid=<identificador> <igual>
-        (
-                <r_function> params=PARAMETROS_FUNCION() block=BLOQUE()                                             { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
-            |   <par_a>
-            (
-                    <par_c> <flecha> block=BLOQUE()                                                                 { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block); }
-                |   LOOKAHEAD(2) exp=EXPRESION() <par_c> <flecha> block=BLOQUE()                                    { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, exp, block); }
-                |   LOOKAHEAD(3) tparam=<identificador> <igual> exp=EXPRESION() <par_c> <flecha> block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(Collections.singletonList(new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp))), block); }
-                |   parametro=PARAMETRO() <coma> params=LISTA_PARAM_FUNCION() <par_c> <flecha> block=BLOQUE()       { params.addFirst(parametro); return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
-            )
-        )
+            <r_function> params=PARAMETROS_FUNCION() block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block); }
+        |   LOOKAHEAD(2) <par_a> <par_c> <flecha> block=BLOQUE()     { return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(), block); }
+        |   <par_a> tparam=<identificador> (<igual> exp=EXPRESION())? (<coma> params=LISTA_PARAM_FUNCION())? <par_c> <flecha> block=BLOQUE()
+        {
+            if (exp == null && params == null) {
+                return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new NId(tparam.beginLine, tparam.beginColumn, archivo, tparam.image), block);
+            } else if (exp != null && params == null) {
+                return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, new LinkedList<NParam>(Collections.singletonList(new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp))), block);
+            } else if (exp == null && params != null) {
+                NParam parametro = new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image);
+                params.addFirst(parametro);
+                return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block);
+            } else {
+                /* Cuando ambas son distintas de null */
+                NParam parametro = new NParam(tparam.beginLine, tparam.beginColumn, archivo, tparam.image, exp);
+                params.addFirst(parametro);
+                return new NFunc(token.beginLine, token.beginColumn, archivo, tid.image, params, block);
+            }
+        }
     } catch (ParseException e) {
         error_skipto(4,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -259,21 +268,28 @@ NParam PARAMETRO() :
     }
 }
 
-Nodo DECASI_VARIABLE() :
+Nodo DECASI() :
 {
-    Nodo exp;
     Token tid;
     Dimension d;
+    Nodo ret, exp;
     LinkedList<Dimension> ldim = new LinkedList<Dimension>();
 }
 {
     try {
-        tid=<identificador>
+        tid=<identificador> ((d=ACCESO() { ldim.add(d); })+)? <igual>
         (
-                <igual> exp=EXPRESION()                                 { return new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp); }
-            |   (d=ACCESO() { ldim.add(d); })+ <igual> exp=EXPRESION()  { return new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp); }
+                LOOKAHEAD(3) ret=DECASI_FUNCION(tid)
+            |   exp=EXPRESION() (<puco>)?
+            {
+                if (ldim.size() > 0) {
+                    ret = new NAsiEdd(token.beginLine, token.beginColumn, archivo, tid.image, ldim, exp);
+                } else {
+                    ret = new NDecAsi(token.beginLine, token.beginColumn, archivo, tid.image, exp);
+                }
+            }
         )
-
+        { return ret; }
     } catch (ParseException e) {
         error_skipto(8,puco);
         return new Nodo(0, 0, archivo, ETipoNodo.ERROR);
@@ -460,11 +476,17 @@ Dimension ACCESO() :
     try {
         <cor_a>
         (
-                LOOKAHEAD(3) a=EXPRESION() <cor_c>                          { return new Dimension(ETipoDimension.SIMPLE, a); }
-            |   LOOKAHEAD(3) a=EXPRESION() <coma> <cor_c>                   { return new Dimension(ETipoDimension.ROW, a); }
-            |   LOOKAHEAD(3) a=EXPRESION() <coma> b=EXPRESION() <cor_c>     { return new Dimension(ETipoDimension.COMPOUND, a, b); }
-            |   <coma> a=EXPRESION() <cor_c>                                { return new Dimension(ETipoDimension.COLUMN, a); }
-            |   <cor_a> a=EXPRESION() <cor_c> <cor_c>                       { return new Dimension(ETipoDimension.INNER, a); }
+            a=EXPRESION()
+            (
+                <coma>
+                (
+                        b=EXPRESION() <cor_c>           { return new Dimension(ETipoDimension.COMPOUND, a, b); }
+                    |   <cor_c>                         { return new Dimension(ETipoDimension.ROW, a); }
+                )
+                |   <cor_c>                             { return new Dimension(ETipoDimension.SIMPLE, a); }
+            )
+            |   <coma> a=EXPRESION() <cor_c>            { return new Dimension(ETipoDimension.COLUMN, a); }
+            |   <cor_a> a=EXPRESION() <cor_c> <cor_c>   { return new Dimension(ETipoDimension.INNER, a); }
         )    
     } catch (ParseException e) {
         error_skipto(21,puco);
@@ -492,7 +514,10 @@ LinkedList<Nodo> LISTA_EXPRESIONES() :
 }
 {
     try {
-        exp=EXPRESION() { listaexps.add(exp); }
+        (
+                exp=EXPRESION() { listaexps.add(exp); }
+            |   <r_default>     { listaexps.add(new NDefault(token.beginLine, token.beginColumn, archivo)); }
+        )
         (
             <coma>
             (
@@ -514,7 +539,7 @@ Nodo EXPRESION() :
     try {
         a=CONDICION_OR()
         (
-            <interrogacion> b=CONDICION_OR() <dospu> c=CONDICION_OR() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
+            LOOKAHEAD(2) <interrogacion> b=EXPRESION() <dospu> c=EXPRESION() { a = new NTernario(token.beginLine, token.beginColumn, archivo, a, b, c); }
         )*
         { return a; }
     } catch (ParseException e) {

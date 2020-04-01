@@ -88,10 +88,7 @@ public class Lista implements Estructura {
         /* Se le resta 1 a la posición ya que las posiciones son manejadas de 0 en adelante. */
         int finalPos = pos - 1;
 
-        if (finalPos <= getListSize()) {
-            elementos.set(finalPos, new Item(type, value));
-        } else {
-
+        if (pos > getListSize()) {
             /*
              * Si la posición proporcionada es mayor que el tamaño actual del vector
              * entonces se procede a llenar los espacios entre el espacio actual y el
@@ -106,7 +103,8 @@ public class Lista implements Estructura {
                     elementos.add(new Item(ETipoDato.STRING, new NNulo(0,0,"[NO_FILE]")));
                 }
             }
-
+        } else {
+            elementos.set(finalPos, new Item(type, value));
         }
 
         return rehashing(false);

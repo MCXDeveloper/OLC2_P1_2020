@@ -7,6 +7,7 @@ import com.constantes.ETipoNodo;
 import com.entorno.TablaSimbolos;
 import com.estaticas.ErrorHandler;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -51,8 +52,9 @@ public class NDivision extends Nodo implements Instruccion {
 
             if (!flag) {
                 if (v1.getTipoDato() == ETipoDato.INT && v2.getTipoDato() == ETipoDato.INT) {
-                    tdr = ETipoDato.DECIMAL;
-                    valor = ((double) (int) v1.getValor() / ((double)(int)v2.getValor()));
+                    tdr = ETipoDato.INT;
+                    double d = (double)((int) v1.getValor() / ((int)v2.getValor()));
+                    valor = new BigDecimal(String.valueOf(d)).intValue();
                 } else if (v1.getTipoDato() == ETipoDato.INT && v2.getTipoDato() == ETipoDato.DECIMAL) {
                     tdr = ETipoDato.DECIMAL;
                     valor = ((int)v1.getValor()) / ((double)v2.getValor());

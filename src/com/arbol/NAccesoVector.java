@@ -66,7 +66,7 @@ public class NAccesoVector extends Nodo implements Instruccion {
                     r = ((Instruccion)listaDims.get(i).getValorDimIzq()).Ejecutar(ts);
                     actualPos = validarPosicionDeDimension((i + 1), r);
                     if (actualPos != -1) {
-                        if (actualPos != firstPos) {
+                        if (actualPos != 1) {
                             msj = "Error. No se puede acceder a una posición inexistente de un vector [Dimension = "+ (i + 1) +" | Valor = "+ actualPos +"].";
                             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_VECTOR]", msj, getLinea(), getColumna());
                             return error;
@@ -80,10 +80,10 @@ public class NAccesoVector extends Nodo implements Instruccion {
             return error;
         }
 
-        int finalPos = actualPos - 1;
+        int finalPos = firstPos - 1;
 
         if (finalPos > vec.getVectorSize() - 1) {
-            msj = "Error. No se puede acceder a una posición inexistente de un vector [Valor = "+ actualPos +"].";
+            msj = "Error. No se puede acceder a una posición inexistente de un vector [Valor = "+ firstPos +"].";
             ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ACCESO_VECTOR]", msj, getLinea(), getColumna());
             return error;
         }

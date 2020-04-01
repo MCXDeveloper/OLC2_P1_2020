@@ -21,19 +21,20 @@ import com.main.Main;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -669,6 +670,9 @@ public class Ventana extends javax.swing.JFrame {
         }
         area.setSyntaxEditingStyle("text/example");
         area.setCodeFoldingEnabled(true);
+        area.setTabSize(4);
+        area.setTabsEmulated(true);
+        area.setAntiAliasingEnabled(true);
         setFont(area, new Font("Source Code Pro", Font.PLAIN, 14));
 
         area.addCaretListener(new CaretListener() {

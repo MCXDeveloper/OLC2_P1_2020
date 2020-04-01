@@ -61,7 +61,13 @@ public class NAsignacionLista extends Nodo implements Instruccion {
             boolean flag = false;
             Object pivote = listax;
 
-            for (Dimension dim : listaDims) {
+            Dimension dim;
+            Dimension lastDim = listaDims.getLast();
+            ETipoDimension lastDimType = lastDim.getTipoDim();
+
+            for (int i = 0; i < listaDims.size() - 1; i++) {
+
+                dim = listaDims.get(i);
 
                 if (pivote instanceof Item) {
                     pivote = ((Item) pivote).getValor();
@@ -95,39 +101,83 @@ public class NAsignacionLista extends Nodo implements Instruccion {
 
             if (!flag) {
 
+                /* Valido que el indice de la última dimensión sea válido */
+                rdim = ((Instruccion) lastDim.getValorDimIzq()).Ejecutar(ts);
+                posicion = validarPosicionDeDimension(cnt, rdim);
+
                 /* ACTUALIZO EL VALOR FINAL */
                 Resultado rexp = ((Instruccion)valor).Ejecutar(ts);
 
                 if (pivote instanceof Lista) {
-                    if (validarExpresionParaLista(rexp)) {
-                        ((Lista)pivote).updateListValue(posicion, rexp.getTipoDato(), rexp.getValor());
+                    if (validarExpresionParaLista(rexp, lastDimType)) {
+                        if (lastDimType == ETipoDimension.SIMPLE && rexp.getTipoDato() == ETipoDato.LIST) {
+                            Lista laux = (Lista)rexp.getValor();
+                            Item itaux = laux.getElementByPosition(0);
+                            ((Lista)pivote).updateListValue(posicion, itaux.getTipo(), itaux.getValor());
+                        } else {
+                            ((Lista)pivote).updateListValue(posicion, rexp.getTipoDato(), rexp.getValor());
+                        }
                         listax.rehashing(false);
                         tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
-                } else if (pivote instanceof Vector) {
+                /*} else if (pivote instanceof Vector) {
                     if (validarExpresionParaVector(rexp)) {
                         ((Vector)pivote).updateVectorValue(posicion, rexp.getTipoDato(), rexp.getValor());
                         listax.rehashing(false);
                         tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
                     }
-                } else if (pivote instanceof Item) {
+                */} else if (pivote instanceof Item) {
 
                     Item i = ((Item)pivote);
 
-                    if ((i.getTipo() == ETipoDato.LIST && validarExpresionParaLista(rexp)) || (i.getTipo() == ETipoDato.VECTOR && validarExpresionParaVector(rexp))) {
+                    if (i.getTipo() == ETipoDato.LIST) {
+                        if (validarExpresionParaLista(rexp, lastDimType)) {
+                            if (lastDimType == ETipoDimension.SIMPLE && rexp.getTipoDato() == ETipoDato.LIST) {
+                                Lista laux = (Lista) rexp.getValor();
+                                Item itaux = laux.getElementByPosition(0);
+                                ((Lista)i.getValor()).updateListValue(posicion, itaux.getTipo(), itaux.getValor());
+                            } else {
+                                ((Lista)i.getValor()).updateListValue(posicion, rexp.getTipoDato(), rexp.getValor());
+                            }
+                            listax.rehashing(false);
+                            tdr = ETipoDato.STRING;
+                            rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
+                        }
+                    } else {
+                        if (validarExpresionParaVector(rexp)) {
+                            ((Vector)i.getValor()).updateVectorValue(posicion, rexp.getTipoDato(), rexp.getValor());
+                            listax.rehashing(false);
+                            tdr = ETipoDato.STRING;
+                            rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
+                        }
+                    }
+
+                    /*if ((i.getTipo() == ETipoDato.LIST && validarExpresionParaLista(rexp, lastDimType)) || (i.getTipo() == ETipoDato.VECTOR && validarExpresionParaVector(rexp))) {
                         if (rexp.getTipoDato() != ETipoDato.LIST && rexp.getTipoDato() != ETipoDato.VECTOR) {
                             i.setTipo(ETipoDato.VECTOR);
                             i.setValor(new Vector(rexp.getTipoDato(), rexp.getValor()));
                         } else {
-                            i.setTipo(rexp.getTipoDato());
-                            i.setValor(rexp.getValor());
+                            if (i.getTipo() == ETipoDato.LIST) {
+                                if (lastDimType == ETipoDimension.SIMPLE && rexp.getTipoDato() == ETipoDato.LIST) {
+                                    Lista laux = (Lista)rexp.getValor();
+                                    Item itaux = laux.getElementByPosition(0);
+                                    i.setTipo(itaux.getTipo());
+                                    i.setValor(itaux.getValor());
+                                } else {
+                                    i.setTipo(rexp.getTipoDato());
+                                    i.setValor(rexp.getValor());
+                                }
+                            } else {
+                                i.setTipo(rexp.getTipoDato());
+                                i.setValor(rexp.getValor());
+                            }
                         }
                         listax.rehashing(false);
                         tdr = ETipoDato.STRING;
                         rvalor = new NNulo(getLinea(), getColumna(), getArchivo());
-                    }
+                    }*/
 
                 } else {
                     msj = "Error. Pivote no reconocido en la modificación de listas.";
@@ -189,7 +239,7 @@ public class NAsignacionLista extends Nodo implements Instruccion {
 
     }
 
-    private boolean validarExpresionParaLista(Resultado rexp) {
+    private boolean validarExpresionParaLista(Resultado rexp, ETipoDimension lastDimType) {
 
         String msj;
 
@@ -201,18 +251,22 @@ public class NAsignacionLista extends Nodo implements Instruccion {
                 break;
             case VECTOR: {
                 Vector v = ((Vector)rexp.getValor());
-                if (v.getVectorSize() > 1) {
-                    msj = "Error. No se puede asignar un vector con más de 1 parámetro a una lista.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_LISTA]", msj, getLinea(), getColumna());
-                    return false;
+                if (lastDimType == ETipoDimension.SIMPLE) {
+                    if (v.getVectorSize() > 1) {
+                        msj = "Error. No se puede asignar un vector con más de 1 parámetro a una lista.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_LISTA]", msj, getLinea(), getColumna());
+                        return false;
+                    }
                 }
             }   break;
             case LIST: {
                 Lista l = ((Lista)rexp.getValor());
-                if (l.getListSize() > 1) {
-                    msj = "Error. No se puede asignar una lista con más de 1 parámetro a otra lista.";
-                    ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_LISTA]", msj, getLinea(), getColumna());
-                    return false;
+                if (lastDimType == ETipoDimension.SIMPLE) {
+                    if (l.getListSize() > 1) {
+                        msj = "Error. No se puede asignar una lista con más de 1 parámetro a otra lista.";
+                        ErrorHandler.AddError(getTipoError(), getArchivo(), "[N_ASIGNACION_LISTA]", msj, getLinea(), getColumna());
+                        return false;
+                    }
                 }
             }   break;
             default: {
